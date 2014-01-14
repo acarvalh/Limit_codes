@@ -168,7 +168,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0);
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 550 || mtot < 450)")); // blind
+        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 450 || mtot < 350)")); // blind
         TString::Format(" cut_based_ct==%d",c)
         +TString::Format(" && (mtot > 2050)") + cut0
     );
