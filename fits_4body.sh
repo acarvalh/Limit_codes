@@ -37,12 +37,12 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
         sed -i -r -e "s/m[0-9]+_8TeV_nm_m[0-9]+.root/m${radion[$j]}_8TeV_nm_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_minimal.root/${radion[$j]}\_minimal.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_regression/${radion[$j]}\_regression/g" R2GGBBFitter_mtot_range.cc
-#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" R2GGBBFitter_mtot_side.cc
-#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_exp.rs
+#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" R2GGBBFitter_mtot_range.cc
+#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_range.rs
 	# the legend
 	sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mtot_range.cc
 	# the window mtot > 550 || mtot < 450
-	sed -i -r -e "s/mtot > [0-9]+ \|\| mtot < [0-9]+/mtot > ${winu[$j]} \|\| mtot < ${winl[$j]}/g" R2GGBBFitter_mtot_side.cc
+	sed -i -r -e "s/mtot > [0-9]+ \|\| mtot < [0-9]+/mtot > ${winu[$j]} \|\| mtot < ${winl[$j]}/g" R2GGBBFitter_mtot_range.cc
 echo WP$i MR ${radion[$j]}
 	# the mass to fit around
 	sed -i -r -e "s/runfits\([0-9]+/runfits\(${radion[$j]}/g" runfits.C
@@ -72,7 +72,8 @@ echo WP$i MR ${radion[$j]}
 #	echo did with lnu 
 	#
 #	text2workspace.py hgg.mH${radion[$j]}.0_8TeVonecat.txt -o hgg.mH${radion[$j]}.0_8TeVonecat.root -L ../../GaussExp_cxx.so
-        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+        combine -M Asymptotic hgg.Asymptotic.mH125.mR${radion[$j]}.0_8TeVonecat.txt >> 
+higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
 # -L ../../GaussExp_cxx.so
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
 	echo did with rep 2btag only
