@@ -72,8 +72,7 @@ echo WP$i MR ${radion[$j]}
 #	echo did with lnu 
 	#
 #	text2workspace.py hgg.mH${radion[$j]}.0_8TeVonecat.txt -o hgg.mH${radion[$j]}.0_8TeVonecat.root -L ../../GaussExp_cxx.so
-        combine -M Asymptotic hgg.Asymptotic.mH125.mR${radion[$j]}.0_8TeVonecat.txt >> 
-higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+        combine -M Asymptotic hgg.Asymptotic.mH125.mR${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
 # -L ../../GaussExp_cxx.so
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
 	echo did with rep 2btag only
