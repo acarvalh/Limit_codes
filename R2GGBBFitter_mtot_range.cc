@@ -36,12 +36,12 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
-const int minfit1 =350,minfit2 =350, maxfit=1200;
+const int minfit1 =350,minfit2 =340, maxfit=1200;
 
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
-  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",350,1200,"GeV");
+  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",340,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 2") ;
@@ -215,7 +215,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 ////////////////////////////////////////////////////////////
 // BKG model berestein 3
 RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
-  const Int_t ncat = NCAT; dobands=false;
+  const Int_t ncat = NCAT; dobands=true;
   std::vector<TString> catdesc;
   catdesc.push_back("2 btag");
   catdesc.push_back("1 btag");
@@ -307,7 +307,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
         plotmtotBkg[c],
         LineColor(kBlue),
         Range("fitrange"),NormRange("fitrange"));
-    //dataplot[c]->plotOn(plotmtotBkg[c]); // blind
+    dataplot[c]->plotOn(plotmtotBkg[c]); // blind
     plotmtotBkg[c]->Draw();
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
