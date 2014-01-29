@@ -36,7 +36,7 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
-const int minfit1 =350,minfit2 =340, maxfit=1200;
+const int minfit1 =350,minfit2 =350, maxfit=1200;
 
 RooArgSet* defineVariables()
 {
@@ -72,8 +72,8 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 // TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m400_8TeV_nm_m400.root";
 // TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m400.root";
   //
-  TString ssignal = "MiniTrees/ChiaraNov13/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m400.root";
-  TString ddata   = "MiniTrees/ChiaraNov13/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
+  TString ssignal = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m500.root";
+  TString ddata   = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
@@ -86,11 +86,11 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   // Construct points workspace
   MakeSigWS(w, fileBaseName);
   MakeBkgWS(w, fileBkgName);
-//  MakePlots(w, mass, fitresults);
+  MakePlots(w, mass, fitresults);
 
-//  MakeDataCardonecat(w, fileBaseName, fileBkgName);
+  MakeDataCardonecat(w, fileBaseName, fileBkgName);
   MakeDataCardREP(w, fileBaseName, fileBkgName);
-//  MakeDataCardLnU(w, fileBaseName, fileBkgName);
+  MakeDataCardLnU(w, fileBaseName, fileBkgName);
   cout<< "here"<<endl;
   return;
 } // close runfits
@@ -596,10 +596,10 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     plotmtot[c]->Draw();
     plotmtot[c]->Draw("SAME");
     TLegend *legmc = new TLegend(0.62,0.75,0.95,0.9);
-    legmc->AddEntry(plotmtot[c]->getObject(3),"Simulation","LPE");
-    legmc->AddEntry(plotmtot[c]->getObject(0),"Parametric Model","L");
-    legmc->AddEntry(plotmtot[c]->getObject(2),"Crystal Ball component","L");
-    legmc->AddEntry(plotmtot[c]->getObject(1),"Gaussian Outliers","L");
+    legmc->AddEntry(plotmtot[c]->getObject(5),"Simulation","LPE");
+    legmc->AddEntry(plotmtot[c]->getObject(1),"Parametric Model","L");
+    legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball component","L");
+    legmc->AddEntry(plotmtot[c]->getObject(2),"Breit-Wigner Outliers","L");
     legmc->SetHeader(" ");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
