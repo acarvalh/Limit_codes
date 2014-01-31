@@ -36,7 +36,7 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
-const int minfit1 =350,minfit2 =350, maxfit=1200;
+const int minfit1 =350,minfit2 =320, maxfit=1200;
 
 RooArgSet* defineVariables()
 {
@@ -72,25 +72,25 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 // TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m400_8TeV_nm_m400.root";
 // TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m400.root";
   //
-  TString ssignal = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m500.root";
+  TString ssignal = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m400.root";
   TString ddata   = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
   AddSigData(w, mass,ssignal);
-  AddBkgData(w,ddata);
+  //AddBkgData(w,ddata);
   w->Print("v");
   // construct the models to fit
   SigModelFit(w, mass);
-  fitresults = BkgModelFitBernstein(w, dobands);
+  //fitresults = BkgModelFitBernstein(w, dobands);
   // Construct points workspace
   MakeSigWS(w, fileBaseName);
-  MakeBkgWS(w, fileBkgName);
+  //MakeBkgWS(w, fileBkgName);
   MakePlots(w, mass, fitresults);
 
-  MakeDataCardonecat(w, fileBaseName, fileBkgName);
-  MakeDataCardREP(w, fileBaseName, fileBkgName);
-  MakeDataCardLnU(w, fileBaseName, fileBkgName);
+  //MakeDataCardonecat(w, fileBaseName, fileBkgName);
+  //MakeDataCardREP(w, fileBaseName, fileBkgName);
+  //MakeDataCardLnU(w, fileBaseName, fileBkgName);
   cout<< "here"<<endl;
   return;
 } // close runfits
@@ -595,11 +595,11 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
     plotmtot[c]->Draw();
     plotmtot[c]->Draw("SAME");
-    TLegend *legmc = new TLegend(0.62,0.75,0.95,0.9);
+    TLegend *legmc = new TLegend(0.52,0.75,0.95,0.9);
     legmc->AddEntry(plotmtot[c]->getObject(5),"Simulation","LPE");
     legmc->AddEntry(plotmtot[c]->getObject(1),"Parametric Model","L");
     legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball component","L");
-    legmc->AddEntry(plotmtot[c]->getObject(2),"Breit-Wigner Outliers","L");
+    legmc->AddEntry(plotmtot[c]->getObject(2),"Gaussian Outliers","L");
     legmc->SetHeader(" ");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -612,12 +612,32 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     TLatex *lat2 = new TLatex(
         minMassFit1+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
+    ////////////////////////////////////////////////////////////
+    // calculate the chi2
+    RooDataHist* dataHist = (RooDataHist*)sigToFit[c]->binnedClone("dataHist","dataHist");
+    float minchi=350, maxchi=450;
+    Float_t minChiFit(minchi),maxChiFit(maxchi);
+    RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
+             Range(minChiFit,maxChiFit),SumW2Error(kTRUE)); 
+    float chi2 = ChiSquare->getVal();
+    char myChi2buffer[50];
+    double ndof; 
+    if(c==0) ndof=((450.-350.)/(1200.-320.))*dataHist->numEntries()-2 ;
+    else if(c==1) ndof= ((450.-350.)/(1200.-350.))*dataHist->numEntries()-3;
+    sprintf(myChi2buffer,"#chi^{2}/ndof = %f/%f",chi2,ndof);
+    TLatex* latex = new TLatex(0.52, 0.7, myChi2buffer);
+    latex -> SetNDC();
+    latex -> SetTextFont(42);
+    latex -> SetTextSize(0.04);
+    latex -> Draw("same"); 
+    ////////////////////////////////////////////////////////////
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
     //ctmp->SaveAs(TString::Format("sigmodel_cat%d.C",c));
   } // close categories
     return;
 } // close makeplots
+/*
 ///////////////////////////////////////////////////////////
 // declare histos or what -> NOT USED
 Double_t effSigma(TH1 *hist) {
@@ -672,6 +692,7 @@ Double_t effSigma(TH1 *hist) {
   return widmin;
 } // close effSigma
 //////////////////////////////////////////////////
+*/
 // with reparametrization of BKG
 void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName) {
   TString cardDir = "datacards/";
