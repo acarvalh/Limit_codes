@@ -1,18 +1,18 @@
 mtot[300,1200];
 
-mtot_sig_m0_cat0[400, 350, 450];
-mtot_sig_sigma_cat0[20, 5., 140.0];
-mtot_sig_alpha_cat0[-1.0, -3, -0.5]; 
-mtot_sig_n_cat0[4.0, 0.5, 10]; 
-mtot_sig_gsigma_cat0[20, 5., 140.0];
-mtot_sig_frac_cat0[0.1, 0, 1.0];
+mtot_sig_m0_cat0[1100, 1000, 1200];
+mtot_sig_sigma_cat0[10, 5, 40.0];
+mtot_sig_alpha_cat0[-1.0, -3, -0.5];
+mtot_sig_n_cat0[4.0, 0.5, 10];
+mtot_sig_gsigma_cat0[40, 20., 60.0];
+mtot_sig_frac_cat0[0.2, 0., 0.6];
 
-mtot_sig_m0_cat1[400, 350, 450];
-mtot_sig_sigma_cat1[20, 5., 140.0];
-mtot_sig_alpha_cat1[-1.0, -3, -0.5]; 
-mtot_sig_n_cat1[4.0, 0.5, 10]; 
-mtot_sig_gsigma_cat1[20.0, 10.0, 150.0];
-mtot_sig_frac_cat1[0.2, 0, 1.0];
+mtot_sig_m0_cat1[1100, 1000, 1200];
+mtot_sig_sigma_cat1[10, 0.5, 40.0];
+mtot_sig_alpha_cat1[-1.0, -3, -0.5];
+mtot_sig_n_cat1[4.0, 0.5, 10];
+mtot_sig_gsigma_cat1[40.0, 20.0, 60.0];
+mtot_sig_frac_cat1[0.2, 0., 0.6];
 
 mtotGaussSig_cat0 = Gaussian(mtot, mtot_sig_m0_cat0, mtot_sig_gsigma_cat0);
 mtotCBSig_cat0    = CBShape(mtot, mtot_sig_m0_cat0, mtot_sig_sigma_cat0, mtot_sig_alpha_cat0, mtot_sig_n_cat0);
