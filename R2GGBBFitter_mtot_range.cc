@@ -69,28 +69,28 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   RooFitResult* fitresults;
 // TString ssignal = "MiniTrees/OlivierAug13/v02_regkin_mggjj_0/Radion_m500_regression-m500_minimal.root";
 // TString ddata = "MiniTrees/OlivierAug13/v02_regkin_mggjj_0/Data_regression-m500_minimal.root";
-// TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m400_8TeV_nm_m400.root";
-// TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m400.root";
+// TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m1100.root";
+// TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m1100.root";
   //
-  TString ssignal = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m400.root";
+  TString ssignal = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m1100.root";
   TString ddata   = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
   AddSigData(w, mass,ssignal);
-  //AddBkgData(w,ddata);
+  AddBkgData(w,ddata);
   w->Print("v");
   // construct the models to fit
   SigModelFit(w, mass);
-  //fitresults = BkgModelFitBernstein(w, dobands);
+  fitresults = BkgModelFitBernstein(w, dobands);
   // Construct points workspace
   MakeSigWS(w, fileBaseName);
-  //MakeBkgWS(w, fileBkgName);
+  MakeBkgWS(w, fileBkgName);
   MakePlots(w, mass, fitresults);
 
-  //MakeDataCardonecat(w, fileBaseName, fileBkgName);
-  //MakeDataCardREP(w, fileBaseName, fileBkgName);
-  //MakeDataCardLnU(w, fileBaseName, fileBkgName);
+  MakeDataCardonecat(w, fileBaseName, fileBkgName);
+  MakeDataCardREP(w, fileBaseName, fileBkgName);
+  MakeDataCardLnU(w, fileBaseName, fileBkgName);
   cout<< "here"<<endl;
   return;
 } // close runfits
@@ -168,7 +168,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0);
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 450 || mtot < 350)")); // blind
+        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 1200 || mtot < 1000)")); // blind
         TString::Format(" cut_based_ct==%d",c)
         +TString::Format(" && (mtot > 2050)") + cut0
     );
@@ -186,11 +186,11 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
 void SigModelFit(RooWorkspace* w, Float_t mass) {
   const Int_t ncat = NCAT;
   Float_t MASS(mass);
-
+  const int minsigfit =mass - 120, maxsigfit=mass +120;
   RooDataSet* sigToFit[ncat];
   RooAbsPdf* mtotSig[ncat];
   // fit range
-  Float_t minMassFit2(minfit2),minMassFit1(minfit1),maxMassFit(maxfit);
+  Float_t minMassFit2(minfit2),minMassFit1(minsigfit),maxMassFit(maxsigfit);
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     sigToFit[c] = (RooDataSet*) w->data(TString::Format("Sig_cat%d",c));
@@ -215,7 +215,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 ////////////////////////////////////////////////////////////
 // BKG model berestein 3
 RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
-  const Int_t ncat = NCAT; dobands=true;
+  const Int_t ncat = NCAT; dobands=false;
   std::vector<TString> catdesc;
   catdesc.push_back("2 btag");
   catdesc.push_back("1 btag");
@@ -390,7 +390,7 @@ mtotSig[c]->plotOn(
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    legmc->SetHeader("WP4 400 GeV");
+    legmc->SetHeader("WP4 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -517,6 +517,7 @@ void SetConstantParams(const RooArgSet* params) {
 ////////////////////////////////////////////////////////////////////////
 void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
   const Int_t ncat = NCAT;
+  const int minsigfit =Mass - 120, maxsigfit=Mass +120;
   std::vector<TString> catdesc;
   catdesc.push_back("2 btag");
   catdesc.push_back("1 btag");
@@ -541,10 +542,10 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
   //****************************//
   // Plot mtot Fit results
   //****************************//
-  Float_t minMassFit2(minfit2),minMassFit1(minfit1),maxMassFit(maxfit);
+  Float_t minMassFit(minsigfit),maxMassFit(maxsigfit);
   Float_t MASS(Mass);
-  Int_t nBinsMass(93);
-  RooPlot* plotmtotAll = mtot->frame(Range(minMassFit1,maxMassFit),Bins(nBinsMass));
+  Int_t nBinsMass(30);
+  RooPlot* plotmtotAll = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
 /* signalAll->plotOn(plotmtotAll);
 gStyle->SetOptTitle(0);
 mtotSigAll->plotOn(plotmtotAll);
@@ -572,10 +573,12 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
   text->SetTextSize(0.04);
   RooPlot* plotmtot[ncat];
   for (int c = 0; c < ncat; ++c) {
-    if(c==0)plotmtot[c] = mtot->frame(Range(minMassFit2,maxMassFit),Bins(nBinsMass));
-    if(c==1)plotmtot[c] = mtot->frame(Range(minMassFit1,maxMassFit),Bins(nBinsMass));
+    if(c==0)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
+    if(c==1)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
     sigToFit[c]->plotOn(plotmtot[c],LineColor(kWhite),MarkerColor(kWhite));
     mtotSig[c] ->plotOn(plotmtot[c]);
+    double chi2n = plotmtot[c]->chiSquare(0) ; 
+    cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
     mtotSig[c] ->plotOn(
         plotmtot[c],
         Components(TString::Format("mtotGaussSig_cat%d",c)),
@@ -587,7 +590,7 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     mtotSig[c] ->paramOn(plotmtot[c]);
     sigToFit[c] ->plotOn(plotmtot[c]);
     TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F("hist", "hist", 400, minMassFit1, maxMassFit);
+    TH1F *hist = new TH1F("hist", "hist", 400, minMassFit, maxMassFit);
     plotmtot[c]->SetTitle("CMS preliminary 19.702/fb ");
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
@@ -606,25 +609,29 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-        minMassFit1+1.5,0.85*plotmtot[c]->GetMaximum(),
-        " WP4 400 GeV");
+        minMassFit+1.5,0.85*plotmtot[c]->GetMaximum(),
+        " WP4 1100 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-        minMassFit1+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
+        minMassFit+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ////////////////////////////////////////////////////////////
-    // calculate the chi2
-    RooDataHist* dataHist = (RooDataHist*)sigToFit[c]->binnedClone("dataHist","dataHist");
-    float minchi=350, maxchi=450;
-    Float_t minChiFit(minchi),maxChiFit(maxchi);
-    RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
-             Range(minChiFit,maxChiFit),SumW2Error(kTRUE)); 
-    float chi2 = ChiSquare->getVal();
+    // calculate the chi2 -- on a rooplot
+    //RooDataHist* dataHist = (RooDataHist*)sigToFit[c]->binnedClone("dataHist","dataHist");
+    //float minchi=350, maxchi=450;
+    //Float_t minChiFit(minchi),maxChiFit(maxchi);
+    
+    //RooPlot* frame = x.frame(Bins(40)) ; // fix the bining to caluculate chi2
+    //sigToFit[c]->plotOn(frame,LineColor(kWhite),MarkerColor(kWhite));    
+    //RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
+    //         Range(minChiFit,maxChiFit),SumW2Error(kTRUE)); 
+
+    //float chi2 = ChiSquare->getVal();
     char myChi2buffer[50];
-    double ndof; 
-    if(c==0) ndof=((450.-350.)/(1200.-320.))*dataHist->numEntries()-2 ;
-    else if(c==1) ndof= ((450.-350.)/(1200.-350.))*dataHist->numEntries()-3;
-    sprintf(myChi2buffer,"#chi^{2}/ndof = %f/%f",chi2,ndof);
+    //double ndof; 
+    //if(c==0) ndof=((450.-350.)/(1200.-320.))*dataHist->numEntries()-2 ;
+    //else if(c==1) ndof= ((450.-350.)/(1200.-350.))*dataHist->numEntries()-3;
+    sprintf(myChi2buffer,"#chi^{2} = %f",chi2n);
     TLatex* latex = new TLatex(0.52, 0.7, myChi2buffer);
     latex -> SetNDC();
     latex -> SetTextFont(42);
