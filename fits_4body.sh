@@ -15,7 +15,7 @@
 
 declare -a radion=("350" "400" "450" "500" "550" "600" "650" "700" "900" "1000" "1100" "1200" "1300" "1400")
 declare -a winl=("300" "350" "400" "450" "500" "550" "600" "650" "850" "900" "1000" "1100" "1200" "1300")
-declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "950" "1100" "1200" "1300" "1400" "1500")
+declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "1000" "1100" "1200" "1300" "1400" "1500")
 
 # R2GGBBFitter_mtot_side.cc
 # models_mtot_exp.rs
@@ -25,7 +25,7 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 
 #  for (( j = 11 ; j < ${#radion[@]} ; j++ )); do # for each mass 
   for (( j = 1 ; j < 2 ; j++ )); do # for each mass 
-#  for (( j = 0 ; j < 1 ; j++ )); do # for each mass 
+#  for (( j = 0 ; j < 11 ; j++ )); do # for each mass 
 	# create the datacard and the workspaces
 	#check the name on R2GGBBFitter.cc!!   legmc->SetHeader("300 GeV | CIC + X jets selection");
         # TString ssignal   = "./MiniTrees/jetwin/WP1/1000.root";
@@ -33,8 +33,8 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 	# things to choose on the runcard
 	# the signal file
 	sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mtot_range.cc
-        sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
-        sed -i -r -e "s/m[0-9]+_8TeV_nm_m[0-9]+.root/m${radion[$j]}_8TeV_nm_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
+        #sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
+        sed -i -r -e "s/m[0-9]+_8TeV_m[0-9]+.root/m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_minimal.root/${radion[$j]}\_minimal.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_regression/${radion[$j]}\_regression/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" R2GGBBFitter_mtot_range.cc
@@ -66,13 +66,15 @@ echo WP$i MR ${radion[$j]}
 	## create limits root files for each mass
 #	cd radlim${radion[$j]}_CSV
 	cd radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
+        cp ../../models_mtot_range.rs .
 	# ### gROOT->ProcessLine(".L /afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/ggfits/GaussExp.cxx+")
 #	combine hgg.mH${radion[$j]}.0_8TeVlnu.txt -M Asymptotic -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_lnu.txt
 #	mv higgsCombineTest.Asymptotic.mH${radion[$j]}.root higgsCombineTest.Asymptotic.mR${radion[$j]}_lnu.root
 #	echo did with lnu 
 	#
 #	text2workspace.py hgg.mH${radion[$j]}.0_8TeVonecat.txt -o hgg.mH${radion[$j]}.0_8TeVonecat.root -L ../../GaussExp_cxx.so
-        combine -M Asymptotic hgg.Asymptotic.mH125.mR${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+
+        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
 # -L ../../GaussExp_cxx.so
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
 	echo did with rep 2btag only
