@@ -41,9 +41,9 @@ const int minfit1 =350,minfit2 =320, maxfit=1200;
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
-  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",340,1200,"GeV");
+  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",300,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
-  RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100,"");
+  RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100000000,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 2") ;
   //
   cut_based_ct->defineType("cat4_0",0);
@@ -62,7 +62,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   style();
   TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range.rs"); // fit model parameters
+  TString card_name("models_mtot_range_m650.rs"); // fit model parameters
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs(); // Get models and variables
@@ -72,25 +72,25 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 // TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m1100.root";
 // TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m1100.root";
   //
-  TString ssignal = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/RadionSignal_m1100.root";
-  TString ddata   = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v24/v24_fitToMggjj_withKinFit/Radion_m650_8TeV_m650.root";
+  TString ddata = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
   AddSigData(w, mass,ssignal);
-  AddBkgData(w,ddata);
+  //AddBkgData(w,ddata);
   w->Print("v");
   // construct the models to fit
   SigModelFit(w, mass);
-  fitresults = BkgModelFitBernstein(w, dobands);
+//  fitresults = BkgModelFitBernstein(w, dobands);
   // Construct points workspace
   MakeSigWS(w, fileBaseName);
-  MakeBkgWS(w, fileBkgName);
+//  MakeBkgWS(w, fileBkgName);
   MakePlots(w, mass, fitresults);
 
-  MakeDataCardonecat(w, fileBaseName, fileBkgName);
-  MakeDataCardREP(w, fileBaseName, fileBkgName);
-  MakeDataCardLnU(w, fileBaseName, fileBkgName);
+//  MakeDataCardonecat(w, fileBaseName, fileBkgName);
+//  MakeDataCardREP(w, fileBaseName, fileBkgName);
+//  MakeDataCardLnU(w, fileBaseName, fileBkgName);
   cout<< "here"<<endl;
   return;
 } // close runfits
@@ -117,6 +117,14 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
         *ntplVars,
         mainCut,
         "evWeight");
+  //
+//  RooRealVar *evWeight = (RooRealVar*) (*ntplVars)["evWeight"] ;
+//  RooRealVar *k = new RooRealVar("k", "k", 0.01);
+//  RooFormulaVar *nw = new RooFormulaVar("nw", "nw", "@0*@1", RooArgSet(*evWeight, *k));
+//  sigScaled1.addColumn(*nw);
+//  RooArgSet *ntplVars1 = sigScaled1.get();  
+//  RooDataSet *sigScaled = new RooDataSet("sigScaled", "dataset",sigTree, *ntplVars1,"", "nw");
+  //
   RooDataSet* sigToFit[ncat];
   TString cut0 = "&& mgg > 120 && mgg < 130 "; // " && 1>0";//
   for (int c = 0; c < ncat; ++c) {
@@ -126,20 +134,20 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
     w->import(*sigToFit[c],Rename(TString::Format("Sig_cat%d",c)));
   } // close ncat
   // Create full signal data set without categorization
-  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mtot"),mainCut);
+  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled->reduce(*w->var("mtot"),mainCut);
   w->import(*sigToFitAll,Rename("Sig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFit[c]->sumEntries();
+    Float_t nExpEvt = sigToFit[c].sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
          << TString::Format(" eff x Acc cat%d : ",c)
          << "%"
          << endl;
   }
   cout << "======================================================================" << endl;
-  sigScaled.Print("v");
+  sigScaled->Print("v");
   return;
 } // end add signal function
 ///////////////////////////////////////////////////////////////////////////////////
@@ -168,7 +176,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0);
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 1200 || mtot < 1000)")); // blind
+        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 700 || mtot < 600)")); // blind
         TString::Format(" cut_based_ct==%d",c)
         +TString::Format(" && (mtot > 2050)") + cut0
     );
@@ -207,6 +215,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
          *w->var(TString::Format("mtot_sig_m0_cat%d",c)),
          *w->var(TString::Format("mtot_sig_alpha_cat%d",c)),
          *w->var(TString::Format("mtot_sig_n_cat%d",c)),
+//         *w->var(TString::Format("mtot_sig_g_cat%d",c)), // voi
          *w->var(TString::Format("mtot_sig_gsigma_cat%d",c)),
          *w->var(TString::Format("mtot_sig_frac_cat%d",c))) );
     SetConstantParams(w->set(TString::Format("SigPdfParam_cat%d",c)));
@@ -281,13 +290,13 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
         Range(minMassFit2,maxMassFit),
         SumW2Error(kTRUE),
         Save(kTRUE));
-/*  if(c==1)fitresult[c] = mtotBkgTmp.fitTo( // fit with normalized pdf,and return values
-        *data[c], // bkg
-        Strategy(1), // MINUIT strategy
-        Minos(kFALSE), // interpretation on the errors, nonlinearities
-        Range(minMassFit1,maxMassFit),
-        SumW2Error(kTRUE),
-        Save(kTRUE));
+/* if(c==1)fitresult[c] = mtotBkgTmp.fitTo( // fit with normalized pdf,and return values
+*data[c], // bkg
+Strategy(1), // MINUIT strategy
+Minos(kFALSE), // interpretation on the errors, nonlinearities
+Range(minMassFit1,maxMassFit),
+SumW2Error(kTRUE),
+Save(kTRUE));
 */
   w->import(mtotBkgTmp); //store the normalized pdf on wp
    //************************************************//
@@ -318,13 +327,13 @@ double norm = 0.01*sigToFit[c]->sumEntries(); //
 mtotSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mtotSig_cat%d",c));
 // we are not constructing signal pdf, this is constructed on sig to fit function...
 mtotSig[c] ->plotOn(
-        plotmtotBkg[c],
-        Normalization(norm,RooAbsPdf::NumEvent),
-        DrawOption("F"),
-        LineColor(kRed),FillStyle(1001),FillColor(19));
+plotmtotBkg[c],
+Normalization(norm,RooAbsPdf::NumEvent),
+DrawOption("F"),
+LineColor(kRed),FillStyle(1001),FillColor(19));
 mtotSig[c]->plotOn(
-        plotmtotBkg[c],
-        Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
+plotmtotBkg[c],
+Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
 */
     plotmtotBkg[c]->SetTitle("CMS preliminary 19.702/fb");
     plotmtotBkg[c]->SetMinimum(0.0);
@@ -376,9 +385,9 @@ mtotSig[c]->plotOn(
       onesigma->SetMarkerColor(kYellow);
       onesigma->Draw("L3 SAME");
       //plotmtotBkg[c]->Draw("SAME");
-    }  // close dobands
-   //plotlinemtotBkg[c]->Draw("SAME"); 
-   plotmtotBkg[c]->getObject(1)->Draw("SAME"); 
+    } // close dobands
+   //plotlinemtotBkg[c]->Draw("SAME");
+   plotmtotBkg[c]->getObject(1)->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
    //plotmtotBkg[c]->Draw("AC");
    ctmp->SetLogy(0);
@@ -390,7 +399,7 @@ mtotSig[c]->plotOn(
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    legmc->SetHeader("WP4 1100 GeV");
+    legmc->SetHeader("WP4 650 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -473,9 +482,9 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
     wAll->factory(
         TString::Format("CMS_hgg_bkg_8TeV_slope1_cat%d[%g, -5., 5.]",
         c, wAll->var(TString::Format("mtot_bkg_8TeV_slope1_cat%d",c))->getVal()));
-/*    if(c==0)wAll->factory(
-        TString::Format("CMS_hgg_bkg_8TeV_slope2_cat%d[%g,0,0]",
-        c, wAll->var(TString::Format("mtot_bkg_8TeV_slope2_cat%d",c))->getVal()));
+/* if(c==0)wAll->factory(
+TString::Format("CMS_hgg_bkg_8TeV_slope2_cat%d[%g,0,0]",
+c, wAll->var(TString::Format("mtot_bkg_8TeV_slope2_cat%d",c))->getVal()));
 */
     if(c==1)wAll->factory(
         TString::Format("CMS_hgg_bkg_8TeV_slope2_cat%d[%g,800000, 1200000]",
@@ -544,22 +553,22 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
   //****************************//
   Float_t minMassFit(minsigfit),maxMassFit(maxsigfit);
   Float_t MASS(Mass);
-  Int_t nBinsMass(30);
+  Int_t nBinsMass(60);
   RooPlot* plotmtotAll = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
 /* signalAll->plotOn(plotmtotAll);
 gStyle->SetOptTitle(0);
 mtotSigAll->plotOn(plotmtotAll);
 mtotSigAll->plotOn(
-        plotmtotAll,Components("mtotGaussSig"),
-        LineStyle(kDashed),LineColor(kGreen));
+plotmtotAll,Components("mtotGaussSig"),
+LineStyle(kDashed),LineColor(kGreen));
 //mtotSigAll->plotOn(
-        //plotmtotAll,Components("mtotCBSig"),
-        //LineStyle(kDashed),LineColor(kRed));
+//plotmtotAll,Components("mtotCBSig"),
+//LineStyle(kDashed),LineColor(kRed));
 mtotSigAll->paramOn(
-        plotmtotAll,
-        ShowConstants(true),
-        Layout(0.15,0.55,0.9),
-        Format("NEU",AutoPrecision(2)));
+plotmtotAll,
+ShowConstants(true),
+Layout(0.15,0.55,0.9),
+Format("NEU",AutoPrecision(2)));
 plotmtotAll->getAttText()->SetTextSize(0.03);
 */
   TCanvas* c1 = new TCanvas("c1","mtot",0,0,501,501);
@@ -577,7 +586,7 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     if(c==1)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
     sigToFit[c]->plotOn(plotmtot[c],LineColor(kWhite),MarkerColor(kWhite));
     mtotSig[c] ->plotOn(plotmtot[c]);
-    double chi2n = plotmtot[c]->chiSquare(0) ; 
+    double chi2n = plotmtot[c]->chiSquare(0) ;
     cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
     mtotSig[c] ->plotOn(
         plotmtot[c],
@@ -589,8 +598,8 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
         LineStyle(kDashed),LineColor(kRed));
     mtotSig[c] ->paramOn(plotmtot[c]);
     sigToFit[c] ->plotOn(plotmtot[c]);
-    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F("hist", "hist", 400, minMassFit, maxMassFit);
+    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 450, 450);
+    TH1F *hist = new TH1F("hist", "hist", 450, minMassFit, maxMassFit);
     plotmtot[c]->SetTitle("CMS preliminary 19.702/fb ");
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
@@ -610,7 +619,7 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
         minMassFit+1.5,0.85*plotmtot[c]->GetMaximum(),
-        " WP4 1100 GeV");
+        " WP4 650 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
@@ -622,21 +631,21 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     //Float_t minChiFit(minchi),maxChiFit(maxchi);
     
     //RooPlot* frame = x.frame(Bins(40)) ; // fix the bining to caluculate chi2
-    //sigToFit[c]->plotOn(frame,LineColor(kWhite),MarkerColor(kWhite));    
+    //sigToFit[c]->plotOn(frame,LineColor(kWhite),MarkerColor(kWhite));
     //RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
-    //         Range(minChiFit,maxChiFit),SumW2Error(kTRUE)); 
+    // Range(minChiFit,maxChiFit),SumW2Error(kTRUE));
 
     //float chi2 = ChiSquare->getVal();
     char myChi2buffer[50];
-    //double ndof; 
+    //double ndof;
     //if(c==0) ndof=((450.-350.)/(1200.-320.))*dataHist->numEntries()-2 ;
     //else if(c==1) ndof= ((450.-350.)/(1200.-350.))*dataHist->numEntries()-3;
-    sprintf(myChi2buffer,"#chi^{2} = %f",chi2n);
+    sprintf(myChi2buffer,"#chi^{2}/ndof = %f",chi2n);
     TLatex* latex = new TLatex(0.52, 0.7, myChi2buffer);
     latex -> SetNDC();
     latex -> SetTextFont(42);
     latex -> SetTextSize(0.04);
-    latex -> Draw("same"); 
+    latex -> Draw("same");
     ////////////////////////////////////////////////////////////
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
@@ -648,55 +657,55 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
 ///////////////////////////////////////////////////////////
 // declare histos or what -> NOT USED
 Double_t effSigma(TH1 *hist) {
-  TAxis *xaxis = hist->GetXaxis();
-  Int_t nb = xaxis->GetNbins();
-  if(nb < 10) {
-    std::cout << "effsigma: Not a valid histo. nbins = " << nb << std::endl;
-    return 0.;
-  }
-  Double_t bwid = xaxis->GetBinWidth(1);
-  if(bwid == 0) {
-    std::cout << "effsigma: Not a valid histo. bwid = " << bwid << std::endl;
-    return 0.;
-  }
-  Double_t xmax = xaxis->GetXmax();
-  Double_t xmin = xaxis->GetXmin();
-  Double_t ave = hist->GetMean();
-  Double_t rms = hist->GetRMS();
-  Double_t total=0.;
-  for(Int_t i=0; i<nb+2; i++) {
-    total+=hist->GetBinContent(i);
-  }
-  if(total < 100.) {
-    std::cout << "effsigma: Too few entries " << total << std::endl;
-    return 0.;
-  }
-  Int_t ierr=0;
-  Int_t ismin=999;
-  Double_t rlim=0.683*total;
-  Int_t nrms=rms/(bwid); // Set scan size to +/- rms
-  if(nrms > nb/10) nrms=nb/10; // Could be tuned...
-  Double_t widmin=9999999.;
-  for(Int_t iscan=-nrms;iscan<nrms+1;iscan++) { // Scan window centre
-    Int_t ibm=(ave-xmin)/bwid+1+iscan;
-    Double_t x=(ibm-0.5)*bwid+xmin;
-    Double_t xj=x;
-    Double_t xk=x;
-    Int_t jbm=ibm;
-    Int_t kbm=ibm;
-    Double_t bin=hist->GetBinContent(ibm);
-    total=bin;
-    for(Int_t j=1;j<nb;j++){
-      if(jbm < nb) {jbm++; xj+=bwid; bin=hist->GetBinContent(jbm); total+=bin; if(total > rlim) break;} else ierr=1;
-      if(kbm > 0) {kbm--; xk-=bwid; bin=hist->GetBinContent(kbm); total+=bin; if(total > rlim) break; } else ierr=1;
-    }
-    Double_t dxf=(total-rlim)*bwid/bin;
-    Double_t wid=(xj-xk+bwid-dxf)*0.5;
-    if(wid < widmin) { widmin=wid; ismin=iscan; }
-  } // Scan window centre
-  if(ismin == nrms || ismin == -nrms) ierr=3;
-  if(ierr != 0) std::cout << "effsigma: Error of type " << ierr << std::endl;
-  return widmin;
+TAxis *xaxis = hist->GetXaxis();
+Int_t nb = xaxis->GetNbins();
+if(nb < 10) {
+std::cout << "effsigma: Not a valid histo. nbins = " << nb << std::endl;
+return 0.;
+}
+Double_t bwid = xaxis->GetBinWidth(1);
+if(bwid == 0) {
+std::cout << "effsigma: Not a valid histo. bwid = " << bwid << std::endl;
+return 0.;
+}
+Double_t xmax = xaxis->GetXmax();
+Double_t xmin = xaxis->GetXmin();
+Double_t ave = hist->GetMean();
+Double_t rms = hist->GetRMS();
+Double_t total=0.;
+for(Int_t i=0; i<nb+2; i++) {
+total+=hist->GetBinContent(i);
+}
+if(total < 100.) {
+std::cout << "effsigma: Too few entries " << total << std::endl;
+return 0.;
+}
+Int_t ierr=0;
+Int_t ismin=999;
+Double_t rlim=0.683*total;
+Int_t nrms=rms/(bwid); // Set scan size to +/- rms
+if(nrms > nb/10) nrms=nb/10; // Could be tuned...
+Double_t widmin=9999999.;
+for(Int_t iscan=-nrms;iscan<nrms+1;iscan++) { // Scan window centre
+Int_t ibm=(ave-xmin)/bwid+1+iscan;
+Double_t x=(ibm-0.5)*bwid+xmin;
+Double_t xj=x;
+Double_t xk=x;
+Int_t jbm=ibm;
+Int_t kbm=ibm;
+Double_t bin=hist->GetBinContent(ibm);
+total=bin;
+for(Int_t j=1;j<nb;j++){
+if(jbm < nb) {jbm++; xj+=bwid; bin=hist->GetBinContent(jbm); total+=bin; if(total > rlim) break;} else ierr=1;
+if(kbm > 0) {kbm--; xk-=bwid; bin=hist->GetBinContent(kbm); total+=bin; if(total > rlim) break; } else ierr=1;
+}
+Double_t dxf=(total-rlim)*bwid/bin;
+Double_t wid=(xj-xk+bwid-dxf)*0.5;
+if(wid < widmin) { widmin=wid; ismin=iscan; }
+} // Scan window centre
+if(ismin == nrms || ismin == -nrms) ierr=3;
+if(ierr != 0) std::cout << "effsigma: Error of type " << ierr << std::endl;
+return widmin;
 } // close effSigma
 //////////////////////////////////////////////////
 */
@@ -1086,12 +1095,14 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
   RooRealVar* mtot_sig_sigma = w->var("mtot_sig_sigma");
   RooRealVar* mtot_sig_alpha = w->var("mtot_sig_alpha");
   RooRealVar* mtot_sig_n = w->var("mtot_sig_n");
+//  RooRealVar* mtot_sig_g = w->var("mtot_sig_g"); // voi
   RooRealVar* mtot_sig_gsigma = w->var("mtot_sig_gsigma");
   RooRealVar* mtot_sig_frac = w->var("mtot_sig_frac");
   mtot_sig_m0 ->SetName("m_{0}");
   mtot_sig_sigma ->SetName("#sigma_{CB}");
   mtot_sig_alpha ->SetName("#alpha");
   mtot_sig_n ->SetName("n");
+//  mtot_sig_g ->SetName("g"); // voi
   mtot_sig_gsigma->SetName("#sigma_G");
   mtot_sig_frac ->SetName("f_G");
   mtot_sig_m0 ->setUnit("GeV");
@@ -1114,6 +1125,7 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
     mtot_sig_sigma = (RooRealVar*) w->var(TString::Format("mtot_sig_sigma_cat%d",c));
     mtot_sig_alpha = (RooRealVar*) w->var(TString::Format("mtot_sig_alpha_cat%d",c));
     mtot_sig_n = (RooRealVar*) w->var(TString::Format("mtot_sig_n_cat%d",c));
+//    mtot_sig_g = (RooRealVar*) w->var(TString::Format("mtot_sig_g_cat%d",c)); // voi
     mtot_sig_gsigma = (RooRealVar*) w->var(TString::Format("mtot_sig_gsigma_cat%d",c));
     mtot_sig_frac = (RooRealVar*) w->var(TString::Format("mtot_sig_frac_cat%d",c));
     mtot_sig_m0 ->SetName("m_{0}");
