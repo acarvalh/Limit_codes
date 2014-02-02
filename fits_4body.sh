@@ -24,7 +24,7 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
   mkdir radlim_CSV_WP$i
 
 #  for (( j = 11 ; j < ${#radion[@]} ; j++ )); do # for each mass 
-  for (( j = 1 ; j < 2 ; j++ )); do # for each mass 
+  for (( j = 6 ; j <7  ; j++ )); do # for each mass 
 #  for (( j = 0 ; j < 11 ; j++ )); do # for each mass 
 	# create the datacard and the workspaces
 	#check the name on R2GGBBFitter.cc!!   legmc->SetHeader("300 GeV | CIC + X jets selection");
@@ -34,11 +34,12 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 	# the signal file
 	sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mtot_range.cc
         #sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
+        sed -i -r -e "s/m[0-9]+.rs/m${radion[$j]}.rs/g" R2GGBBFitter_mtot_range.cc
         sed -i -r -e "s/m[0-9]+_8TeV_m[0-9]+.root/m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_minimal.root/${radion[$j]}\_minimal.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_regression/${radion[$j]}\_regression/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" R2GGBBFitter_mtot_range.cc
-#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_range.rs
+#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_range_m400.rs
 	# the legend
 	sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mtot_range.cc
 	# the window mtot > 550 || mtot < 450
@@ -51,10 +52,10 @@ echo WP$i MR ${radion[$j]}
 	# mtot_sig_m0_cat0[500.0, 450, 550];
 	# mtot_sig_m0_cat1[500.0, 450, 550];
 	# mtot_sig_m0_cat2[500.0, 450, 550];
-	sed -i -r -e "s/mtot_sig_m0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
-	sed -i -r -e "s/mtot_sig_m0_cat0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
-	sed -i -r -e "s/mtot_sig_m0_cat1\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat1\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
-	sed -i -r -e "s/mtot_sig_m0_cat2\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat2\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+	sed -i -r -e "s/mtot_sig_m0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
+	sed -i -r -e "s/mtot_sig_m0_cat0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
+	sed -i -r -e "s/mtot_sig_m0_cat1\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat1\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
+	sed -i -r -e "s/mtot_sig_m0_cat2\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat2\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
 	mkdir radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
 	root -l -q runfits.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}.txt
 	mv workspaces/hgg.* radlim_CSV_WP$i/radlim${radion[$j]}_CSV
@@ -66,7 +67,7 @@ echo WP$i MR ${radion[$j]}
 	## create limits root files for each mass
 #	cd radlim${radion[$j]}_CSV
 	cd radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-        cp ../../models_mtot_range.rs .
+        cp ../../models_mtot_range_m${radion[$j]}.rs .
 	# ### gROOT->ProcessLine(".L /afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/ggfits/GaussExp.cxx+")
 #	combine hgg.mH${radion[$j]}.0_8TeVlnu.txt -M Asymptotic -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_lnu.txt
 #	mv higgsCombineTest.Asymptotic.mH${radion[$j]}.root higgsCombineTest.Asymptotic.mR${radion[$j]}_lnu.root
