@@ -15,12 +15,14 @@ declare -a winu1=("280" "290" "350" "400" "450" "500" "550" )
 for (( i = 4 ; i < 5 ; i++ )); do # for each working point
   mkdir radlim_CSV_WP$i
 #   for (( j = 0 ; j < ${#radion[@]} ; j++ )); do # for each mass
-  for (( j = 2 ; j < 3; j++ )); do # for each mass
+  for (( j = 4 ; j < 7; j++ )); do # for each mass
   # for (( j = 0 ; j < 1 ; j++ )); do # for each mass
         # the signal file
         sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhiggs.cc
-        sed -i -r -e "s/[0-9]+.root/${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc
-        sed -i -r -e "s/m[0-9]+_8TeV_nm_m[0-9]+.root/m${radion[$j]}_8TeV_nm_m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc
+        sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc 
+        sed -i -r -e "s/selez[0-9]+.root/selez${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc 
+        #data__selez270.root
+        sed -i -r -e "s/Radion_m[0-9]+_8TeV_m[0-9]+.root/Radion_m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc
         # the legend
         sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mgg_addhiggs.cc
         # name of files
@@ -64,9 +66,9 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
         mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}lnu.root
 	echo did with lnu
 	#
-        combine -M Asymptotic hgg.mH125.6_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_onecat.txt
-        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_onecat.root
-	echo did one categ
+        #combine -M Asymptotic hgg.mH125.6_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_onecat.txt
+        #mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_onecat.root
+	#echo did one categ
 	#
         combine -M Asymptotic hgg.mH125.6_8TeVonecatnohiggs.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_onecatnohiggs.txt
         mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_onecatnohiggs.root
