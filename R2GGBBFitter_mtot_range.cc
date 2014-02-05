@@ -62,7 +62,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   style();
   TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m500.rs"); // fit model parameters
+  TString card_name("models_mtot_range_m400.rs"); // fit model parameters
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs(); // Get models and variables
@@ -72,25 +72,25 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 // TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m1100.root";
 // TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m1100.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v25/v25_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v25/v25_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
   TString ddata = "/afs/cern.ch/user/c/crovelli/public/4Alexandra/trees/v20/finalizedTrees_Radion_V07__fitToGGJJ__withKinFit/Data.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
   AddSigData(w, mass,ssignal);
-  //AddBkgData(w,ddata);
+  AddBkgData(w,ddata);
   w->Print("v");
   // construct the models to fit
   SigModelFit(w, mass);
-//  fitresults = BkgModelFitBernstein(w, dobands);
+  fitresults = BkgModelFitBernstein(w, dobands);
   // Construct points workspace
   MakeSigWS(w, fileBaseName);
-//  MakeBkgWS(w, fileBkgName);
+  MakeBkgWS(w, fileBkgName);
   MakePlots(w, mass, fitresults);
 
-//  MakeDataCardonecat(w, fileBaseName, fileBkgName);
-//  MakeDataCardREP(w, fileBaseName, fileBkgName);
-//  MakeDataCardLnU(w, fileBaseName, fileBkgName);
+  MakeDataCardonecat(w, fileBaseName, fileBkgName);
+  MakeDataCardREP(w, fileBaseName, fileBkgName);
+  MakeDataCardLnU(w, fileBaseName, fileBkgName);
   cout<< "here"<<endl;
   return;
 } // close runfits
@@ -176,7 +176,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0);
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 550 || mtot < 450)")); // blind
+        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 450 || mtot < 350)")); // blind
         TString::Format(" cut_based_ct==%d",c)
         +TString::Format(" && (mtot > 2050)") + cut0
     );
@@ -224,7 +224,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 ////////////////////////////////////////////////////////////
 // BKG model berestein 3
 RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
-  const Int_t ncat = NCAT; dobands=false;
+  const Int_t ncat = NCAT; dobands=true;
   std::vector<TString> catdesc;
   catdesc.push_back("2 btag");
   catdesc.push_back("1 btag");
@@ -303,7 +303,8 @@ Save(kTRUE));
    // Plot mtot background fit results per categories
    //************************************************//
    TCanvas* ctmp = new TCanvas("ctmp","mtot Background Categories",0,0,501,501);
-   Int_t nBinsMass(80);
+   int binning; if(c==0) binning=88; else binning = 85;
+   Int_t nBinsMass(binning);
    plotmtotBkg[c] = mtot->frame(nBinsMass);
    plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
@@ -376,13 +377,13 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
       } // close for each bin
       if (c==0) mtot->setRange("errRange",minMassFit2,maxMassFit);
       if (c==1) mtot->setRange("errRange",minMassFit1,maxMassFit);
-      twosigma->SetLineColor(kGreen);
-      twosigma->SetFillColor(kGreen);
-      twosigma->SetMarkerColor(kGreen);
+      twosigma->SetLineColor(kYellow);
+      twosigma->SetFillColor(kYellow);
+      twosigma->SetMarkerColor(kYellow);
       twosigma->Draw("L3 SAME");
-      onesigma->SetLineColor(kYellow);
-      onesigma->SetFillColor(kYellow);
-      onesigma->SetMarkerColor(kYellow);
+      onesigma->SetLineColor(kGreen);
+      onesigma->SetFillColor(kGreen);
+      onesigma->SetMarkerColor(kGreen);
       onesigma->Draw("L3 SAME");
       //plotmtotBkg[c]->Draw("SAME");
     } // close dobands
@@ -399,7 +400,7 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    legmc->SetHeader("WP4 500 GeV");
+    legmc->SetHeader("WP4 400 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -619,7 +620,7 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
         minMassFit+1.5,0.85*plotmtot[c]->GetMaximum(),
-        " WP4 500 GeV");
+        " WP4 400 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
@@ -779,6 +780,10 @@ cout<<"here"<<endl;
         << "1.015 - "
         << "1.015 - "
         <<"# JER and JES " << endl;
+  outFile << "Photon_selectios_accep              lnN " 
+	<< "1.08        -   "
+	<< "1.08        -   "
+	<<"# photon acceptance" << endl;
   outFile << "btag_eff lnN "
         << "1.06 - "
         << "1.03 - "
@@ -891,6 +896,10 @@ cout<<"here"<<endl;
         << "1.015 - "
         << "1.015 - "
         <<"# JER and JES " << endl;
+  outFile << "Photon_selectios_accep              lnN " 
+	<< "1.08        -   "
+	<< "1.08        -   "
+	<<"# photon acceptance" << endl;
   outFile << "btag_eff lnN "
         << "1.06 - "
         << "1.03 - "
@@ -1007,8 +1016,10 @@ cout<<"here"<<endl;
   outFile << "############## for mtot fit" << endl;
   outFile << "maa_acceptance lnN "
           << "1.005 - "
-          << "1.005 - "
           << "# photon energy resolution" << endl;
+  outFile << "Photon_selectios_accep              lnN " 
+	<< "1.08        -   "
+	<<"# photon acceptance" << endl;
   outFile << "############## normalization floating" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on both higgs/signal " << endl;
   outFile << "CMS_hgg_sig_m0_absShift param 1 0.006 # displacement of the dipho mean" << endl;
