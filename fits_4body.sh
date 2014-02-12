@@ -14,8 +14,8 @@
 #declare -a winu=("330" "530" "730" "1030")
 
 declare -a radion=("350" "400" "450" "500" "550" "600" "650" "700" "800" "900" "1000" "1100" "1200" "1300" "1400")
-declare -a winl=("300" "350" "400" "450" "500" "550" "600" "650" "850" "800" "900" "1000" "1100" "1200" "1300")
-declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "800" "1000" "1100" "1200" "1300" "1400" "1500")
+declare -a winl=("300" "350" "400" "450" "500" "550" "600" "650" "750" "800" "900" "1000" "1100" "1200" "1300")
+declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "900" "1000" "1100" "1200" "1300" "1400" "1500")
 
 # R2GGBBFitter_mtot_side.cc
 # models_mtot_exp.rs
@@ -24,7 +24,7 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
   mkdir radlim_CSV_WP$i
 
 #  for (( j = 11 ; j < ${#radion[@]} ; j++ )); do # for each mass 
-  for (( j = 1 ; j <2  ; j++ )); do # for each mass 
+  for (( j = 1 ; j < 2 ; j++ )); do # for each mass 
 #  for (( j = 0 ; j < 11 ; j++ )); do # for each mass 
 	# create the datacard and the workspaces
 	#check the name on R2GGBBFitter.cc!!   legmc->SetHeader("300 GeV | CIC + X jets selection");
@@ -39,7 +39,11 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 #	sed -i -r -e "s/[0-9]+\_minimal.root/${radion[$j]}\_minimal.root/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/[0-9]+\_regression/${radion[$j]}\_regression/g" R2GGBBFitter_mtot_range.cc
 #	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" R2GGBBFitter_mtot_range.cc
-#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_range_m400.rs
+	#sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_range.rs
+	sed -i -r -e "s/mtot_sig_m0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+sed -i -r -e "s/mtot_sig_m0_cat0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+sed -i -r -e "s/mtot_sig_m0_cat1\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat1\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+
 	# the legend
 	sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mtot_range.cc
 	# the window mtot > 550 || mtot < 450
