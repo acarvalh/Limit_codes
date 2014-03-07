@@ -62,7 +62,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   style();
   TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m1100.rs"); // fit model parameters to kinfit
+  TString card_name("models_mtot_range_m500.rs"); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
@@ -73,8 +73,8 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 // TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m1100.root";
 // TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m1100.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v27/v27_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v27/v27_fitToMggjj_withKinFit/Data_m500.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
@@ -177,7 +177,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0);
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 1200 || mtot < 1000)")); // blind
+        //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 550 || mtot < 450)")); // blind
         TString::Format(" cut_based_ct==%d",c)
         +TString::Format(" && (mtot > 2050)") + cut0
     );
@@ -225,7 +225,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 ////////////////////////////////////////////////////////////
 // BKG model berestein 3
 RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
-  const Int_t ncat = NCAT; dobands=false;
+  const Int_t ncat = NCAT; dobands=true;
   std::vector<TString> catdesc;
   catdesc.push_back("2 btag");
   catdesc.push_back("1 btag");
@@ -304,7 +304,7 @@ Save(kTRUE));
    // Plot mtot background fit results per categories
    //************************************************//
    TCanvas* ctmp = new TCanvas("ctmp","mtot Background Categories",0,0,501,501);
-   int binning; if(c==0) binning=88; else binning = 85;
+   int binning; if(c==0) binning=87; else binning = 87;
    Int_t nBinsMass(binning);
    plotmtotBkg[c] = mtot->frame(nBinsMass);
    plotlinemtotBkg[c] = mtot->frame(nBinsMass);
@@ -339,7 +339,7 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
 */
     plotmtotBkg[c]->SetTitle("CMS preliminary 19.702/fb");
     plotmtotBkg[c]->SetMinimum(0.0);
-    plotmtotBkg[c]->SetMaximum(1.40*plotmtotBkg[c]->GetMaximum());
+    plotmtotBkg[c]->SetMaximum(4.5);
     plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
     if (dobands) {
       RooAbsPdf *cpdf; cpdf = mtotBkgTmp0;
@@ -391,6 +391,8 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
    //plotlinemtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->getObject(1)->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
+    if(c==0) plotmtotBkg[c]->SetMaximum(2.5);
+    if (c==1) plotmtotBkg[c]->SetMaximum(4.5);
    //plotmtotBkg[c]->Draw("AC");
    ctmp->SetLogy(0);
    ctmp->SetGrid(1);
@@ -401,7 +403,7 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    legmc->SetHeader("WP4 1100 GeV");
+    legmc->SetHeader("WP4 500 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -621,7 +623,7 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
         minMassFit+1.5,0.85*plotmtot[c]->GetMaximum(),
-        " WP4 1100 GeV");
+        " WP4 500 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
@@ -647,7 +649,7 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     latex -> SetNDC();
     latex -> SetTextFont(42);
     latex -> SetTextSize(0.04);
-    latex -> Draw("same");
+    //latex -> Draw("same");
     ////////////////////////////////////////////////////////////
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
@@ -781,17 +783,21 @@ cout<<"here"<<endl;
         << "1.01 - "
         << "# Trigger efficiency" << endl;
   outFile << "############## jet" << endl;
+  outFile << "Extra_Photon_selectios_accep              lnN " 
+	<< "1.050        -   "
+	<< "1.050        -   "
+	<<"# photon acceptance " << endl;
   outFile << "Photon_selectios_accep              lnN " 
-	<< "1.050        -   "
-	<< "1.050        -   "
+	<< "1.010        -   "
+	<< "1.010        -   "
 	<<"# photon acceptance = sqrt(0.8^2 +5^2)" << endl;
   outFile << "Mjj_acceptance lnN "
         << "1.015 - "
         << "1.015 - "
         <<"# JER and JES " << endl;
   outFile << "btag_eff lnN "
-        << "1.053 - "
-        << "1.027 - "
+        << "1.0527 - "
+        << "0.9818 - "
         <<"# b tag efficiency uncertainty" << endl;
   outFile << "############## photon " << endl;
   outFile << "CMS_hgg_eff_g lnN "
@@ -805,7 +811,7 @@ cout<<"here"<<endl;
           << "# photon energy resolution" << endl;
   outFile << "############## normalization floating" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on both higgs/signal " << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0117 # displacement of the dipho mean" << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.014 # displacement of the dipho mean (0.45 + 0.8 + 1.0) in quadrature" << endl;
   outFile << "CMS_hgg_sig_sigmaScale param 1 0.10 # optimistic estimative of resolution uncertainty " << endl;
   outFile << "############## for mtot fit - slopes" << endl;
   outFile << "############## with reparametrization" << endl;
@@ -813,7 +819,6 @@ cout<<"here"<<endl;
   outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#CMS_hgg_bkg_8TeV_slope2_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope2_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile.close();
   cout << "Write data card in: " << filename << " file" << endl;
@@ -998,14 +1003,14 @@ cout<<"here"<<endl;
          << " " << endl;
   outFile << "--------------------------------" << endl;
   outFile << "lumi_8TeV lnN "
-        << "1.025 - "
+        << "1.026 - "
         << endl;
   outFile << "############## jet" << endl;
   outFile << "Mjj_acceptance lnN "
         << "1.015 - "
         <<"# JER and JES " << endl;
   outFile << "btag_eff lnN "
-        << "1.06 - "
+        << "1.0527 - "
         <<"# b tag efficiency uncertainty" << endl;
   outFile << "############## photon " << endl;
   outFile << "CMS_hgg_eff_g lnN "
@@ -1019,12 +1024,12 @@ cout<<"here"<<endl;
           << "1.005 - "
           << "# photon energy resolution" << endl;
   outFile << "Photon_selectios_accep              lnN " 
-	<< "1.0506        -   "
+	<< "1.01        -   "
 	<<"# photon acceptance = sqrt(0.8^2 +5^2)" << endl;
   outFile << "############## normalization floating" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on both higgs/signal " << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.006 # displacement of the dipho mean" << endl;
-  outFile << "CMS_hgg_sig_sigmaScale param 1 0.11 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.014 # displacement of the dipho mean" << endl;
+  outFile << "CMS_hgg_sig_sigmaScale param 1 0.10 # optimistic estimative of resolution uncertainty " << endl;
   outFile << "############## for mtot fit - slopes" << endl;
   outFile << "############## with reparametrization" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;

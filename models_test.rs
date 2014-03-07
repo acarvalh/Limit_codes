@@ -5,19 +5,19 @@ mgg_bkg_8TeV_slope1_cat0[9,-10.0, 20.0];
 
 mgg_bkg_8TeV_slope1_cat1[9,-10.0, 20.0];
 
-mgg_sig_m0_cat0[124.0, 123, 125];
-mgg_sig_sigma_cat0[3.0, 2.0, 5.0];
-mgg_sig_alpha_cat0[1.0, -2.5, 2.5];
+mgg_sig_m0_cat0[124.2, 123, 125];
+mgg_sig_sigma_cat0[2.0, 1.0, 3.0];
+mgg_sig_alpha_cat0[1.0, 0.0, 2.5];
 mgg_sig_n_cat0[2.0, 1.0, 5.0];
 mgg_sig_gsigma_cat0[1.2, 0.8, 1.6];
-mgg_sig_frac_cat0[0.5, 0.0, 1.0];
+mgg_sig_frac_cat0[0.6, 0.4, 1.0];
 
-mgg_sig_m0_cat1[124.0, 123, 125];
-mgg_sig_sigma_cat1[3.0, 2.0, 5.0];
-mgg_sig_alpha_cat1[1.0, -2.5, 2.5];
+mgg_sig_m0_cat1[124.2, 123, 125];
+mgg_sig_sigma_cat1[2.0, 1.0, 3.0];
+mgg_sig_alpha_cat1[1.0, 0.0, 2.5];
 mgg_sig_n_cat1[2.0, 1.5, 10];
-mgg_sig_gsigma_cat1[1.8, 1.3, 2.5];
-mgg_sig_frac_cat1[0.5, 0.0, 1.0];
+mgg_sig_gsigma_cat1[1.2, 0.8, 1.6];
+mgg_sig_frac_cat1[0.6, 0.4, 1.0];
 
 GaussSig_cat0 = Gaussian(mgg, mgg_sig_m0_cat0, mgg_sig_gsigma_cat0);
 CBSig_cat0 = CBShape(mgg, mgg_sig_m0_cat0, mgg_sig_sigma_cat0, mgg_sig_alpha_cat0, mgg_sig_n_cat0);

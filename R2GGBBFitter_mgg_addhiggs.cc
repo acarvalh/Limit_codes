@@ -104,13 +104,16 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
   MakeBkgWS(w, fileBkgName);
   // construct the models to fit
+
   //
   AddSigData(w, mass,ssignal);
   cout<<"SIGNAL ADDED"<<endl;
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
+  MakePlots(w, mass, fitresults);
   cout<<" did signal WS's"<<endl;
   //
+
   cout<<"Higgs: "<<hhiggsggh<<endl;
   AddHigData(w, mass,hhiggsggh,0);
   HigModelFit(w, mass,0); // constructing higgs pdf
@@ -132,7 +135,6 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   MakeHigWS(w, fileHiggsNamevh,3);
   cout<<"HIGGS ADDED"<<endl;
   //
-  MakePlots(w, mass, fitresults);
   // MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
   MakeDataCardREP(w, fileBaseName, fileBkgName);
   MakeDataCardLNU(w, fileBaseName, fileBkgName);
@@ -140,6 +142,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   MakeDataCard(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
   // MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsName);//MakeDataCardnohiggs
   cout<< "here"<<endl;
+
   return;
 } // close runfits
 ////////////////////////////////////////////////////////////////////
@@ -526,6 +529,8 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
     } else plotmggBkg[c]->Draw("SAME"); // close dobands
    //plotmggBkg[c]->getObject(1)->Draw("SAME");
    //plotmggBkg[c]->getObject(2)->Draw("P SAME");
+      if(c==0)plotmggBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
+      if(c==1)plotmggBkg[c]->SetMaximum(18); // no error bar in bins with zero events
       plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     TLegend *legmc = new TLegend(0.60,0.72,0.92,0.9);
@@ -743,9 +748,9 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
   // Set P.D.F. parameter names
   // WARNING: Do not use it if Workspaces are created
   // SetParamNames(w);
-  Float_t minSigFit(115),maxSigFit(135);
+  Float_t minSigFit(120),maxSigFit(130);
   Float_t MASS(Mass);
-  Int_t nBinsMass(20); // just need to plot
+  Int_t nBinsMass(40); // just need to plot
   RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
   signalAll->plotOn(plotmggAll);
   gStyle->SetOptTitle(0);
@@ -807,7 +812,7 @@ minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
     latex -> SetNDC();
     latex -> SetTextFont(42);
     latex -> SetTextSize(0.04);
-    latex -> Draw("same");
+    //latex -> Draw("same");
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
     //ctmp->SaveAs(TString::Format("sigmodel_cat%d.C",c));
@@ -841,7 +846,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults, int
   //
   Float_t minMassFit(115),maxMassFit(135);
   Float_t MASS(Mass);
-  Int_t nBinsMass(50); // just need to plot
+  Int_t nBinsMass(80); // just need to plot
   RooPlot* plotmggAll = mgg->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
   signalAll->plotOn(plotmggAll);
   gStyle->SetOptTitle(0);
@@ -1169,7 +1174,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 <<"# photon acceptance" << endl;
   outFile << "btag_eff lnN "
 << "1.046 - 1.046 1.046 1.046 1.046 "
-<< "1.024 - 1.024 1.024 1.024 1.024 "
+<< "0.988 - 0.988 0.988 0.988 0.988 "
 <<"# b tag efficiency uncertainty" << endl;
   outFile << "############## photon " << endl;
   outFile << "CMS_hgg_eff_g lnN "
@@ -1186,32 +1191,32 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
    << "1.02 - 1.02 1.02 1.02 1.02 " << endl;
   /// higgs uncertainties
   outFile << "PDF lnN "
-   << "1.10 - 1.72 1.81 1.27 1.24 "
-   << "1.10 - 1.72 1.81 1.27 1.24 " << endl;
+   << " - - 1.75/1.69 1.81/1.81 1.26/1.28 1.25/1.25 "
+   << " - - 1.75/1.69 1.81/1.81 1.26/1.28 1.25/1.25 " << endl;
   outFile << "QCD_scale lnN "
-   << "1.10 - 1.75 1.655 - 1.105 "
-   << "1.10 - 1.75 1.655 - 1.105 " << endl;
+   << " - - 1.72/1.78 1.38/1.93 1.02/1.02 1.31/1.31 "
+   << " - - 1.72/1.78 1.38/1.93 1.02/1.02 1.31/1.31 " << endl;
   outFile << "gg_migration lnN "
-   << "1.10 - 1.30 - - 1.30 "
-   << "1.10 - 1.30 - - 1.30 " << endl;
+   << " - - 1.25 1.40 1.08 1.08 "
+   << " - - 1.25 1.40 1.08 1.08 " << endl;
   ////
   outFile << "# photon energy resolution" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand." << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean " << endl;
   outFile << "CMS_hgg_sig_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
   //
   outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
-  outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57% " << endl;
+  outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
-  outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57%" << endl;
+  outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
-  outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57%" << endl;
+  outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
-  outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57%" << endl;
+  outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
   outFile << "############## for mgg fit - slopes" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
@@ -1301,28 +1306,28 @@ cout<<"here"<<endl;
   outFile << "lumi_8TeV lnN "
 << "1.026 - "
 << "1.026 - " << endl;
+  outFile << "DiphoTrigger lnN "
+<< "1.01 - "
+<< "1.01 - "
+<< "# Trigger efficiency" << endl;
   outFile << "############## jet" << endl;
   outFile << "Mjj_acceptance lnN "
 << "1.015 - "
 << "1.015 - "
 <<"# JER and JES " << endl;
+  outFile << "btag_eff lnN "
+<< "1.046 - "
+<< "0.988 - "
+<<"# b tag efficiency uncertainty" << endl;
+  outFile << "############## photon " << endl;
   outFile << "Photon_selectios_accep lnN "
 << "1.01 - "
 << "1.01 - "
 <<"# photon acceptance" << endl;
-  outFile << "btag_eff lnN "
-<< "1.046 - "
-<< "1.024 - "
-<<"# b tag efficiency uncertainty" << endl;
-  outFile << "############## photon " << endl;
   outFile << "CMS_hgg_eff_g lnN "
    << "1.010 - "
    << "1.010 - "
    << "# photon selection accep." << endl;
-  outFile << "DiphoTrigger lnN "
-<< "1.01 - "
-<< "1.01 - "
-<< "# Trigger efficiency" << endl;
   outFile << "############## for mtot fit" << endl;
   outFile << "maajj_acceptance lnN "
    << "1.02 - "
@@ -1332,8 +1337,8 @@ cout<<"here"<<endl;
   //outFile << "# Parametric shape uncertainties, entered by hand. they act on both higgs/signal " << endl;
   //
   outFile << "# Parametric shape uncertainties, entered by hand." << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_sig_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean" << endl;
+  outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
   //outFile << "CMS_hgg_sig_m0_absShift param 1 0.006 # displacement of the dipho mean" << endl;
   //outFile << "CMS_hgg_sig_sigmaScale param 1 0.30 # optimistic estimative of resolution uncertainty " << endl;
@@ -1343,12 +1348,7 @@ cout<<"here"<<endl;
   outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#CMS_hgg_bkg_8TeV_slope2_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope2_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#CMS_hgg_bkg_8TeV_slope3_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#CMS_hgg_bkg_8TeV_slope3_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#CMS_hgg_bkg_8TeV_slope4_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#CMS_hgg_bkg_8TeV_slope5_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile.close();
   cout << "Write data card in: " << filename << " file" << endl;
   return;
@@ -1452,8 +1452,8 @@ cout<<"here"<<endl;
    << "# photon energy resolution" << endl;
   outFile << "############## normalization floating" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on both higgs/signal " << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_sig_sigmaScale param 1 0.30 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
+  outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   outFile << "############## for mtot fit - slopes" << endl;
   outFile << "############## with reparametrization" << endl;
   outFile << "mgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
@@ -1559,8 +1559,8 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
 << "1.08 - "
 <<"# photon acceptance" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs " << endl;
-  outFile << "CMS_hgg_hig_m0_absShift param 1 0.006 # displacement of the dipho mean" << endl;
-  outFile << "CMS_hgg_hig_sigmaScale param 1 0.30 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_hig_m0_absShift param 1 0.0045 # displacement of the dipho mean" << endl;
+  outFile << "CMS_hgg_hig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   outFile << "############## for mgg fit - slopes" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
@@ -1650,7 +1650,7 @@ cout<<"here"<<endl;
 << "1.015 - "
 <<"# JER and JES " << endl;
   outFile << "btag_eff lnN "
-<< "1.06 - "
+<< "1.046 - "
 <<"# b tag efficiency uncertainty" << endl;
   outFile << "############## photon " << endl;
   outFile << "CMS_hgg_eff_g lnN "
@@ -1664,22 +1664,17 @@ cout<<"here"<<endl;
    << "1.10 - "
    << "# photon energy resolution" << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on signal " << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0075 # displacement of the dipho mean 0.0075 = sqrt(0.006**2 + 0.004**2)" << endl;
-  outFile << "CMS_hgg_sig_sigmaScale param 1 0.30 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean" << endl;
+  outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs " << endl;
-  outFile << "CMS_hgg_hig_m0_absShift param 1 0.006 # displacement of the dipho mean" << endl;
-  outFile << "CMS_hgg_hig_sigmaScale param 1 0.30 # optimistic estimative of resolution uncertainty " << endl;
+  outFile << "CMS_hgg_hig_m0_absShift param 1 0.045 # displacement of the dipho mean" << endl;
+  outFile << "CMS_hgg_hig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   outFile << "############## for mgg fit - slopes" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
 
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
 
-
-  outFile << "#CMS_hgg_bkg_8TeV_slope2_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
-
-
-  outFile << "#CMS_hgg_bkg_8TeV_slope3_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
 
   } // if ncat ==2
   /////////////////////////////////////
