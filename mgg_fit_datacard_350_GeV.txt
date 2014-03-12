@@ -1,0 +1,70 @@
+#Run with: combine -d hgg.mH260.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30
+# Lumi = 19785 pb-1
+imax 2
+jmax 5
+kmax *
+---------------
+shapes data_obs cat0 hgg.inputbkg_8TeV.root w_all:data_obs_cat0
+shapes data_obs cat1 hgg.inputbkg_8TeV.root w_all:data_obs_cat1
+############## shape with reparametrization
+shapes mggBkg cat0 hgg.inputbkg_8TeV.root w_all:CMS_hgg_bkg_8TeV_cat0
+shapes mggBkg cat1 hgg.inputbkg_8TeV.root w_all:CMS_hgg_bkg_8TeV_cat1
+# signal
+shapes mggSig cat0 hgg.mH125.6_8TeV.inputsig.root w_all:CMS_hgg_sig_cat0
+shapes mggSig cat1 hgg.mH125.6_8TeV.inputsig.root w_all:CMS_hgg_sig_cat1
+# ggh
+shapes mggHigggh cat0 hgg.hig.mH125.6_8TeV.ggh.inputhig.root w_all:CMS_hgg_hig_0_cat0
+shapes mggHigggh cat1 hgg.hig.mH125.6_8TeV.ggh.inputhig.root w_all:CMS_hgg_hig_0_cat1
+# tth
+shapes mggHigtth cat0 hgg.hig.mH125.6_8TeV.tth.inputhig.root w_all:CMS_hgg_hig_1_cat0
+shapes mggHigtth cat1 hgg.hig.mH125.6_8TeV.tth.inputhig.root w_all:CMS_hgg_hig_1_cat1
+# vbf
+shapes mggHigvbf cat0 hgg.hig.mH125.6_8TeV.vbf.inputhig.root w_all:CMS_hgg_hig_2_cat0
+shapes mggHigvbf cat1 hgg.hig.mH125.6_8TeV.vbf.inputhig.root w_all:CMS_hgg_hig_2_cat1
+# vh
+shapes mggHigvh cat0 hgg.hig.mH125.6_8TeV.vh.inputhig.root w_all:CMS_hgg_hig_3_cat0
+shapes mggHigvh cat1 hgg.hig.mH125.6_8TeV.vh.inputhig.root w_all:CMS_hgg_hig_3_cat1
+---------------
+bin cat0 cat1 
+observation ? ?
+------------------------------
+bin cat0 cat0 cat0 cat0 cat0 cat0 cat1 cat1 cat1 cat1 cat1 cat1
+process mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh
+process 0 1 2 3 4 5  0 1 2 3 4 5 
+rate  1.5189 1 0 0.0862722 0.00331303 0.0123816 1.67051 1 0.236324 0.15959 0.0397825 0.02455 
+     
+############## Total normalisation
+lumi_8TeV lnN 1.026 - 1.026 1.026 1.026 1.026 1.026 - 1.026 1.026 1.026 1.026 
+     
+############## Photon selection normalisation uncertainties 
+DiphoTrigger lnN 1.01 - 1.010 1.010 1.010 1.010 1.01 - 1.010 1.010 1.010 1.010 # Trigger efficiency
+CMS_hgg_eff_g lnN 1.010 - 1.010 1.010 1.010 1.010 1.010 - 1.010 1.010 1.010 1.010 # photon selection accep.
+     
+############## Jet selection and phase space cuts normalisation uncertainties 
+Mjj_PTj_cut_acceptance lnN 1.015 - 1.015 1.015 1.015 1.015 1.015 - 1.015 1.015 1.015 1.015 # JER and JES 
+btag_eff lnN 1.046 - 1.046 1.046 1.046 1.046 0.988 - 0.988 0.988 0.988 0.988 # b tag efficiency uncertainty
+maajj_cut_acceptance lnN 1.02 - 1.02 1.02 1.02 1.02 1.02 - 1.02 1.02 1.02 1.02 
+     
+############## Theory uncertainties on SM Higgs production 
+PDF lnN  - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024  - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 
+QCD_scale lnN  - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020  - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 
+gg_migration lnN  - - 1.25 1.25 1.08 1.08  - - 1.25 1.25 1.08 1.08 # UEPS
+gluonSplitting lnN  - - 1.40 1.40 1.40 1.40  - - 1.40 1.40 1.40 1.40 
+     
+############## Signal parametric shape uncertainties 
+CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) 
+CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty 
+# Parametric shape uncertainties, entered by hand. they act on higgs
+CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)
+CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty 
+CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)
+CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty 
+CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)
+CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty 
+CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)
+CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty 
+############## for mgg fit - slopes
+CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope
+CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope
+CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope
+CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope
