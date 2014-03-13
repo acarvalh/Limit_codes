@@ -179,7 +179,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
         *w->var("mtot"),
         //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 550 || mtot < 450)")); // blind
         TString::Format(" cut_based_ct==%d",c)
-        +TString::Format(" && (mtot > 2050)") + cut0
+        //+TString::Format(" && (mtot > 2050)") + cut0 //blind
     );
     w->import(*dataToFit[c],Rename(TString::Format("Data_cat%d",c)));
     w->import(*dataToPlot[c],Rename(TString::Format("Dataplot_cat%d",c)));
@@ -309,7 +309,7 @@ Save(kTRUE));
    plotmtotBkg[c] = mtot->frame(nBinsMass);
    plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
-   data[c]->plotOn(plotmtotBkg[c],LineColor(kWhite),MarkerColor(kWhite));
+   data[c]->plotOn(plotmtotBkg[c]);//,LineColor(kWhite),MarkerColor(kWhite)); // kWhite blind
    mtotBkgTmp.plotOn(
         plotlinemtotBkg[c],
         LineColor(kBlue),
@@ -318,7 +318,7 @@ Save(kTRUE));
         plotmtotBkg[c],
         LineColor(kBlue),
         Range("fitrange"),NormRange("fitrange"));
-    dataplot[c]->plotOn(plotmtotBkg[c]); // blind
+
     plotmtotBkg[c]->Draw();
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
@@ -388,18 +388,23 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
       onesigma->Draw("L3 SAME");
       //plotmtotBkg[c]->Draw("SAME");
     } // close dobands
+
+
    //plotlinemtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->getObject(1)->Draw("SAME");
+   dataplot[c]->plotOn(plotmtotBkg[c]); // blind
+   data[c]->plotOn(plotmtotBkg[c]);//  blind
+    plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
-    if(c==0) plotmtotBkg[c]->SetMaximum(2.5);
-    if (c==1) plotmtotBkg[c]->SetMaximum(4.5);
+    if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
+    if (c==1) plotmtotBkg[c]->SetMaximum(6.5);
    //plotmtotBkg[c]->Draw("AC");
    ctmp->SetLogy(0);
    ctmp->SetGrid(1);
    cout << "!!!!!!!!!!!!!!!!!" << endl;
 
     TLegend *legmc = new TLegend(0.62,0.75,0.92,0.9);
-    //legmc->AddEntry(plotmtotBkg[c]->getObject(2),"Data ",""); //"LPE" blind
+    legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ",""); //"LPE" blind
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
@@ -409,6 +414,7 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
     legmc->Draw();
     TLatex *lat2 = new TLatex(363.0,0.85*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
+
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
   cout<<"here 2 "<< c<<endl;
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
