@@ -17,13 +17,23 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 #   for (( j = 0 ; j < ${#radion[@]} ; j++ )); do # for each mass
 #  for (( j = 1 ; j < 7; j++ )); do # for each mass
    for (( j = 0 ; j < 1 ; j++ )); do # for each mass
-#   for (( j = 2 ; j < 4 ; j++ )); do # for each mass
+#   for (( j = 1 ; j < 4 ; j++ )); do # for each mass
         # the signal file
         sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhiggs.cc
         sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc 
-        #sed -i -r -e "s/selez[0-9]+.root/selez${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc 
-        #data__selez270.root
         sed -i -r -e "s/Radion_m[0-9]+_8TeV_m[0-9]+.root/Radion_m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc
+        # the ggH file
+        sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhigg_ggH.cc
+        sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhigg_ggH.cc 
+        # the ttH file
+        sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhigg_ttH.cc
+        sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhigg_ttH.cc 
+        # the signal file
+        sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhigg_vbf.cc
+        sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhigg_vbf.cc 
+        # the signal file
+        sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhigg_vH.cc
+        sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhigg_vH.cc 
         # the legend
         sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mgg_addhiggs.cc
         # name of files
@@ -40,11 +50,16 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
         # TString cutj0 = "&& mjj > 90 && mjj < 170 "; //"&& 1>0";//
         # TString cutj1 = "&& mjj > 100 && mjj < 160 "; // "&& 1>0";//
         # the signal parameters (median to fit)
-        sed -i -r -e "s/TString cut0 = \"\&\& mtot > [0-9]+ \&\& mtot < [0-9]+/TString cut0 = \"\&\& mtot > ${winl0[$j]} \&\& mtot < ${winu0[$j]}/g" R2GGBBFitter_mgg_addhiggs.cc
-        sed -i -r -e "s/TString cut1 = \"\&\& mtot > [0-9]+ \&\& mtot < [0-9]+/TString cut1 = \"\&\& mtot > ${winl1[$j]} \&\& mtot < ${winu1[$j]}/g" R2GGBBFitter_mgg_addhiggs.cc
+#        sed -i -r -e "s/TString cut0 = \"\&\& mtot > [0-9]+ \&\& mtot < [0-9]+/TString cut0 = \"\&\& mtot > ${winl0[$j]} \&\& mtot < ${winu0[$j]}/g" R2GGBBFitter_mgg_addhiggs.cc
+#        sed -i -r -e "s/TString cut1 = \"\&\& mtot > [0-9]+ \&\& mtot < [0-9]+/TString cut1 = \"\&\& mtot > ${winl1[$j]} \&\& mtot < ${winu1[$j]}/g" R2GGBBFitter_mgg_addhiggs.cc
         #
         mkdir radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-        root -l -q runmgg.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}.txt
+        root -l -q runmgg.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_vH.txt
+        # overwrite the higgs WS
+        root -l -q runmgg_ggH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}.txt
+        root -l -q runmgg_ttH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_ggH.txt
+        root -l -q runmgg_vbf.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_ttH.txt
+        root -l -q runmgg_vH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_vbf.txt
 	mv workspaces/*.root radlim_CSV_WP$i/radlim${radion[$j]}_CSV
 	mv datacards/*.txt radlim_CSV_WP$i/radlim${radion[$j]}_CSV
 

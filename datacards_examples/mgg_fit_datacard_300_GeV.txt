@@ -1,4 +1,4 @@
-#Run with: combine -d hgg.mH270.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30
+#Run with: combine -d hgg.mH300.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30
 # Lumi = 19785 pb-1
 imax 2
 jmax 5
@@ -26,12 +26,12 @@ shapes mggHigvh cat0 hgg.hig.mH125.6_8TeV.vh.inputsig.root w_all:CMS_hgg_sig_cat
 shapes mggHigvh cat1 hgg.hig.mH125.6_8TeV.vh.inputsig.root w_all:CMS_hgg_sig_cat1
 ---------------
 bin cat0 cat1 
-observation 9 201 
+observation 21 230 
 ------------------------------
 bin cat0 cat0 cat0 cat0 cat0 cat0 cat1 cat1 cat1 cat1 cat1 cat1
 process mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh
 process 0 1 2 3 4 5  0 1 2 3 4 5 
-rate  1.28434 1 0.0248434 0.0637582 0.0012511 0.0114928 1.53613 1 0.132256 0.0864101 0.026218 0.0644584 
+rate  1.3822 1 0.0229854 0.0996953 0.00264523 0.0112303 1.59849 1 0.189888 0.145086 0.0383963 0.0809241 
      
 ############## Total normalisation
 lumi_8TeV lnN 1.026 - 1.026 1.026 1.026 1.026 1.026 - 1.026 1.026 1.026 1.026 

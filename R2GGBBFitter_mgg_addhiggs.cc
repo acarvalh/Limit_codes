@@ -31,8 +31,8 @@ void MakeBkgWS(RooWorkspace* w, const char* filename);//,
 void MakeDataCard(RooWorkspace* w, const char* filename, const char* filename1,
                   const char* filename2, const char*, const char*, const char*);
 void MakeDataCardREP(RooWorkspace* w, const char* filename, const char* filename1);
-//void MakeDataCardonecat(RooWorkspace* w, const char* filename, const char* filename1,
-// const char* filename2, const char*, const char*, const char*);
+void MakeDataCardonecat(RooWorkspace* w, const char* filename, const char* filename1, 
+                         const char* filename2, const char*, const char*, const char*);
 void MakeDataCardLNU(RooWorkspace* w, const char* filename, const char* filename1);
 void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* filename, const char* filename1, const char* filename2, const char*, const char*, const char*);
 // MakeDataCardonecat(w, fileBaseName, fileBkgName);
@@ -75,7 +75,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
   TString card_name("models_test.rs"); // put the model parameters here!
   HLFactory hlf("HLFactory", card_name, false);
-  RooWorkspace* w = hlf.GetWs();
+
   RooFitResult* fitresults;
   bool cutbased=true;
   // the minitree to be addeed
@@ -83,7 +83,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m260.root";
   TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m260.root";
   TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m260.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m260.root";
+  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";
   //
   TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/MSSM_m260_8TeV_m260.root ";
   TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m260.root";
@@ -99,14 +99,13 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
   //
-
+  RooWorkspace* w = hlf.GetWs();
   AddSigData(w, mass,ssignal);
   cout<<"SIGNAL ADDED"<<endl;
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
   MakePlots(w, mass);
   cout<<" did signal WS's"<<endl;
-
   //
   cout<<"Higgs: "<<hhiggsggh<<endl;
   AddHigData(w, mass,hhiggsggh,0);
@@ -116,29 +115,29 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   cout<<"Higgs: "<<hhiggstth<<endl;
   AddHigData(w, mass,hhiggstth,1);
   HigModelFit(w, mass,1); // constructing higgs pdf
-  MakeHigWS(w, fileHiggsNametth,1);
+  //MakeHigWS(w, fileHiggsNametth,1);
   //
   cout<<"Higgs: "<<hhiggsvbf<<endl;
   AddHigData(w, mass,hhiggsvbf,2);
   HigModelFit(w, mass,2); // constructing higgs pdf
-  MakeHigWS(w, fileHiggsNamevbf,2);
+  //MakeHigWS(w, fileHiggsNamevbf,2);
   //
   cout<<"Higgs: "<<hhiggsvh<<endl;
   AddHigData(w, mass,hhiggsvh,3);
   HigModelFit(w, mass,3); // constructing higgs pdf
-  MakeHigWS(w, fileHiggsNamevh,3);
+  //MakeHigWS(w, fileHiggsNamevh,3);
   cout<<"HIGGS ADDED"<<endl;
   MakePlotsHiggs(w, mass);
   //
   AddBkgData(w,ddata);
   w->Print("v");
   cout<<"BKG ADDED"<<endl;
-  bool dobands=true;
+  bool dobands=false;
   fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
   MakeBkgWS(w, fileBkgName);
   // construct the models to fit
   //
-  // MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
+  MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
   MakeDataCardREP(w, fileBaseName, fileBkgName);
   MakeDataCardLNU(w, fileBaseName, fileBkgName);
   MakeDataCardonecatnohiggs(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
@@ -189,14 +188,14 @@ mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0);
 mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
   w->import(*sigToFit[1],Rename(TString::Format("Sig_cat%d",1)));
   // Create full signal data set without categorization
-  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mgg"),mainCut);
+  //RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mgg"),mainCut);
   cout << "======================================================================" << endl;
-  w->import(*sigToFitAll,Rename("Sig"));
+  //w->import(*sigToFitAll,Rename("Sig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFitAll[c]->sumEntries();
+    Float_t nExpEvt =1;// sigToFitAll[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
 << TString::Format(" eff x Acc cat%d : ",c)
 << "%"
@@ -236,7 +235,7 @@ mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0+cutj0);
     dataToPlot[0] = (RooDataSet*) Data.reduce(
 *w->var("mgg"),
 mainCut+TString::Format(" && cut_based_ct==%d",0)
-+TString::Format(" && (mgg > 130 || mgg < 120)")// blind
+//+TString::Format(" && (mgg > 130 || mgg < 120)")// blind
 +cut0+cutj0); 
    
 dataToFit[1] = (RooDataSet*) Data.reduce(
@@ -245,7 +244,7 @@ mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1);
     dataToPlot[1] = (RooDataSet*) Data.reduce(
 *w->var("mgg"),
 mainCut+TString::Format(" && cut_based_ct==%d",1)
-+TString::Format(" && (mgg > 130 || mgg < 120)") // blind
+//+TString::Format(" && (mgg > 130 || mgg < 120)") // blind
 +cut1); 
 
   for (int c = 0; c < ncat; ++c) {
@@ -336,7 +335,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
 
     // Fit model as M(x|y) to D(x,y)
-    mggHig[c]->fitTo(*higToFit[c],Range(minSigFit,maxSigFit),SumW2Error(kTRUE));
+    //mggHig[c]->fitTo(*higToFit[c],Range(minSigFit,maxSigFit),SumW2Error(kTRUE));
     // IMPORTANT: fix all pdf parameters to constant
     w->defineSet(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c),
         RooArgSet(
@@ -347,7 +346,10 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
 *w->var(TString::Format("mgg_hig_gsigma_%d_cat%d",higgschannel,c)),
 *w->var(TString::Format("mgg_hig_frac_%d_cat%d",higgschannel,c))) );
     SetConstantParams(w->set(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c)));
+
   } // close for ncat
+  cout<<" ---- here fittted hegs  -----"<< endl;
+
 } // close higgs model fit
 ////////////////////////////////////////////////////////////
 // BKG model berestein 3
@@ -785,7 +787,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   catdesc.push_back("cat 3");
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
-  RooDataSet* signalAll = (RooDataSet*) w->data("Sig");
+  //RooDataSet* signalAll = (RooDataSet*) w->data("Sig");
   //RooDataSet* higgsAll = (RooDataSet*) w->data("Hig");
   // blinded dataset
   // RooDataSet* data[ncat];
@@ -819,8 +821,8 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   Float_t minSigFit(120),maxSigFit(130);
   Float_t MASS(Mass);
   Int_t nBinsMass(20); // just need to plot
-  RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
-  signalAll->plotOn(plotmggAll);
+  //RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
+  //signalAll->plotOn(plotmggAll);
   gStyle->SetOptTitle(0);
   TCanvas* c1 = new TCanvas("c1","mgg",0,0,500,500);
   c1->cd(1);
@@ -1046,8 +1048,8 @@ mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0);
 *w->var("mgg"),
 mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
   w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1))); // Create full signal data set without categorization
-  RooDataSet* higToFitAll = (RooDataSet*) higScaled->reduce(*w->var("mgg"),mainCut);
-  w->import(*higToFitAll,Rename("Hig"));
+  //RooDataSet* higToFitAll = (RooDataSet*) higScaled->reduce(*w->var("mgg"),mainCut);
+  //w->import(*higToFitAll,Rename(TString::Format("Hig_%d",higgschannel)));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << higScaled->sumEntries() << endl;
@@ -1108,7 +1110,7 @@ TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d, ",higgschannel, c
 TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d, ",higgschannel, c,higgschannel,c) +
 TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
   );
-  TString filename(wsDir+TString(fileHiggsName)+".inputhig.root");
+  TString filename(wsDir+TString(fileHiggsName)+".inputsig.root");
   wAll->writeToFile(filename);
   cout << "Write signal workspace in: " << filename << " file" << endl;
   return;
@@ -1221,17 +1223,17 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# ggh" << endl;
-  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
-  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat1" << endl;
+  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# tth" << endl;
-  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
-  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat1" << endl;
+  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# vbf" << endl;
-  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
-  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat1" << endl;
+  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# vh" << endl;
-  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
-  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat1" << endl;
+  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
@@ -1296,7 +1298,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) " << endl;
   outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
-  outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
+/*  outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
   outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
   outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
@@ -1309,6 +1311,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
   outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
   //
+*/
   outFile << "############## for mgg fit - slopes" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
@@ -1431,7 +1434,7 @@ cout<<"here"<<endl;
   outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile << "CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "CMS_hgg_bkg_8TeV_slope2_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//  outFile << "CMS_hgg_bkg_8TeV_slope2_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile.close();
   cout << "Write data card in: " << filename << " file" << endl;
   return;
@@ -1541,27 +1544,36 @@ cout<<"here"<<endl;
   outFile << "############## with reparametrization" << endl;
   outFile << "mgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile << "mgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#mgg_bkg_8TeV_slope2_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "mgg_bkg_8TeV_slope2_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#mgg_bkg_8TeV_slope3_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "mgg_bkg_8TeV_slope3_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#mgg_bkg_8TeV_slope4_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
-  outFile << "#mgg_bkg_8TeV_slope5_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//  outFile << "#mgg_bkg_8TeV_slope2_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//  outFile << "mgg_bkg_8TeV_slope2_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//  outFile << "#mgg_bkg_8TeV_slope3_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//  outFile << "mgg_bkg_8TeV_slope3_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//  outFile << "#mgg_bkg_8TeV_slope4_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+//($\sim$ 125 GeV)  outFile << "#mgg_bkg_8TeV_slope5_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
   outFile.close();
   cout << "Write data card in: " << filename << " file" << endl;
   return;
 } // close write datacard without rep
 ////////////////////////////////////////////////////////////////////////////////
-void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName , const char* fileHiggsName) {
+void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName , 
+const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHiggsNamevbf, const char* fileHiggsNamevh) {
   TString cardDir = "datacards/";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
   RooDataSet* sigToFit[ncat];
-  RooDataSet* higToFit[ncat];
+  //RooDataSet* higToFit[ncat];
+  RooDataSet* higToFitggh[ncat];
+  RooDataSet* higToFittth[ncat];
+  RooDataSet* higToFitvbf[ncat];
+  RooDataSet* higToFitvh[ncat];
   for (int c = 0; c < ncat; ++c) {
     data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
     sigToFit[c] = (RooDataSet*) w->data(TString::Format("Sig_cat%d",c));
-    higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_cat%d",c));
+    //higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_cat%d",c));
+    higToFitggh[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",0,c));
+    higToFittth[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",1,c));
+    higToFitvbf[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",2,c));
+    higToFitvh[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",3,c));
   }
   //RooRealVar* lumi = w->var("lumi");
   cout << "======== Expected Events Number =====================" << endl;
@@ -1599,21 +1611,21 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# ggh" << endl;
-  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
-  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat1" << endl;
+  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# tth" << endl;
-  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
-  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat1" << endl;
+  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# vbf" << endl;
-  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
-  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat1" << endl;
+  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# vh" << endl;
-  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
-  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat1" << endl;
+  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
-  outFile << "bin cat0 cat1 " << endl;
+  outFile << "bin cat0 " << endl;
   cout<<"here"<<endl;
   outFile << "observation "<< data[0]->sumEntries() <<" "<< endl;
   outFile << "------------------------------" << endl;
@@ -1621,59 +1633,43 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
   outFile << "process mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh"<< endl;
   outFile << "process 0 1 2 3 4 5 " << endl;
   outFile << "rate "
-<<" "<<sigToFit[0]->sumEntries()<<" "<<1<<" "<<higToFitggh[0]->sumEntries()<<" "<<higToFittth[0]->sumEntries()<<" "<<higToFitvbf[0]->sumEntries()<<" "<<higToFitvh[0]->sumEntries()
-<<" "<<endl;
+<<" "<<sigToFit[0]->sumEntries()<<" "<<1<<" "<<higToFitggh[0]->sumEntries()<<" "<<higToFittth[0]->sumEntries()<<" "<<higToFitvbf[0]->sumEntries()<<" "<<higToFitvh[0]->sumEntries()<<" "<<endl;
   outFile << "--------------------------------" << endl;
+  outFile << "############## Total normalisation" << endl;
   outFile << "lumi_8TeV lnN "
-<< "1.026 - 1.026 1.026 1.026 1.026 " << endl;
-  outFile << "############## jet" << endl;
-  outFile << "Mjj_acceptance lnN "
-<< "1.015 - 1.015 1.015 1.015 1.015 "
-<<"# JER and JES " << endl;
-  outFile << "Photon_selectios_accep lnN "
-<< "1.01 - 1.01 1.01 1.01 1.01 "
-<<"# photon acceptance" << endl;
-  outFile << "btag_eff lnN "
-<< "1.046 - 1.046 1.046 1.046 1.046 "
-<<"# b tag efficiency uncertainty" << endl;
-  outFile << "############## photon " << endl;
-  outFile << "CMS_hgg_eff_g lnN "
-   << "1.010 - 1.010 1.010 1.010 1.010 "
-   << "# photon selection accep." << endl;
+<< "1.026 - 1.026 1.026 1.026 1.026 "<< endl;
+  outFile << "     " << endl;
+  outFile << "############## Photon selection normalisation uncertainties " << endl;
   outFile << "DiphoTrigger lnN "
 << "1.01 - 1.010 1.010 1.010 1.010 "
 << "# Trigger efficiency" << endl;
-  outFile << "############## for mtot fit" << endl;
-  outFile << "maajj_acceptance lnN "
+  outFile << "CMS_hgg_eff_g lnN "
+   << "1.010 - 1.010 1.010 1.010 1.010 "
+   << "# photon selection accep." << endl;
+  outFile << "     " << endl;
+  outFile << "############## Jet selection and phase space cuts normalisation uncertainties " << endl;
+  outFile << "Mjj_PTj_cut_acceptance lnN "
+<< "1.015 - 1.015 1.015 1.015 1.015 "
+<<"# JER and JES " << endl;
+  outFile << "btag_eff lnN "
+<< "1.046 - 1.046 1.046 1.046 1.046 "
+<<"# b tag efficiency uncertainty" << endl;
+  outFile << "maajj_cut_acceptance lnN "
    << "1.02 - 1.02 1.02 1.02 1.02 "<< endl;
-  /// higgs uncertainties
+  outFile << "     " << endl;
+  outFile << "############## Theory uncertainties on SM Higgs production " << endl;
   outFile << "PDF lnN "
    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 " << endl;
   outFile << "QCD_scale lnN "
-   << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 " << endl;
+   << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 "<< endl;
   outFile << "gg_migration lnN "
-   << " - - 1.25 1.25 1.08 1.08  # UEPS" << endl;
+   << " - - 1.25 1.25 1.08 1.08 # UEPS" << endl;
   outFile << "gluonSplitting lnN "
    << " - - 1.40 1.40 1.40 1.40 "<< endl;
-  ////
-  outFile << "# photon energy resolution" << endl;
-  outFile << "# Parametric shape uncertainties, entered by hand." << endl;
-  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean " << endl;
-  outFile << "CMS_hgg_sig_sigmaScale param 1 0.06 # optimistic estimative of resolution uncertainty " << endl;
-  //
-  outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
-  outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57% " << endl;
-  outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
-  //
-  outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57%" << endl;
-  outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
-  //
-  outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57%" << endl;
-  outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
-  //
-  outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) = 0.57%" << endl;
-  outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
-  //
+  outFile << "     " << endl;
+  outFile << "############## Signal parametric shape uncertainties " << endl;
+  outFile << "CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) " << endl;
+  outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;  
   outFile << "############## for mgg fit - slopes" << endl;
   outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
 
@@ -1732,7 +1728,7 @@ cout<<"here"<<endl;
   outFile << "# signal" << endl;
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "# signal" << endl;
-  outFile << "shapes mggHig cat0 " << TString(fileHiggsName)+".inputhig.root" << " w_all:CMS_hgg_hig_cat0" << endl;
+  outFile << "shapes mggHig cat0 " << TString(fileHiggsName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
 
   outFile << "---------------" << endl;
   /////////////////////////////////////
