@@ -15,6 +15,7 @@ void MakeDataCardREP(RooWorkspace* w, const char* filename, const char* filename
 void MakeDataCardLnU(RooWorkspace* w, const char* filename, const char* filename1);
 void SetParamNames(RooWorkspace*);
 void SetConstantParams(const RooArgSet* params);
+void MakePlots(RooWorkspace* w, Float_t Mass);
 
 RooFitResult* fitresult[NCAT]; // container for the fit results
 using namespace RooFit;
@@ -51,6 +52,7 @@ RooArgSet* defineVariables()
 
 void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 {
+  style();
   TString fileBaseName(TString::Format("hgg.hig.mH%.1f_8TeV.vbf", mass));
   TString card_name("models_test.rs"); // put the model parameters here!
   HLFactory hlf("HLFactory", card_name, false);
@@ -59,13 +61,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m260.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m350.root";
   //
   RooWorkspace* w = hlf.GetWs();
   AddSigData(w, mass,ssignal);
-  cout<<"SIGNAL ADDED"<<endl;
+  cout<<"SIGNAL ADDED "<<ssignal<<endl;
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
+  MakePlots(w, mass);
   cout<<" did ggH WS's"<<endl;
   cout<< "here"<<endl;
   return;
@@ -118,7 +121,7 @@ mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFitAll[c]->sumEntries();
+    Float_t nExpEvt = sigToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
 << TString::Format(" eff x Acc cat%d : ",c)
 << "%"
@@ -234,7 +237,120 @@ TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c)
   cout << "Write signal workspace in: " << filename << " file" << endl;
   return;
 } // close make signal WP
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void MakePlots(RooWorkspace* w, Float_t Mass) {
+  const Int_t ncat = NCAT;
+  std::vector<TString> catdesc;
+  catdesc.push_back(" 2 btag");
+  catdesc.push_back(" 1 btag");
+  catdesc.push_back("cat 2");
+  catdesc.push_back("cat 3");
+  // retrieve data sets from the workspace
+  // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
+  //RooDataSet* signalAll = (RooDataSet*) w->data("Sig");
+  //RooDataSet* higgsAll = (RooDataSet*) w->data("Hig");
+  // blinded dataset
+  // RooDataSet* data[ncat];
+  RooDataSet* sigToFit[ncat];
+  RooAbsPdf* mggGaussSig[ncat];
+  RooAbsPdf* mggCBSig[ncat];
+  RooAbsPdf* mggSig[ncat];
+  //
+  RooAbsPdf* mggBkg[ncat];
+  for (int c = 0; c < ncat; ++c) {
+  // data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
+    sigToFit[c] = (RooDataSet*) w->data(TString::Format("Sig_cat%d",c));
+    mggGaussSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggGaussSig_cat%d",c));
+    mggCBSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggCBSig_cat%d",c));
+    mggSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggSig_cat%d",c));
+    mggBkg[c] = (RooAbsPdf*) w->pdf(TString::Format("mggBkg_cat%d",c));
+  } // close categories
+  RooRealVar* mgg = w->var("mgg");
+  mgg->setUnit("GeV");
+  RooAbsPdf* mggGaussSigAll = w->pdf("mggGaussSig");
+  RooAbsPdf* mggCBSigAll = w->pdf("mggCBSig");
+  RooAbsPdf* mggSigAll = w->pdf("mggSig");
+  //RooAbsPdf* mggBkgAll = w->pdf("mggBkg_cat1");
+  //
+  //****************************//
+  // Plot mgg Fit results
+  //****************************//
+  // Set P.D.F. parameter names
+  // WARNING: Do not use it if Workspaces are created
+  // SetParamNames(w);
+  Float_t minSigFit(120),maxSigFit(130);
+  Float_t MASS(Mass);
+  Int_t nBinsMass(20); // just need to plot
+  //RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
+  //signalAll->plotOn(plotmggAll);
+  gStyle->SetOptTitle(0);
+  TCanvas* c1 = new TCanvas("c1","mgg",0,0,500,500);
+  c1->cd(1);
+  //********************************************//
+  // Plot Signal Categories
+  //****************************//
+  TLatex *text = new TLatex();
+  text->SetNDC();
+  text->SetTextSize(0.04);
+  RooPlot* plotmgg[ncat];
+  for (int c = 0; c < ncat; ++c) {
+    plotmgg[c] = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
+    sigToFit[c]->plotOn(plotmgg[c],LineColor(kWhite),MarkerColor(kWhite));
+    mggSig[c] ->plotOn(plotmgg[c]);
+    double chi2n = plotmgg[c]->chiSquare(0) ;
+    cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
+    mggSig[c] ->plotOn(
+plotmgg[c],
+Components(TString::Format("GaussSig_cat%d",c)),
+LineStyle(kDashed),LineColor(kGreen));
+    mggSig[c] ->plotOn(
+plotmgg[c],
+Components(TString::Format("CBSig_cat%d",c)),
+LineStyle(kDashed),LineColor(kRed));
+    mggSig[c] ->paramOn(plotmgg[c]);
+    sigToFit[c] ->plotOn(plotmgg[c]);
+// TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
+    TH1F *hist = new TH1F("hist", "hist", 400, minSigFit, maxSigFit);
+    plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
+    plotmgg[c]->SetMinimum(0.0);
+    plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
+    plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
+    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,500,500);
+    plotmgg[c]->Draw();
+    plotmgg[c]->Draw("SAME");
+    TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
+    legmc->AddEntry(plotmgg[c]->getObject(5),"Simulation","LPE");
+    legmc->AddEntry(plotmgg[c]->getObject(1),"Parametric Model","L");
+    legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian Outliers","L");
+    legmc->AddEntry(plotmgg[c]->getObject(3),"Crystal Ball component","L");
+    legmc->SetHeader(" ");
+    legmc->SetBorderSize(0);
+    legmc->SetFillStyle(0);
+    legmc->Draw();
+    // float effS = effSigma(hist);
+    TLatex *lat = new TLatex(
+minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
+" Resonance - 260 GeV");
+    lat->Draw();
+    TLatex *lat2 = new TLatex(
+minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+    lat2->Draw();
+    ///////
+    char myChi2buffer[50];
+    sprintf(myChi2buffer,"#chi^{2}/ndof = %f",chi2n);
+    TLatex* latex = new TLatex(0.52, 0.7, myChi2buffer);
+    latex -> SetNDC();
+    latex -> SetTextFont(42);
+    latex -> SetTextSize(0.04);
+    //latex -> Draw("same");
+    ctmp->SaveAs(TString::Format("sigmodel_vbf_cat%d.pdf",c));
+    ctmp->SaveAs(TString::Format("sigmodel_vbf_cat%d.png",c));
+    //ctmp->SaveAs(TString::Format("sigmodel_cat%d.C",c));
+  } // close categories
+    return;
+} // close makeplots signal
+////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////////////////
 void SetConstantParams(const RooArgSet* params) {
   // set constant parameters for signal fit, ... NO IDEA !!!!
@@ -245,6 +361,68 @@ void SetConstantParams(const RooArgSet* params) {
   }
 } // close set const parameters
 ////////////////////////////////////////////////////////////////////////
+void style(){
+  TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
+  defaultStyle->SetOptStat(0000);
+  defaultStyle->SetOptFit(000);
+  defaultStyle->SetPalette(1);
+  /////// pad ////////////
+  defaultStyle->SetPadBorderMode(1);
+  defaultStyle->SetPadBorderSize(1);
+  defaultStyle->SetPadColor(0);
+  defaultStyle->SetPadTopMargin(0.05);
+  defaultStyle->SetPadBottomMargin(0.13);
+  defaultStyle->SetPadLeftMargin(0.13);
+  defaultStyle->SetPadRightMargin(0.02);
+  /////// canvas /////////
+  defaultStyle->SetCanvasBorderMode(0);
+  defaultStyle->SetCanvasColor(0);
+  defaultStyle->SetCanvasDefH(600);
+  defaultStyle->SetCanvasDefW(600);
+  /////// frame //////////
+  defaultStyle->SetFrameBorderMode(0);
+  defaultStyle->SetFrameBorderSize(1);
+  defaultStyle->SetFrameFillColor(0);
+  defaultStyle->SetFrameLineColor(1);
+  /////// label //////////
+  defaultStyle->SetLabelOffset(0.005,"XY");
+  defaultStyle->SetLabelSize(0.05,"XY");
+  defaultStyle->SetLabelFont(42,"XY");
+  /////// title //////////
+  defaultStyle->SetTitleOffset(1.1,"X");
+  defaultStyle->SetTitleSize(0.01,"X");
+  defaultStyle->SetTitleOffset(1.25,"Y");
+  defaultStyle->SetTitleSize(0.05,"Y");
+  defaultStyle->SetTitleFont(42, "XYZ");
+  /////// various ////////
+  defaultStyle->SetNdivisions(505,"Y");
+  defaultStyle->SetLegendBorderSize(0); // For the axis titles:
+
+    defaultStyle->SetTitleColor(1, "XYZ");
+    defaultStyle->SetTitleFont(42, "XYZ");
+    defaultStyle->SetTitleSize(0.06, "XYZ");
+ 
+    // defaultStyle->SetTitleYSize(Float_t size = 0.02);
+    defaultStyle->SetTitleXOffset(0.9);
+    defaultStyle->SetTitleYOffset(1.05);
+    // defaultStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
+
+    // For the axis labels:
+    defaultStyle->SetLabelColor(1, "XYZ");
+    defaultStyle->SetLabelFont(42, "XYZ");
+    defaultStyle->SetLabelOffset(0.007, "XYZ");
+    defaultStyle->SetLabelSize(0.04, "XYZ");
+
+    // For the axis:
+    defaultStyle->SetAxisColor(1, "XYZ");
+    defaultStyle->SetStripDecimals(kTRUE);
+    defaultStyle->SetTickLength(0.03, "XYZ");
+    defaultStyle->SetNdivisions(510, "XYZ");
+    defaultStyle->SetPadTickX(1); // To get tick marks on the opposite side of the frame
+    defaultStyle->SetPadTickY(1);
+    defaultStyle->cd();
+  return;
+}
 
 
 

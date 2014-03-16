@@ -16,8 +16,8 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
   mkdir radlim_CSV_WP$i
 #   for (( j = 0 ; j < ${#radion[@]} ; j++ )); do # for each mass
 #  for (( j = 1 ; j < 7; j++ )); do # for each mass
-   for (( j = 0 ; j < 1 ; j++ )); do # for each mass
-#   for (( j = 1 ; j < 4 ; j++ )); do # for each mass
+#   for (( j = 0 ; j < 1 ; j++ )); do # for each mass
+   for (( j = 1 ; j < 4 ; j++ )); do # for each mass
         # the signal file
         sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhiggs.cc
         sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc 
@@ -98,6 +98,7 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
         combine -M Asymptotic hgg.mH125.6_8TeV.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_nosyst_higgs.txt
         mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst_higgs.root
 	echo did with no syst with higgs
+        rm roostats*
         cd ../..
   done # mass
 done # wp
