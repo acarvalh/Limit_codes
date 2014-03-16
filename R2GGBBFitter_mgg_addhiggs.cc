@@ -104,7 +104,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   cout<<"SIGNAL ADDED"<<endl;
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
-  MakePlots(w, mass);
+//  MakePlots(w, mass);
   cout<<" did signal WS's"<<endl;
   //
   cout<<"Higgs: "<<hhiggsggh<<endl;
@@ -127,7 +127,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   HigModelFit(w, mass,3); // constructing higgs pdf
   //MakeHigWS(w, fileHiggsNamevh,3);
   cout<<"HIGGS ADDED"<<endl;
-  MakePlotsHiggs(w, mass);
+  //MakePlotsHiggs(w, mass);
   //
   AddBkgData(w,ddata);
   w->Print("v");
@@ -1110,7 +1110,7 @@ TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d, ",higgschannel, c
 TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d, ",higgschannel, c,higgschannel,c) +
 TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
   );
-  TString filename(wsDir+TString(fileHiggsName)+".inputsig.root");
+  TString filename(wsDir+TString(fileHiggsName)+".inputhig.root");
   wAll->writeToFile(filename);
   cout << "Write signal workspace in: " << filename << " file" << endl;
   return;
