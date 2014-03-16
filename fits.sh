@@ -54,12 +54,12 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 #        sed -i -r -e "s/TString cut1 = \"\&\& mtot > [0-9]+ \&\& mtot < [0-9]+/TString cut1 = \"\&\& mtot > ${winl1[$j]} \&\& mtot < ${winu1[$j]}/g" R2GGBBFitter_mgg_addhiggs.cc
         #
         mkdir radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-        root -l -q runmgg.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_vH.txt
+        root -l -q runmgg.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}.txt
         # overwrite the higgs WS
-        root -l -q runmgg_ggH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}.txt
-        root -l -q runmgg_ttH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_ggH.txt
-        root -l -q runmgg_vbf.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_ttH.txt
-        root -l -q runmgg_vH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_vbf.txt
+        root -l -q runmgg_ggH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_ggH.txt
+        root -l -q runmgg_ttH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_ttH.txt
+        root -l -q runmgg_vbf.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_vbf.txt
+        root -l -q runmgg_vH.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}_vH.txt
 	mv workspaces/*.root radlim_CSV_WP$i/radlim${radion[$j]}_CSV
 	mv datacards/*.txt radlim_CSV_WP$i/radlim${radion[$j]}_CSV
 
