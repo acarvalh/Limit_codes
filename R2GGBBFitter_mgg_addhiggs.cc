@@ -80,21 +80,21 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m350.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m350.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m350.root";
-  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m350.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m350.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m260.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m260.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m260.root";
+  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Radion_m350_8TeV_m350.root ";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m350.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/MSSM_m260_8TeV_m260.root ";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m260.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m260.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m260.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m260.root";
    //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m260.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m260.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m260.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -104,7 +104,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   cout<<"SIGNAL ADDED"<<endl;
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
-  MakePlots(w, mass);
+  //MakePlots(w, mass);
   cout<<" did signal WS's"<<endl;
   //
   cout<<"Higgs: "<<hhiggsggh<<endl;
@@ -132,7 +132,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   AddBkgData(w,ddata);
   w->Print("v");
   cout<<"BKG ADDED"<<endl;
-  bool dobands=true;
+  bool dobands=false;
   fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
   MakeBkgWS(w, fileBkgName);
   // construct the models to fit
@@ -578,7 +578,7 @@ Range("fitrange"),NormRange("fitrange"));
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
-    legmc->SetHeader(" 350 GeV");
+    legmc->SetHeader(" 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -587,7 +587,7 @@ Range("fitrange"),NormRange("fitrange"));
     TLatex *lat2 = new TLatex(minMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
+/*    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
 
       if(c==0)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
@@ -596,6 +596,7 @@ Range("fitrange"),NormRange("fitrange"));
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.png",c));
   // ctmp->SaveAs(TString::Format("databkgoversig_cat%d.C",c));
+*/
   } // close to each category
   RooBernstein mggBkgAll("mggBkgAll", "", *mgg,
 RooArgList(RooConst(1.0),
@@ -848,7 +849,7 @@ LineStyle(kDashed),LineColor(kRed));
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-" Resonance - 350 GeV");
+" Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -960,7 +961,7 @@ for (int d = 0; d < 4; ++d){
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-" Resonance - 350 GeV");
+" Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1182,7 +1183,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   ofstream outFile(filename);
 
 // outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH260.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 5" << endl; // number of BKG
@@ -1197,17 +1198,17 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# ggh" << endl;
-  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat0" << endl;
+  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat1" << endl;
   outFile << "# tth" << endl;
-  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_tth_cat0" << endl;
+  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_tth_cat1" << endl;
   outFile << "# vbf" << endl;
-  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_vbf_cat0" << endl;
+  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_vbf_cat1" << endl;
   outFile << "# vh" << endl;
-  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat0" << endl;
+  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat1" << endl;
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
@@ -1330,7 +1331,7 @@ void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* file
   TString filename(cardDir+TString(fileBaseName)+"rep.txt");
   ofstream outFile(filename);
   //outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH260.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   //outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 1" << endl;
@@ -1442,7 +1443,7 @@ void MakeDataCardLNU(RooWorkspace* w, const char* fileBaseName, const char* file
   TString filename(cardDir+TString(fileBaseName)+"lnu.txt");
   ofstream outFile(filename);
   //outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH260.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   //outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 1" << endl;
@@ -1569,7 +1570,7 @@ const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHigg
   ofstream outFile(filename);
 
   //outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH260.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   // outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax 1" << endl;
@@ -1585,17 +1586,17 @@ const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHigg
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# ggh" << endl;
-  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat0" << endl;
+  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat1" << endl;
   outFile << "# tth" << endl;
-  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_tth_cat0" << endl;
+  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_sig_tth_cat1" << endl;
   outFile << "# vbf" << endl;
-  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_vbf_cat0" << endl;
+  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_sig_vbf_cat1" << endl;
   outFile << "# vh" << endl;
-  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat0" << endl;
+  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat1" << endl;
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
@@ -1687,7 +1688,7 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   ofstream outFile(filename);
 
   //outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH260.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
 // outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax 1" << endl;

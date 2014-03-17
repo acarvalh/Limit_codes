@@ -13,17 +13,17 @@ shapes mggBkg cat1 hgg.inputbkg_8TeV.root w_all:CMS_hgg_bkg_8TeV_cat1
 shapes mggSig cat0 hgg.mH125.6_8TeV.inputsig.root w_all:CMS_hgg_sig_cat0
 shapes mggSig cat1 hgg.mH125.6_8TeV.inputsig.root w_all:CMS_hgg_sig_cat1
 # ggh
-shapes mggHigggh cat0 hgg.hig.mH125.6_8TeV.ggh.inputsig.root w_all:CMS_hgg_sig_cat0
-shapes mggHigggh cat1 hgg.hig.mH125.6_8TeV.ggh.inputsig.root w_all:CMS_hgg_sig_cat1
+shapes mggHigggh cat0 hgg.hig.mH125.6_8TeV.ggh.inputsig.root w_all:CMS_hgg_sig_ggh_cat0
+shapes mggHigggh cat1 hgg.hig.mH125.6_8TeV.ggh.inputsig.root w_all:CMS_hgg_sig_ggh_cat1
 # tth
-shapes mggHigtth cat0 hgg.hig.mH125.6_8TeV.tth.inputsig.root w_all:CMS_hgg_sig_cat0
-shapes mggHigtth cat1 hgg.hig.mH125.6_8TeV.tth.inputsig.root w_all:CMS_hgg_sig_cat1
+shapes mggHigtth cat0 hgg.hig.mH125.6_8TeV.tth.inputsig.root w_all:CMS_hgg_sig_tth_cat0
+shapes mggHigtth cat1 hgg.hig.mH125.6_8TeV.tth.inputsig.root w_all:CMS_hgg_sig_tth_cat1
 # vbf
-shapes mggHigvbf cat0 hgg.hig.mH125.6_8TeV.vbf.inputsig.root w_all:CMS_hgg_sig_cat0
-shapes mggHigvbf cat1 hgg.hig.mH125.6_8TeV.vbf.inputsig.root w_all:CMS_hgg_sig_cat1
+shapes mggHigvbf cat0 hgg.hig.mH125.6_8TeV.vbf.inputsig.root w_all:CMS_hgg_sig_vbf_cat0
+shapes mggHigvbf cat1 hgg.hig.mH125.6_8TeV.vbf.inputsig.root w_all:CMS_hgg_sig_vbf_cat1
 # vh
-shapes mggHigvh cat0 hgg.hig.mH125.6_8TeV.vh.inputsig.root w_all:CMS_hgg_sig_cat0
-shapes mggHigvh cat1 hgg.hig.mH125.6_8TeV.vh.inputsig.root w_all:CMS_hgg_sig_cat1
+shapes mggHigvh cat0 hgg.hig.mH125.6_8TeV.vh.inputsig.root w_all:CMS_hgg_sig_vh_cat0
+shapes mggHigvh cat1 hgg.hig.mH125.6_8TeV.vh.inputsig.root w_all:CMS_hgg_sig_vh_cat1
 ---------------
 bin cat0 cat1 
 observation 9 201 

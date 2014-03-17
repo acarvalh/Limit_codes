@@ -61,14 +61,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m350.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m260.root";
   //
   cout<<"SIGNAL ADDED "<<ssignal<<endl;
   RooWorkspace* w = hlf.GetWs();
   AddSigData(w, mass,ssignal);
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
-  MakePlots(w, mass);
+  //MakePlots(w, mass);
   cout<<" did ggH WS's"<<endl;
   cout<< "here"<<endl;
   return;
@@ -180,22 +180,22 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   // (2) Systematics on energy scale and resolution
   // 1,1,1 statistical to be treated on the datacard
   wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");
-  wAll->factory("prod::CMS_hgg_sig_m0_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
-  wAll->factory("prod::CMS_hgg_sig_m0_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hgg_sig_m0_ggh_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hgg_sig_m0_ggh_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
-  wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_sigma_ggh_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
   //wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
 
-  wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_sigma_ggh_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_gsigma_ggh_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_gsigma_ggh_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
-TString::Format("EDIT::CMS_hgg_sig_cat%d(mggSig_cat%d,",c,c) +
-TString::Format(" mgg_sig_m0_cat%d=CMS_hgg_sig_m0_cat%d, ", c,c) +
-TString::Format(" mgg_sig_sigma_cat%d=CMS_hgg_sig_sigma_cat%d, ", c,c) +
-TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c)
+TString::Format("EDIT::CMS_hgg_sig_ggh_cat%d(mggSig_cat%d,",c,c) +
+TString::Format(" mgg_sig_m0_cat%d=CMS_hgg_sig_m0_ggh_cat%d, ", c,c) +
+TString::Format(" mgg_sig_sigma_cat%d=CMS_hgg_sig_sigma_ggh_cat%d, ", c,c) +
+TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_ggh_cat%d)", c,c)
   );
   TString filename(wsDir+TString(fileBaseName)+".inputsig.root");
   wAll->writeToFile(filename);
