@@ -80,21 +80,21 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m260.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m260.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m260.root";
-  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m270.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m270.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m270.root";
+  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m270.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m270.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/MSSM_m260_8TeV_m260.root ";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m260.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Radion_m270_8TeV_m270.root ";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m270.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m260.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m260.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m260.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m270.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m270.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m270.root";
    //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m260.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m260.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m260.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m270.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m270.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m270.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -104,7 +104,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   cout<<"SIGNAL ADDED"<<endl;
   SigModelFit(w, mass); // constructing signal pdf
   MakeSigWS(w, fileBaseName);
-  //MakePlots(w, mass);
+  MakePlots(w, mass);
   cout<<" did signal WS's"<<endl;
   //
   cout<<"Higgs: "<<hhiggsggh<<endl;
@@ -127,7 +127,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   HigModelFit(w, mass,3); // constructing higgs pdf
   MakeHigWS(w, fileHiggsNamevh,3);
   cout<<"HIGGS ADDED"<<endl;
-  //MakePlotsHiggs(w, mass);
+  MakePlotsHiggs(w, mass);
   //
   AddBkgData(w,ddata);
   w->Print("v");
@@ -578,7 +578,7 @@ Range("fitrange"),NormRange("fitrange"));
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
-    legmc->SetHeader(" 260 GeV");
+    legmc->SetHeader(" 270 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -849,7 +849,7 @@ LineStyle(kDashed),LineColor(kRed));
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-" Resonance - 260 GeV");
+" Resonance - 270 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -961,7 +961,7 @@ for (int d = 0; d < 4; ++d){
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-" Resonance - 260 GeV");
+" Resonance - 270 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1055,16 +1055,16 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   }
   // (2) Systematics on energy scale and resolution
   // 1,1,1 statistical to be treated on the datacard
-  wAll->factory(TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");//TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_sig_m0_absShift)",higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_sig_m0_absShift)",higgschannel,higgschannel));
   // (3) Systematics on resolution
-  wAll->factory(TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");//TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_sig_sigmaScale)",higgschannel,higgschannel));
 
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_sig_sigmaScale)",higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_sig_sigmaScale)",higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_sig_sigmaScale)",higgschannel,higgschannel));
   // save the other parameters
   /* for (int c = 0; c < ncat; ++c) {
 wAll->factory(
@@ -1085,7 +1085,7 @@ TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d, ",higgschannel, c
 TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d, ",higgschannel, c,higgschannel,c) +
 TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
   );
-  TString filename(wsDir+TString(fileHiggsName)+".inputhig.root");
+  TString filename(wsDir+TString(fileHiggsName)+".inputsig.root");
   wAll->writeToFile(filename);
   cout << "Write signal workspace in: " << filename << " file" << endl;
   return;
@@ -1198,6 +1198,18 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# ggh" << endl;
+  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
+  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_hig_0_cat1" << endl;
+  outFile << "# tth" << endl;
+  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
+  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_hig_1_cat1" << endl;
+  outFile << "# vbf" << endl;
+  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
+  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_hig_2_cat1" << endl;
+  outFile << "# vh" << endl;
+  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
+  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_hig_3_cat1" << endl;
+/* CMS_hgg_hig_0_
   outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat0" << endl;
   outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat1" << endl;
   outFile << "# tth" << endl;
@@ -1209,6 +1221,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "# vh" << endl;
   outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat0" << endl;
   outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat1" << endl;
+*/
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
@@ -1586,6 +1599,15 @@ const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHigg
   outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
   outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
   outFile << "# ggh" << endl;
+  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
+  outFile << "# tth" << endl;
+  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputsig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
+  outFile << "# vbf" << endl;
+  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputsig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
+  outFile << "# vh" << endl;
+  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
+/*
+  outFile << "# ggh" << endl;
   outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat0" << endl;
   outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputsig.root" << " w_all:CMS_hgg_sig_ggh_cat1" << endl;
   outFile << "# tth" << endl;
@@ -1597,7 +1619,8 @@ const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHigg
   outFile << "# vh" << endl;
   outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat0" << endl;
   outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputsig.root" << " w_all:CMS_hgg_sig_vh_cat1" << endl;
-  outFile << "---------------" << endl;
+*/
+  outFile << "---------------" << endl; //CMS_hgg_hig_0_
   /////////////////////////////////////
   if(addHiggs) { //
   outFile << "bin cat0 " << endl;
