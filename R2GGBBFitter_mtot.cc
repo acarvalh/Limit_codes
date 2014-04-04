@@ -321,7 +321,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 	plotmtotBkg[c],
 	Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed)); 
     */ 
-    plotmtotBkg[c]->SetTitle("CMS preliminary 19.702/fb");      
+    //plotmtotBkg[c]->SetTitle("CMS preliminary 19.702/fb");      
     plotmtotBkg[c]->SetMinimum(0.0);
     plotmtotBkg[c]->SetMaximum(20*plotmtotBkg[c]->GetMaximum());
     plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
@@ -374,19 +374,28 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,100); // this one works
    //plotmtotBkg[c]->Draw("AC");
    ctmp->SetLogy(1);
-   ctmp->SetGrid(1);
+   //ctmp->SetGrid(0);
    cout << "!!!!!!!!!!!!!!!!!" << endl; 
-
-    TLegend *legmc = new TLegend(0.62,0.75,0.92,0.9);
+    //////////////////////////////////////////////////////////////////
+  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  //   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   //   pt->SetShadowColor(kWhite);
+   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->SetTextSize(0.04);
+   pt->Draw();
+    ////////////////////////////////////////////////////////////////////
+    TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
 //    legmc->AddEntry(plotmtotBkg[c]->getObject(2),"Data ",""); //"LPE" blind
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Exponential fit","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F"); 
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    legmc->SetHeader("WP4 550 GeV");
+    //legmc->SetHeader("WP4 550 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();    
-    TLatex *lat2 = new TLatex(363.0,0.85*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(363.0+30,0.85*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
   cout<<"here 2 "<< c<<endl;
@@ -574,30 +583,40 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     sigToFit[c]  ->plotOn(plotmtot[c]);
     TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
     TH1F *hist = new TH1F("hist", "hist", 400, minMassFit, maxMassFit);
-    plotmtot[c]->SetTitle("CMS preliminary 19.702/fb ");      
+    //plotmtot[c]->SetTitle("CMS preliminary 19.702/fb ");      
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
     plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
     TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
     plotmtot[c]->Draw();  
     plotmtot[c]->Draw("SAME");  
-    TLegend *legmc = new TLegend(0.62,0.75,0.95,0.9);
+    TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
     legmc->AddEntry(plotmtot[c]->getObject(5),"Simulation","LPE");
     legmc->AddEntry(plotmtot[c]->getObject(1),"Parametric Model","L");
-    legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball component","L");
-    legmc->AddEntry(plotmtot[c]->getObject(2),"Gaussian Outliers","L");
+    legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball ","L");
+    legmc->AddEntry(plotmtot[c]->getObject(2),"Gaussian ","L");
     legmc->SetHeader(" ");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();    
+    //////////////////////////////////////////////////////////////////
+  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  //   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   //   pt->SetShadowColor(kWhite);
+   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->SetTextSize(0.04);
+   pt->Draw();
+    ////////////////////////////////////////////////////////////////////
     //    float effS = effSigma(hist);
     TLatex *lat  = new TLatex(
 	minMassFit+1.5,0.85*plotmtot[c]->GetMaximum(),
-	" WP4 550 GeV");
+	" M_{X} = 550 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-	minMassFit+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
-    lat2->Draw();
+	minMassFit+2.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
+    //lat2->Draw();
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
     //ctmp->SaveAs(TString::Format("sigmodel_cat%d.C",c));
@@ -974,63 +993,65 @@ cout<<"here"<<endl;
 
 void style(){
   TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
-  defaultStyle->SetOptStat(0000);
-  defaultStyle->SetOptFit(000); 
-  defaultStyle->SetPalette(1);
+//  defaultStyle->SetOptStat(0000);
+//  defaultStyle->SetOptFit(000); 
+//  defaultStyle->SetPalette(1);
   /////// pad ////////////
   defaultStyle->SetPadBorderMode(1);
   defaultStyle->SetPadBorderSize(1);
   defaultStyle->SetPadColor(0);
-  defaultStyle->SetPadTopMargin(0.05);
-  defaultStyle->SetPadBottomMargin(0.13);
-  defaultStyle->SetPadLeftMargin(0.13);
-  defaultStyle->SetPadRightMargin(0.02);
+  defaultStyle->SetPadTopMargin(0.08);
+  defaultStyle->SetPadBottomMargin(0.15);
+  defaultStyle->SetPadLeftMargin(0.20);
+  defaultStyle->SetPadRightMargin(0.04);
   /////// canvas /////////
   defaultStyle->SetCanvasBorderMode(0);
   defaultStyle->SetCanvasColor(0);
-  defaultStyle->SetCanvasDefH(600);
-  defaultStyle->SetCanvasDefW(600);
+//  defaultStyle->SetCanvasDefH(600);
+//  defaultStyle->SetCanvasDefW(600);
   /////// frame //////////
   defaultStyle->SetFrameBorderMode(0);
   defaultStyle->SetFrameBorderSize(1);
   defaultStyle->SetFrameFillColor(0); 
   defaultStyle->SetFrameLineColor(1);
   /////// label //////////
-  defaultStyle->SetLabelOffset(0.005,"XY");
+//  defaultStyle->SetLabelOffset(0.005,"XY");
   defaultStyle->SetLabelSize(0.05,"XY");
   defaultStyle->SetLabelFont(42,"XY");
   /////// title //////////
-  defaultStyle->SetTitleOffset(1.1,"X");
-  defaultStyle->SetTitleSize(0.01,"X");
+//  defaultStyle->SetTitleOffset(1.1,"X");
+//  defaultStyle->SetTitleSize(0.01,"X");
   defaultStyle->SetTitleOffset(1.25,"Y");
-  defaultStyle->SetTitleSize(0.05,"Y");
+//  defaultStyle->SetTitleSize(0.05,"Y");
   defaultStyle->SetTitleFont(42, "XYZ");
   /////// various ////////
-  defaultStyle->SetNdivisions(505,"Y");
-  defaultStyle->SetLegendBorderSize(0);  // For the axis titles:
+  defaultStyle->SetNdivisions(303,"Y");
+  //defaultStyle->SetTitleFillStyle(10, "Z");
 
-    defaultStyle->SetTitleColor(1, "XYZ");
-    defaultStyle->SetTitleFont(42, "XYZ");
+//  defaultStyle->SetLegendBorderSize(0);  // For the axis titles:
+
+//    defaultStyle->SetTitleColor(1, "XYZ");
+//    defaultStyle->SetTitleFont(42, "XYZ");
     defaultStyle->SetTitleSize(0.06, "XYZ");
  
     // defaultStyle->SetTitleYSize(Float_t size = 0.02);
-    defaultStyle->SetTitleXOffset(0.9);
-    defaultStyle->SetTitleYOffset(1.05);
+    //defaultStyle->SetTitleXOffset(0.9);
+    //defaultStyle->SetTitleYOffset(1.05);
     // defaultStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
 
     // For the axis labels:
     defaultStyle->SetLabelColor(1, "XYZ");
     defaultStyle->SetLabelFont(42, "XYZ");
-    defaultStyle->SetLabelOffset(0.007, "XYZ");
-    defaultStyle->SetLabelSize(0.04, "XYZ");
+   // defaultStyle->SetLabelOffset(0.007, "XYZ");
+    defaultStyle->SetLabelSize(0.045, "XYZ");
 
     // For the axis:
-    defaultStyle->SetAxisColor(1, "XYZ");
+//    defaultStyle->SetAxisColor(1, "XYZ");
     defaultStyle->SetStripDecimals(kTRUE);
     defaultStyle->SetTickLength(0.03, "XYZ");
     defaultStyle->SetNdivisions(510, "XYZ");
-    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
-    defaultStyle->SetPadTickY(1);
+//    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
+//    defaultStyle->SetPadTickY(1);
     defaultStyle->cd();
   return;
 }

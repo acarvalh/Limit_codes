@@ -41,7 +41,7 @@ const int minfit1 =320,minfit2 =320, maxfit=1200;
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
-  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",300,1200,"GeV");
+  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",320,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100000000,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 2") ;
@@ -227,8 +227,8 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   const Int_t ncat = NCAT; dobands=true;
   std::vector<TString> catdesc;
-  catdesc.push_back("2 btag");
-  catdesc.push_back("1 btag");
+  catdesc.push_back("High purity");//2 btag");
+  catdesc.push_back("Medium purity");//1 btag");
   //******************************************//
   // Fit background with model pdfs
   //******************************************//
@@ -304,22 +304,23 @@ Save(kTRUE));
    // Plot mtot background fit results per categories
    //************************************************//
    TCanvas* ctmp = new TCanvas("ctmp","mtot Background Categories",0,0,501,501);
-   int binning; if(c==0) binning=87; else binning = 87;
+    ctmp->cd();
+   int binning; if(c==0) binning=88; else binning = 88;
    Int_t nBinsMass(binning);
    plotmtotBkg[c] = mtot->frame(nBinsMass);
-   plotlinemtotBkg[c] = mtot->frame(nBinsMass);
+   //plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
    data[c]->plotOn(plotmtotBkg[c]);//,LineColor(kWhite),MarkerColor(kWhite)); // kWhite blind
-   mtotBkgTmp.plotOn(
-        plotlinemtotBkg[c],
-        LineColor(kBlue),
-        Range("fitrange"),NormRange("fitrange"));
+   //mtotBkgTmp.plotOn(
+     //   plotlinemtotBkg[c],
+     //   LineColor(kBlue),
+      //  Range("fitrange"),NormRange("fitrange"));
    mtotBkgTmp.plotOn(
         plotmtotBkg[c],
         LineColor(kBlue),
         Range("fitrange"),NormRange("fitrange"));
 
-    plotmtotBkg[c]->Draw();
+
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
     // we draw signal on the same
@@ -337,10 +338,14 @@ mtotSig[c]->plotOn(
 plotmtotBkg[c],
 Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
 */
-    plotmtotBkg[c]->SetTitle("CMS preliminary 19.702/fb");
-    plotmtotBkg[c]->SetMinimum(0.0);
-    plotmtotBkg[c]->SetMaximum(4.5);
-    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    plotmtotBkg[c]->SetTitle("");
+    plotmtotBkg[c]->Draw();
+    //plotmtotBkg[c]->SetMinimum(0.0);
+    //plotmtotBkg[c]->SetMaximum(4.5);
+
+    //plotmtotBkg[c]->Draw("Same");
+
+
     if (dobands) {
       RooAbsPdf *cpdf; cpdf = mtotBkgTmp0;
       TGraphAsymmErrors *onesigma = new TGraphAsymmErrors();
@@ -391,33 +396,45 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
 
 
    //plotlinemtotBkg[c]->Draw("SAME");
-   plotmtotBkg[c]->getObject(1)->Draw("SAME");
+   // //plotmtotBkg[c]->getObject(1)->Draw("SAME");
    dataplot[c]->plotOn(plotmtotBkg[c]); // blind
    data[c]->plotOn(plotmtotBkg[c]);//  blind
-    plotmtotBkg[c]->Draw("SAME");
+   plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
-    if (c==1) plotmtotBkg[c]->SetMaximum(6.5);
-   //plotmtotBkg[c]->Draw("AC");
+    if (c==1) plotmtotBkg[c]->SetMaximum(8.0);
+    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+  // plotmtotBkg[c]->Draw("AC");
+    //////////////////////////////////////////////////////////////////
+  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  //   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   //   pt->SetShadowColor(kWhite);
+   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->SetTextSize(0.04);
+   pt->Draw();
+    ////////////////////////////////////////////////////////////////////
    ctmp->SetLogy(0);
-   ctmp->SetGrid(1);
+//   ctmp->SetGrid(0);
    cout << "!!!!!!!!!!!!!!!!!" << endl;
 
-    TLegend *legmc = new TLegend(0.62,0.75,0.92,0.9);
+    TLegend *legmc = new TLegend(0.6,0.7,0.9,0.9);
     legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ",""); //"LPE" blind
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    legmc->SetHeader("WP4 500 GeV");
+    //legmc->SetHeader("M_{X} = 500 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    TLatex *lat2 = new TLatex(363.0,0.85*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(363.0,0.91*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
 
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
   cout<<"here 2 "<< c<<endl;
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
+    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.root",c));
   cout<<"here 3 "<< c<<endl;
     //ctmp->SaveAs(TString::Format("databkgoversig_cat%d.C",c));
   } // close to each category
@@ -538,8 +555,8 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
   const Int_t ncat = NCAT;
   const int minsigfit =Mass - 120, maxsigfit=Mass +120;
   std::vector<TString> catdesc;
-  catdesc.push_back("2 btag");
-  catdesc.push_back("1 btag");
+  catdesc.push_back("High purity");//2 btag");
+  catdesc.push_back("Medium purity");//1 btag");
   RooDataSet* signalAll = (RooDataSet*) w->data("Sig");
   // blinded dataset
   RooDataSet* sigToFit[ncat];
@@ -581,15 +598,15 @@ Layout(0.15,0.55,0.9),
 Format("NEU",AutoPrecision(2)));
 plotmtotAll->getAttText()->SetTextSize(0.03);
 */
-  TCanvas* c1 = new TCanvas("c1","mtot",0,0,501,501);
-  c1->cd(1);
-  plotmtotAll->Draw();
+ // TCanvas* c1 = new TCanvas("c1","mtot",0,0,501,501);
+  //c1->cd(1);
+//  plotmtotAll->Draw();
   //****************************//
   // Plot Signal Categories
   //****************************//
-  TLatex *text = new TLatex();
-  text->SetNDC();
-  text->SetTextSize(0.04);
+  //TLatex *text = new TLatex();
+  //text->SetNDC();
+  //text->SetTextSize(0.04);
   RooPlot* plotmtot[ncat];
   for (int c = 0; c < ncat; ++c) {
     if(c==0)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
@@ -608,32 +625,37 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
         LineStyle(kDashed),LineColor(kRed));
     mtotSig[c] ->paramOn(plotmtot[c]);
     sigToFit[c] ->plotOn(plotmtot[c]);
-    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 450, 450);
-    TH1F *hist = new TH1F("hist", "hist", 450, minMassFit, maxMassFit);
-    plotmtot[c]->SetTitle("CMS preliminary 19.702/fb ");
+//    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 450, 450);
+    //TH1F *hist = new TH1F("hist", "hist", 450, minMassFit, maxMassFit);
+    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
+    ctmp->cd();
+   plotmtot[c]->Draw("AC");
+    plotmtot[c]->SetTitle("");
+    //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
     plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
-    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
-    plotmtot[c]->Draw();
+
+
     plotmtot[c]->Draw("SAME");
-    TLegend *legmc = new TLegend(0.52,0.75,0.95,0.9);
+    TLegend *legmc = new TLegend(0.58,0.7,0.95,0.9);
     legmc->AddEntry(plotmtot[c]->getObject(5),"Simulation","LPE");
     legmc->AddEntry(plotmtot[c]->getObject(1),"Parametric Model","L");
-    legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball component","L");
-    legmc->AddEntry(plotmtot[c]->getObject(2),"Gaussian Outliers","L");
-    legmc->SetHeader(" ");
+    legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball ","L");
+    legmc->AddEntry(plotmtot[c]->getObject(2),"Gaussian ","L");
+    //legmc->SetHeader(" ");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-        minMassFit+1.5,0.85*plotmtot[c]->GetMaximum(),
-        " WP4 500 GeV");
+        minMassFit+10.5,0.85*plotmtot[c]->GetMaximum(),
+        " M_{X} = 500 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-        minMassFit+1.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
+        minMassFit+10.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
+
     ////////////////////////////////////////////////////////////
     // calculate the chi2 -- on a rooplot
     //RooDataHist* dataHist = (RooDataHist*)sigToFit[c]->binnedClone("dataHist","dataHist");
@@ -644,21 +666,31 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     //sigToFit[c]->plotOn(frame,LineColor(kWhite),MarkerColor(kWhite));
     //RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
     // Range(minChiFit,maxChiFit),SumW2Error(kTRUE));
-
+    //////////////////////////////////////////////////////////////////
+  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  //   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   //   pt->SetShadowColor(kWhite);
+   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->SetTextSize(0.04);
+   pt->Draw();
+    ////////////////////////////////////////////////////////////////////
     //float chi2 = ChiSquare->getVal();
-    char myChi2buffer[50];
+    //char myChi2buffer[50];
     //double ndof;
     //if(c==0) ndof=((450.-350.)/(1200.-320.))*dataHist->numEntries()-2 ;
     //else if(c==1) ndof= ((450.-350.)/(1200.-350.))*dataHist->numEntries()-3;
-    sprintf(myChi2buffer,"#chi^{2}/ndof = %f",chi2n);
-    TLatex* latex = new TLatex(0.52, 0.7, myChi2buffer);
-    latex -> SetNDC();
-    latex -> SetTextFont(42);
-    latex -> SetTextSize(0.04);
+    //sprintf(myChi2buffer,"#chi^{2}/ndof = %f",chi2n);
+    //TLatex* latex = new TLatex(0.52, 0.7, myChi2buffer);
+    //latex -> SetNDC();
+    //latex -> SetTextFont(42);
+    //latex -> SetTextSize(0.04);
     //latex -> Draw("same");
     ////////////////////////////////////////////////////////////
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
+    ctmp->SaveAs(TString::Format("sigmodel_cat%d.root",c));
     //ctmp->SaveAs(TString::Format("sigmodel_cat%d.C",c));
   } // close categories
     return;
@@ -1048,63 +1080,65 @@ cout<<"here"<<endl;
 
 void style(){
   TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
-  defaultStyle->SetOptStat(0000);
-  defaultStyle->SetOptFit(000);
-  defaultStyle->SetPalette(1);
+//  defaultStyle->SetOptStat(0000);
+//  defaultStyle->SetOptFit(000); 
+//  defaultStyle->SetPalette(1);
   /////// pad ////////////
   defaultStyle->SetPadBorderMode(1);
   defaultStyle->SetPadBorderSize(1);
   defaultStyle->SetPadColor(0);
-  defaultStyle->SetPadTopMargin(0.05);
-  defaultStyle->SetPadBottomMargin(0.13);
-  defaultStyle->SetPadLeftMargin(0.13);
-  defaultStyle->SetPadRightMargin(0.02);
+  defaultStyle->SetPadTopMargin(0.08);
+  defaultStyle->SetPadBottomMargin(0.15);
+  defaultStyle->SetPadLeftMargin(0.20);
+  defaultStyle->SetPadRightMargin(0.06);
   /////// canvas /////////
   defaultStyle->SetCanvasBorderMode(0);
   defaultStyle->SetCanvasColor(0);
-  defaultStyle->SetCanvasDefH(600);
-  defaultStyle->SetCanvasDefW(600);
+//  defaultStyle->SetCanvasDefH(600);
+//  defaultStyle->SetCanvasDefW(600);
   /////// frame //////////
   defaultStyle->SetFrameBorderMode(0);
   defaultStyle->SetFrameBorderSize(1);
-  defaultStyle->SetFrameFillColor(0);
+  defaultStyle->SetFrameFillColor(0); 
   defaultStyle->SetFrameLineColor(1);
   /////// label //////////
-  defaultStyle->SetLabelOffset(0.005,"XY");
+//  defaultStyle->SetLabelOffset(0.005,"XY");
   defaultStyle->SetLabelSize(0.05,"XY");
   defaultStyle->SetLabelFont(42,"XY");
   /////// title //////////
-  defaultStyle->SetTitleOffset(1.1,"X");
-  defaultStyle->SetTitleSize(0.01,"X");
-  defaultStyle->SetTitleOffset(1.25,"Y");
-  defaultStyle->SetTitleSize(0.05,"Y");
+//  defaultStyle->SetTitleOffset(1.1,"X");
+//  defaultStyle->SetTitleSize(0.01,"X");
+  //defaultStyle->SetTitleOffset(1.25,"Y");
+//  defaultStyle->SetTitleSize(0.05,"Y");
   defaultStyle->SetTitleFont(42, "XYZ");
   /////// various ////////
-  defaultStyle->SetNdivisions(505,"Y");
-  defaultStyle->SetLegendBorderSize(0); // For the axis titles:
+  defaultStyle->SetNdivisions(303,"Y");
+  //defaultStyle->SetTitleFillStyle(10, "Z");
 
-    defaultStyle->SetTitleColor(1, "XYZ");
-    defaultStyle->SetTitleFont(42, "XYZ");
+//  defaultStyle->SetLegendBorderSize(0);  // For the axis titles:
+
+//    defaultStyle->SetTitleColor(1, "XYZ");
+//    defaultStyle->SetTitleFont(42, "XYZ");
     defaultStyle->SetTitleSize(0.06, "XYZ");
  
     // defaultStyle->SetTitleYSize(Float_t size = 0.02);
-    defaultStyle->SetTitleXOffset(0.9);
-    defaultStyle->SetTitleYOffset(1.05);
+    //defaultStyle->SetTitleXOffset(0.9);
+    //defaultStyle->SetTitleYOffset(1.05);
     // defaultStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
 
     // For the axis labels:
     defaultStyle->SetLabelColor(1, "XYZ");
     defaultStyle->SetLabelFont(42, "XYZ");
-    defaultStyle->SetLabelOffset(0.007, "XYZ");
-    defaultStyle->SetLabelSize(0.04, "XYZ");
+   // defaultStyle->SetLabelOffset(0.007, "XYZ");
+    defaultStyle->SetLabelSize(0.045, "XYZ");
 
     // For the axis:
-    defaultStyle->SetAxisColor(1, "XYZ");
+//    defaultStyle->SetAxisColor(1, "XYZ");
     defaultStyle->SetStripDecimals(kTRUE);
     defaultStyle->SetTickLength(0.03, "XYZ");
     defaultStyle->SetNdivisions(510, "XYZ");
-    defaultStyle->SetPadTickX(1); // To get tick marks on the opposite side of the frame
-    defaultStyle->SetPadTickY(1);
+//    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
+//    defaultStyle->SetPadTickY(1);
     defaultStyle->cd();
   return;
 }

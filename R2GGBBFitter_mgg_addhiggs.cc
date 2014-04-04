@@ -80,21 +80,21 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m350.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m350.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m350.root";
-  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m350.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m350.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m400.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m400.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m400.root";
+  TString hhiggsvh = "/afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m400.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m400.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Radion_m350_8TeV_m350.root ";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m350.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Radion_m400_8TeV_m400.root ";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m400.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m400.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m400.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m400.root";
    //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m400.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m400.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m400.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -107,6 +107,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   MakePlots(w, mass);
   cout<<" did signal WS's"<<endl;
   //
+
   cout<<"Higgs: "<<hhiggsggh<<endl;
   AddHigData(w, mass,hhiggsggh,0);
   HigModelFit(w, mass,0); // constructing higgs pdf
@@ -127,12 +128,13 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   HigModelFit(w, mass,3); // constructing higgs pdf
   MakeHigWS(w, fileHiggsNamevh,3);
   cout<<"HIGGS ADDED"<<endl;
-  MakePlotsHiggs(w, mass);
+  //MakePlotsHiggs(w, mass);
   //
+
   AddBkgData(w,ddata);
   w->Print("v");
   cout<<"BKG ADDED"<<endl;
-  bool dobands=false;
+  bool dobands=true;
   fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
   MakeBkgWS(w, fileBkgName);
   // construct the models to fit
@@ -144,6 +146,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   MakeDataCard(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
   // MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsName);//MakeDataCardnohiggs 
   cout<< "here"<<endl;
+
   return;
 } // close runfits
 ////////////////////////////////////////////////////////////////////
@@ -278,7 +281,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
     // Fit model as M(x|y) to D(x,y)
     mggSig[c]->fitTo(*sigToFit[c],Range(minSigFit,maxSigFit),SumW2Error(kTRUE));
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal() << endl;
-    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal()+0.6; // shift the peak
+    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal()+0.0; // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->setVal(mPeak); // shift the peak
     cout << "mPeak = " << mPeak << endl;
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal() << endl;
@@ -311,7 +314,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(MASS);
     cout << "OK up to now..." <<MASS<< endl;
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
-    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+0.6; // shift the peak
+    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+0.0; // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(mPeak); // shift the peak
     cout << "mPeak = " << mPeak << endl;
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
@@ -334,8 +337,8 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
 RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
-  catdesc.push_back("2 btag");
-  catdesc.push_back("1 btag");
+  catdesc.push_back("High purity");//2 btag");
+  catdesc.push_back("Medium purity");//1 btag");
   catdesc.push_back("cat 2");
   catdesc.push_back("cat 3");
   //******************************************//
@@ -448,7 +451,17 @@ Range("fitrange"),NormRange("fitrange"));
       if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
       if(c==1)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmggBkg[c]->Draw();
-    plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //////////////////////////////////////////////////////////////////
+  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  //   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   //   pt->SetShadowColor(kWhite);
+   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->SetTextSize(0.04);
+   pt->Draw();
+    ////////////////////////////////////////////////////////////////////
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmggBkg[c]->SetMaximum(1.40*plotmggBkg[c]->GetMaximum());
     plotmggBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
@@ -503,7 +516,7 @@ Range("fitrange"),NormRange("fitrange"));
     } else plotmggBkg[c]->Draw("SAME"); // close dobands
    //plotmggBkg[c]->getObject(1)->Draw("SAME");
    //plotmggBkg[c]->getObject(2)->Draw("P SAME");
-   ////////////////////////////////////////////////////////// plot higgs
+/*   ////////////////////////////////////////////////////////// plot higgs
 	sigToFit0[c] = (RooDataSet*) w->data(TString::Format("Hig_0_cat%d",c));
 	double norm0; norm0 = 1.0*sigToFit0[c]->sumEntries(); //
         //norm0 = 0.0000001;
@@ -560,6 +573,7 @@ Range("fitrange"),NormRange("fitrange"));
 	plotmggBkg[c],
 	Normalization(norm3,RooAbsPdf::NumEvent),LineColor(kCyan),LineStyle(1));
    //////////////////////////////////////////////////////////
+*/
    plotmggBkg[c]->Draw("SAME"); 
       if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
       if(c==1)plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
@@ -568,8 +582,8 @@ Range("fitrange"),NormRange("fitrange"));
      // plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     //plotmggBkg[c]->SetLogy(0);
     cout << "!!!!!!!!!!!!!!!!!" << endl;
-    TLegend *legmc = new TLegend(0.40,0.72,0.62,0.9);
-    TLegend *legmcH = new TLegend(0.66,0.72,0.94,0.9);
+    TLegend *legmcH = new TLegend(0.40,0.72,0.62,0.9);
+    TLegend *legmc = new TLegend(0.64,0.7,0.94,0.9);
     legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data ","LPE"); // not...
     legmc->AddEntry(plotmggBkg[c]->getObject(1),"Fit","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F"); // not...
@@ -578,25 +592,27 @@ Range("fitrange"),NormRange("fitrange"));
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
-    legmc->SetHeader(" 350 GeV");
+    legmc->SetHeader(" M_{X} = 400 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    legmcH->Draw();
-    TLatex *lat2 = new TLatex(minMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
+//    legmcH->Draw();
+    TLatex *lat2 = new TLatex(minMassFit+2.0,0.9*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
-/*    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
+    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
+    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.root",c));
 
       if(c==0)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
       if(c==1)plotmggBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
-    ctmp->SetLogy(1);
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.pdf",c));
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.png",c));
+  //  ctmp->SetLogy(1);
+  //  ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.pdf",c));
+  //  ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.png",c));
+  //  ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.root",c));
   // ctmp->SaveAs(TString::Format("databkgoversig_cat%d.C",c));
-*/
+
   } // close to each category
   RooBernstein mggBkgAll("mggBkgAll", "", *mgg,
 RooArgList(RooConst(1.0),
@@ -760,8 +776,8 @@ void SetConstantParams(const RooArgSet* params) {
 void MakePlots(RooWorkspace* w, Float_t Mass) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
-  catdesc.push_back(" 2 btag");
-  catdesc.push_back(" 1 btag");
+  catdesc.push_back("High purity ");//2 btag");
+  catdesc.push_back("Medium purity ");//1 btag");
   catdesc.push_back("cat 2");
   catdesc.push_back("cat 3");
   // retrieve data sets from the workspace
@@ -830,29 +846,36 @@ LineStyle(kDashed),LineColor(kRed));
     sigToFit[c] ->plotOn(plotmgg[c]);
 // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
     TH1F *hist = new TH1F("hist", "hist", 400, minSigFit, maxSigFit);
-    plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
+    //plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
     plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
     TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,500,500);
     plotmgg[c]->Draw();
-    plotmgg[c]->Draw("SAME");
-    TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
+    //plotmgg[c]->Draw("SAME");
+    TLegend *legmc = new TLegend(0.65,0.6,0.95,0.99);
     legmc->AddEntry(plotmgg[c]->getObject(5),"Simulation","LPE");
     legmc->AddEntry(plotmgg[c]->getObject(1),"Parametric Model","L");
-    legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian Outliers","L");
-    legmc->AddEntry(plotmgg[c]->getObject(3),"Crystal Ball component","L");
+    legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian ","L");
+    legmc->AddEntry(plotmgg[c]->getObject(3),"Crystal Ball","L");
     legmc->SetHeader(" ");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
+    /////////////////////////////////////////////////////
+  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  //   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   //   pt->SetShadowColor(kWhite);
+   pt->AddText("                  CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV  ");
+   pt->SetTextSize(0.04);
+   pt->Draw();
+    ////////////////////////////////////////////////  
     // float effS = effSigma(hist);
-    TLatex *lat = new TLatex(
-minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-" Resonance - 350 GeV");
+    TLatex *lat = new TLatex(minSigFit+0.5,0.85*plotmgg[c]->GetMaximum()," M_{X} = 400 GeV");
     lat->Draw();
-    TLatex *lat2 = new TLatex(
-minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(minSigFit+0.5,0.9*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -864,7 +887,7 @@ minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
     //latex -> Draw("same");
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("sigmodel_cat%d.png",c));
-    //ctmp->SaveAs(TString::Format("sigmodel_cat%d.C",c));
+    ctmp->SaveAs(TString::Format("sigmodel_cat%d.root",c));
   } // close categories
     return;
 } // close makeplots signal
@@ -952,19 +975,16 @@ for (int d = 0; d < 4; ++d){
 
     legmc->AddEntry(plotmgg[c]->getObject(5),component[d],"LPE");
     legmc->AddEntry(plotmgg[c]->getObject(1),"Parametric Model","L");
-    legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian Outliers","L");
-    legmc->AddEntry(plotmgg[c]->getObject(3),"Crystal Ball component","L");
+    legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian","L");
+    legmc->AddEntry(plotmgg[c]->getObject(3),"Crystal Ball ","L");
     legmc->SetHeader(" ");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
     // float effS = effSigma(hist);
-    TLatex *lat = new TLatex(
-minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-" Resonance - 350 GeV");
+    TLatex *lat = new TLatex(minSigFit+0.5,0.85*plotmgg[c]->GetMaximum()," M_{X} = 400 GeV");
     lat->Draw();
-    TLatex *lat2 = new TLatex(
-minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1787,63 +1807,65 @@ cout<<"here"<<endl;
 
 void style(){
   TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
-  defaultStyle->SetOptStat(0000);
-  defaultStyle->SetOptFit(000);
-  defaultStyle->SetPalette(1);
+//  defaultStyle->SetOptStat(0000);
+//  defaultStyle->SetOptFit(000); 
+//  defaultStyle->SetPalette(1);
   /////// pad ////////////
   defaultStyle->SetPadBorderMode(1);
   defaultStyle->SetPadBorderSize(1);
   defaultStyle->SetPadColor(0);
-  defaultStyle->SetPadTopMargin(0.05);
-  defaultStyle->SetPadBottomMargin(0.13);
-  defaultStyle->SetPadLeftMargin(0.13);
-  defaultStyle->SetPadRightMargin(0.02);
+  defaultStyle->SetPadTopMargin(0.08);
+  defaultStyle->SetPadBottomMargin(0.15);
+  defaultStyle->SetPadLeftMargin(0.20);
+  defaultStyle->SetPadRightMargin(0.04);
   /////// canvas /////////
   defaultStyle->SetCanvasBorderMode(0);
   defaultStyle->SetCanvasColor(0);
-  defaultStyle->SetCanvasDefH(600);
-  defaultStyle->SetCanvasDefW(600);
+//  defaultStyle->SetCanvasDefH(600);
+//  defaultStyle->SetCanvasDefW(600);
   /////// frame //////////
   defaultStyle->SetFrameBorderMode(0);
   defaultStyle->SetFrameBorderSize(1);
-  defaultStyle->SetFrameFillColor(0);
+  defaultStyle->SetFrameFillColor(0); 
   defaultStyle->SetFrameLineColor(1);
   /////// label //////////
-  defaultStyle->SetLabelOffset(0.005,"XY");
+//  defaultStyle->SetLabelOffset(0.005,"XY");
   defaultStyle->SetLabelSize(0.05,"XY");
   defaultStyle->SetLabelFont(42,"XY");
   /////// title //////////
-  defaultStyle->SetTitleOffset(1.1,"X");
-  defaultStyle->SetTitleSize(0.01,"X");
+//  defaultStyle->SetTitleOffset(1.1,"X");
+//  defaultStyle->SetTitleSize(0.01,"X");
   defaultStyle->SetTitleOffset(1.25,"Y");
-  defaultStyle->SetTitleSize(0.05,"Y");
+//  defaultStyle->SetTitleSize(0.05,"Y");
   defaultStyle->SetTitleFont(42, "XYZ");
   /////// various ////////
-  defaultStyle->SetNdivisions(505,"Y");
-  defaultStyle->SetLegendBorderSize(0); // For the axis titles:
+  defaultStyle->SetNdivisions(303,"Y");
+  //defaultStyle->SetTitleFillStyle(10, "Z");
 
-    defaultStyle->SetTitleColor(1, "XYZ");
-    defaultStyle->SetTitleFont(42, "XYZ");
+//  defaultStyle->SetLegendBorderSize(0);  // For the axis titles:
+
+//    defaultStyle->SetTitleColor(1, "XYZ");
+//    defaultStyle->SetTitleFont(42, "XYZ");
     defaultStyle->SetTitleSize(0.06, "XYZ");
  
     // defaultStyle->SetTitleYSize(Float_t size = 0.02);
-    defaultStyle->SetTitleXOffset(0.9);
-    defaultStyle->SetTitleYOffset(1.05);
+    //defaultStyle->SetTitleXOffset(0.9);
+    //defaultStyle->SetTitleYOffset(1.05);
     // defaultStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
 
     // For the axis labels:
     defaultStyle->SetLabelColor(1, "XYZ");
     defaultStyle->SetLabelFont(42, "XYZ");
-    defaultStyle->SetLabelOffset(0.007, "XYZ");
-    defaultStyle->SetLabelSize(0.04, "XYZ");
+   // defaultStyle->SetLabelOffset(0.007, "XYZ");
+    defaultStyle->SetLabelSize(0.045, "XYZ");
 
     // For the axis:
-    defaultStyle->SetAxisColor(1, "XYZ");
+//    defaultStyle->SetAxisColor(1, "XYZ");
     defaultStyle->SetStripDecimals(kTRUE);
     defaultStyle->SetTickLength(0.03, "XYZ");
     defaultStyle->SetNdivisions(510, "XYZ");
-    defaultStyle->SetPadTickX(1); // To get tick marks on the opposite side of the frame
-    defaultStyle->SetPadTickY(1);
+//    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
+//    defaultStyle->SetPadTickY(1);
     defaultStyle->cd();
   return;
 }
