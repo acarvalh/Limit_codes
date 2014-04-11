@@ -24,7 +24,7 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
   mkdir radlim_CSV_WP$i
 
 #  for (( j = 11 ; j < ${#radion[@]} ; j++ )); do # for each mass 
-  for (( j = 10 ; j < 11 ; j++ )); do # for each mass 
+  for (( j = 3 ; j < 4 ; j++ )); do # for each mass 
 #  for (( j = 0 ; j < 11 ; j++ )); do # for each mass 
 	# create the datacard and the workspaces
 	#check the name on R2GGBBFitter.cc!!   legmc->SetHeader("300 GeV | CIC + X jets selection");

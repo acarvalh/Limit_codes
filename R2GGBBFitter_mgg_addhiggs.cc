@@ -81,22 +81,22 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m350.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m350.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m350.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m350.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m350.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m260.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/tth_m125_8TeV_m260.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/vbf_m125_8TeV_m260.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m260.root";///afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/code/Limit_codes/MiniTrees/v28/wzh_m125_8TeV_m260.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Radion_m350_8TeV_m350.root ";
-  //TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/MSSM_m260_8TeV_m350.root ";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m350.root";
+  //TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Radion_m260_8TeV_m260.root ";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/MSSM_m260_8TeV_m260.root ";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMgg_noKinFit/Data_m260.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m260.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m300_8TeV_nm_m260.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m260.root";
    //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m260.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m300_8TeV_nm_m260.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m260.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -456,12 +456,12 @@ Range("fitrange"),NormRange("fitrange"));
     plotmggBkg[c]->Draw();
     //plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //////////////////////////////////////////////////////////////////
-  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  TPaveText *pt = new TPaveText(0.2,0.93,0.9,0.99, "brNDC");
   //   pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    //   pt->SetShadowColor(kWhite);
-   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->AddText("            CMS Preliminary                     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
    pt->SetTextSize(0.035);
    pt->Draw();
     ////////////////////////////////////////////////////////////////////
@@ -580,8 +580,8 @@ Range("fitrange"),NormRange("fitrange"));
    plotmggBkg[c]->Draw("SAME"); 
       if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
       if(c==1)plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-      //if(c==0)plotmggBkg[c]->SetMaximum(5.3); // 
-      if(c==0)plotmggBkg[c]->SetMaximum(6.3); // 300 && 350 mass-points
+      if(c==0)plotmggBkg[c]->SetMaximum(5.3); // 260 && 270 mass-points
+      //if(c==0)plotmggBkg[c]->SetMaximum(6.3); // 300 && 350 mass-points
       if(c==1)plotmggBkg[c]->SetMaximum(20); // 
      // plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     //plotmggBkg[c]->SetLogy(0);
@@ -598,7 +598,7 @@ Range("fitrange"),NormRange("fitrange"));
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
-    legmc->SetHeader(" M_{X} = 350 GeV");
+    legmc->SetHeader(" m_{X} = 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -883,13 +883,13 @@ LineStyle(kDashed),LineColor(kRed),Rescale(1./integral[c]));
     legmc->SetFillStyle(0);
     legmc->Draw();
     /////////////////////////////////////////////////////
-  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  TPaveText *pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
    //pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    pt->SetShadowColor(kWhite);
    pt->SetLineColor(kWhite);
-   pt->AddText("               CMS Preliminary Simulation,   X#rightarrow HH #rightarrow #gamma#gammab#bar{b}  ");
+   pt->AddText("CMS Preliminary Simulation ");
    pt->SetTextSize(0.035);
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
@@ -898,10 +898,12 @@ LineStyle(kDashed),LineColor(kRed),Rescale(1./integral[c]));
    pt->Draw();
     ////////////////////////////////////////////////  
     // float effS = effSigma(hist);
-    TLatex *lat = new TLatex(minSigFit+0.5,0.8*plotmgg[c]->GetMaximum()," M_{X} = 350 GeV");
+    TLatex *lat = new TLatex(minSigFit+0.5,0.7*plotmgg[c]->GetMaximum(),"m_{X} = 260 GeV");
     lat->Draw();
-    TLatex *lat2 = new TLatex(minSigFit+0.5,0.9*plotmgg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(minSigFit+0.5,0.8*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
+    TLatex *lat3 = new TLatex(minSigFit+0.5,0.9*plotmgg[c]->GetMaximum(),"X#rightarrow HH #rightarrow #gamma#gammab#bar{b}");
+    lat3->Draw();
     ///////
     char myChi2buffer[50];
     sprintf(myChi2buffer,"#chi^{2}/ndof = %f",chi2n);
@@ -1008,7 +1010,7 @@ for (int d = 0; d < 4; ++d){
     legmc->SetFillStyle(0);
     legmc->Draw();
     // float effS = effSigma(hist);
-    TLatex *lat = new TLatex(minSigFit+0.5,0.85*plotmgg[c]->GetMaximum()," M_{X} = 350 GeV");
+    TLatex *lat = new TLatex(minSigFit+0.5,0.85*plotmgg[c]->GetMaximum()," M_{X} = 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();

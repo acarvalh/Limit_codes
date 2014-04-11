@@ -413,12 +413,12 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
     std::cout << "TITLE SIZE: " << plotmtotBkg[c]->GetXaxis()->GetTitleSize() << std::endl;
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
-  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  TPaveText *pt = new TPaveText(0.25,0.93,0.8,0.99, "brNDC");
   //   pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    //   pt->SetShadowColor(kWhite);
-   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->AddText("            CMS Preliminary           L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
    pt->SetTextSize(0.035);
    pt->Draw();
     ////////////////////////////////////////////////////////////////////
@@ -642,10 +642,10 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     plotmtot[c]->SetTitle("");
     //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
-    /*plotmtot[c]->SetMaximum(0.21); // 500 mass-point
-    if(c==1) plotmtot[c]->SetMaximum(0.18);*/ //500 mass-point
-    plotmtot[c]->SetMaximum(0.12); // 1000 mass-point
-    if(c==1) plotmtot[c]->SetMaximum(0.10); // 1000 mass-point
+    plotmtot[c]->SetMaximum(0.21); // 500 mass-point
+    if(c==1) plotmtot[c]->SetMaximum(0.18); //500 mass-point
+    /*plotmtot[c]->SetMaximum(0.12); // 1000 mass-point
+    if(c==1) plotmtot[c]->SetMaximum(0.10); // 1000 mass-point*/
     plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
     std::string Ytitle = std::string(plotmtot[c]->GetYaxis()->GetTitle());
     Ytitle.replace(0,6,"Fraction of events");
@@ -665,12 +665,15 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-        minMassFit+10.5,0.75*plotmtot[c]->GetMaximum(),
-        " M_{X} = 500 GeV");
+        minMassFit+10.5,0.7*plotmtot[c]->GetMaximum(),
+        "m_{X} = 500 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-        minMassFit+10.5,0.85*plotmtot[c]->GetMaximum(),catdesc.at(c));
+        minMassFit+10.5,0.8*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
+    TLatex *lat3 = new TLatex(
+        minMassFit+10.5,0.9*plotmtot[c]->GetMaximum(),"X#rightarrow HH #rightarrow #gamma#gammab#bar{b}");
+    lat3->Draw();
 
     ////////////////////////////////////////////////////////////
     // calculate the chi2 -- on a rooplot
@@ -683,12 +686,12 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     //RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
     // Range(minChiFit,maxChiFit),SumW2Error(kTRUE));
     //////////////////////////////////////////////////////////////////
-  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  TPaveText *pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
   //   pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    //   pt->SetShadowColor(kWhite);
-   pt->AddText("               CMS Preliminary Simulation,   X#rightarrow HH #rightarrow #gamma#gammab#bar{b}  ");
+   pt->AddText("CMS Preliminary Simulation");
    pt->SetTextSize(0.035);
    pt->Draw();
     ////////////////////////////////////////////////////////////////////
