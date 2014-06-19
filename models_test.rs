@@ -115,3 +115,24 @@ CBHig_3_cat1 = CBShape(mgg, mgg_hig_m0_3_cat1, mgg_hig_sigma_3_cat1, mgg_hig_alp
 mggHig_3_cat1 = AddPdf(GaussHig_3_cat1, CBHig_3_cat1, mgg_hig_frac_3_cat1);
 
 
+mgg_hig_m0_4_cat0[124.2, 123, 125];
+mgg_hig_sigma_4_cat0[2.0, 1.0, 3.0];
+mgg_hig_alpha_4_cat0[1.0, 0.0, 2.5];
+mgg_hig_n_4_cat0[2.0, 1.0, 5.0];
+mgg_hig_gsigma_4_cat0[1.2, 0.8, 1.6];
+mgg_hig_frac_4_cat0[0.6, 0.4, 1.0];
+
+mgg_hig_m0_4_cat1[124.2, 123, 125];
+mgg_hig_sigma_4_cat1[2.0, 1.0, 3.0];
+mgg_hig_alpha_4_cat1[1.0, 0.0, 2.5];
+mgg_hig_n_4_cat1[2.0, 1.5, 10];
+mgg_hig_gsigma_4_cat1[1.2, 0.8, 1.6];
+mgg_hig_frac_4_cat1[0.6, 0.4, 1.0];
+
+GaussHig_4_cat0 = Gaussian(mgg, mgg_hig_m0_4_cat0, mgg_hig_gsigma_4_cat0);
+CBHig_4_cat0 = CBShape(mgg, mgg_hig_m0_4_cat0, mgg_hig_sigma_4_cat0, mgg_hig_alpha_4_cat0, mgg_hig_n_4_cat0);
+mggHig_4_cat0 = AddPdf(GaussHig_4_cat0, CBHig_4_cat0, mgg_hig_frac_4_cat0);
+
+GaussHig_4_cat1 = Gaussian(mgg, mgg_hig_m0_4_cat1, mgg_hig_gsigma_4_cat1);
+CBHig_4_cat1 = CBShape(mgg, mgg_hig_m0_4_cat1, mgg_hig_sigma_4_cat1, mgg_hig_alpha_4_cat1, mgg_hig_n_4_cat1);
+mggHig_4_cat1 = AddPdf(GaussHig_4_cat1, CBHig_4_cat1, mgg_hig_frac_4_cat1);
