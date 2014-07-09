@@ -43,6 +43,7 @@ RooArgSet* defineVariables()
   // define variables of the input ntuple
   RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",320,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
+  RooRealVar* mjj = new RooRealVar("mjj","Mjj",100,180,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100000000,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 2") ;
   //
@@ -53,6 +54,7 @@ RooArgSet* defineVariables()
   ntplVars->add(*cut_based_ct);
   ntplVars->add(*mtot);
   ntplVars->add(*mgg);
+  ntplVars->add(*mjj);
   ntplVars->add(*evWeight);
   return ntplVars;
 }
@@ -70,11 +72,11 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   RooFitResult* fitresults;
 // TString ssignal = "MiniTrees/OlivierAug13/v02_regkin_mggjj_0/Radion_m500_regression-m500_minimal.root";
 // TString ddata = "MiniTrees/OlivierAug13/v02_regkin_mggjj_0/Data_regression-m500_minimal.root";
-// TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m1100.root";
-// TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m1100.root";
+// TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m500.root";
+// TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m500.root";
   //
-  TString ssignal = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
-  TString ddata = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMggjj_withKinFit/bkg_m500.root";
+  TString ssignal = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
+  TString ddata = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMggjj_withKinFit/bkg_m500.root";
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
@@ -167,7 +169,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
 
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
-  TString cut0 = "&& mgg > 120 && mgg < 130 "; // " && 1>0";//
+  TString cut0 = "&& mgg > 120 && mgg < 130 && mjj > 109 && mjj < 131"; // " && 1>0";
   for (int c = 0; c < ncat; ++c) {
     if(c==0) dataToFit[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
