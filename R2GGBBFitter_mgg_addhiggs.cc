@@ -74,22 +74,22 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m260.root";
-  TString hhiggstth = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/tth_m125_8TeV_m260.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/vbf_m125_8TeV_m260.root";
-  TString hhiggsvh = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m260.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/bbh_m125_8TeV_m260.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m350.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/tth_m125_8TeV_m350.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/vbf_m125_8TeV_m350.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m350.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/bbh_m125_8TeV_m350.root";
   //
-  TString ssignal = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/MSSM_m260_8TeV_m260.root ";
-  TString ddata = "/afs/cern.ch/work/b/bmarzocc/LimitTrees/CMSSW_6_1_1/src/Selection/v33_fitToMgg_noKinFit/bkg_m260.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/MSSM_m350_8TeV_m350.root ";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v33/v33_fitToMgg_noKinFit/Data_m350.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m260_8TeV_nm_m260.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m260_8TeV_nm_m260.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m260.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m260_8TeV_nm_m260.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m260_8TeV_nm_m260.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m260.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -719,12 +719,12 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
     cout<<"here"<<endl;
     data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
 
-    RooDataHist* dataBinned = data[c]->binnedClone(); // Uncomment if you want to use wights in the limits
+    //RooDataHist* dataBinned = data[c]->binnedClone(); // Uncomment if you want to use wights in the limits
 
     mggBkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mggBkg_cat%d",c));
-    //wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));// Comment if you want to use wights in the limits
+    wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));// Comment if you want to use wights in the limits
 
-    wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
+    //wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
 
     cout<<"here"<<endl;
     wAll->import(*w->pdf(TString::Format("mggBkg_cat%d",c)));
@@ -1225,7 +1225,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
-  outFile << "jmax 6" << endl; // number of BKG
+  outFile << "jmax 5" << endl; // number of BKG
   outFile << "kmax *" << endl;
   outFile << "---------------" << endl;
   outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
@@ -1294,8 +1294,8 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 	    << "0.988 - 0.988 0.988 0.988 0.988 0.988 "
 	    <<"# b tag efficiency uncertainty" << endl;
     outFile << "maajj_cut_acceptance lnN "
-	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 "
-	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 " << endl;
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02"
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02" << endl;
     outFile << " " << endl;
     outFile << "############## Theory uncertainties on SM Higgs production " << endl;
     outFile << "PDF lnN "
