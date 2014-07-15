@@ -1225,7 +1225,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
-  outFile << "jmax 5" << endl; // number of BKG
+  outFile << "jmax 6" << endl; // number of BKG
   outFile << "kmax *" << endl;
   outFile << "---------------" << endl;
   outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
