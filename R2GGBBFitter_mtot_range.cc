@@ -19,6 +19,7 @@ using namespace RooFit;
 using namespace RooStats ;
 
 const Int_t NCAT = 2;
+float integral[NCAT];
 
 // declare the functions
 void AddSigData(RooWorkspace*, Float_t);
@@ -38,12 +39,15 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
 const int minfit1 =320,minfit2 =320, maxfit=1200;
 
+TString FinalCuts = "";
+TString baseDir = "";
+
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
   RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",320,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
-  RooRealVar* mjj = new RooRealVar("mjj","Mjj",100,180,"GeV");
+  RooRealVar* mjj = new RooRealVar("mjj","M(jj)",60.,500.,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100000000,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 2") ;
   //
@@ -59,12 +63,14 @@ RooArgSet* defineVariables()
   return ntplVars;
 }
 
-void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
+void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false,TString CUTS, TString BASEDIR)
 {
   style();
+  FinalCuts = CUTS;
+  baseDir = BASEDIR;
   TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m500.rs"); // fit model parameters to kinfit
+  TString card_name = baseDir+TString(TString::Format("models_mtot_range_m%d.rs",int(mass))); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
@@ -72,11 +78,11 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   RooFitResult* fitresults;
 // TString ssignal = "MiniTrees/OlivierAug13/v02_regkin_mggjj_0/Radion_m500_regression-m500_minimal.root";
 // TString ddata = "MiniTrees/OlivierAug13/v02_regkin_mggjj_0/Data_regression-m500_minimal.root";
-// TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m500.root";
-// TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m500.root";
+// TString ssignal = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Radion_m1100_8TeV_nm_m1100.root";
+// TString ddata = "MiniTrees/OlivierOc13/v15_base_mggjj_0/02013-10-30-Data_m1100.root";
   //
-  TString ssignal = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
-  TString ddata = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMggjj_withKinFit/bkg_m500.root";
+  TString ssignal(TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMggjj_withKinFit/Radion_m%d_8TeV_m%d.root",int(mass),int(mass)));
+  TString ddata(TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMggjj_withKinFit/bkg_m%d.root",int(mass)));
   //
   cout<<"Signal: "<< ssignal<<endl;
   cout<<"Data: "<< ddata<<endl;
@@ -133,7 +139,7 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   for (int c = 0; c < ncat; ++c) {
     sigToFit[c] = (RooDataSet*) sigScaled.reduce(
         *w->var("mtot"),
-        mainCut+TString::Format(" && cut_based_ct==%d",c)+cut0);
+        mainCut+TString::Format(" && cut_based_ct==%d",c)+cut0+FinalCuts);
     w->import(*sigToFit[c],Rename(TString::Format("Sig_cat%d",c)));
   } // close ncat
   // Create full signal data set without categorization
@@ -144,6 +150,7 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
     Float_t nExpEvt = sigToFit[c].sumEntries();
+    integral[c] = sigToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
          << TString::Format(" eff x Acc cat%d : ",c)
          << "%"
@@ -169,14 +176,14 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
 
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
-  TString cut0 = "&& mgg > 120 && mgg < 130 && mjj > 109 && mjj < 131"; // " && 1>0";
+  TString cut0 = "&& mgg > 120 && mgg < 130 "; // " && 1>0";//
   for (int c = 0; c < ncat; ++c) {
     if(c==0) dataToFit[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit2)+cut0);
+        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit2)+cut0+FinalCuts);
     if(c==1) dataToFit[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0);
+        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit1)+cut0+FinalCuts);
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
         //mainCut+TString::Format(" && cut_based_ct==%d",c)+TString::Format(" && (mtot > 550 || mtot < 450)")); // blind
@@ -255,7 +262,6 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   //
   for (int c = 0; c < ncat; ++c) {
     data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
-
     cout << "!!!!!!!!!!!!!" << endl;
     /*
 w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is is on the .rs
@@ -402,38 +408,45 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
    // //plotmtotBkg[c]->getObject(1)->Draw("SAME");
    dataplot[c]->plotOn(plotmtotBkg[c]); // blind
    data[c]->plotOn(plotmtotBkg[c]);//  blind
+   plotmtotBkg[c]->GetYaxis()->SetTitleSize(0.06);
+   plotmtotBkg[c]->GetYaxis()->SetTitleOffset(1.4);
+   //plotmtotBkg[c]->GetXaxis()->SetNdivisions(406,false);
+   plotmtotBkg[c]->GetXaxis()->	SetLabelSize(0.035);
    plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
-    if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
-    if (c==1) plotmtotBkg[c]->SetMaximum(8.0);
+    if(c==0) plotmtotBkg[c]->SetMaximum(5.5);
+    if (c==1) plotmtotBkg[c]->SetMaximum(9.0);
     plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    std::cout << "TITLE SIZE: " << plotmtotBkg[c]->GetXaxis()->GetTitleSize() << std::endl;
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
-  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  TPaveText *pt = new TPaveText(0.25,0.93,0.8,0.99, "brNDC");
   //   pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    //   pt->SetShadowColor(kWhite);
-   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
-   pt->SetTextSize(0.04);
+   pt->AddText("            CMS Preliminary           L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+   pt->SetTextSize(0.035);
    pt->Draw();
     ////////////////////////////////////////////////////////////////////
    ctmp->SetLogy(0);
 //   ctmp->SetGrid(0);
    cout << "!!!!!!!!!!!!!!!!!" << endl;
 
-    TLegend *legmc = new TLegend(0.6,0.7,0.9,0.9);
-    legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ",""); //"LPE" blind
-    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
-    if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
-    if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
+    TLegend *legmc = new TLegend(0.6,0.69,0.9,0.89);
+    legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ","LPE"); //"LPE" blind
+    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Fit","L");
+    if(dobands)legmc->AddEntry(twosigma,"Fit #pm 2 #sigma ","F");
+    if(dobands)legmc->AddEntry(onesigma,"Fit #pm 1 #sigma","F");
     //legmc->SetHeader("M_{X} = 500 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    TLatex *lat2 = new TLatex(363.0,0.91*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(363.3,0.8*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
-
+    TLatex *lat3 = new TLatex(363.3,0.9*plotmtotBkg[c]->GetMaximum(),"X #rightarrow HH #rightarrow #gamma#gammab#bar{b}");
+    lat3->Draw(); 
+    
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
   cout<<"here 2 "<< c<<endl;
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
@@ -447,7 +460,7 @@ Normalization(norm,RooAbsPdf::NumEvent),LineColor(kRed));
 } // close berestein 3
 ///////////////////////////////////////////////////////////////
 void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
-  TString wsDir = "workspaces/";
+  TString wsDir = "";
   const Int_t ncat = NCAT;
   //**********************************************************************//
   // Write pdfs and datasets into the workspace
@@ -491,7 +504,7 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
 } // close make signal WP
 ////////////////////////////////////////////////////////////////
 void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
-  TString wsDir = "workspaces/";
+  TString wsDir = "";
   const Int_t ncat = NCAT;
   //**********************************************************************//
   // Write pdfs and datasets into the workspace
@@ -508,6 +521,7 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
     mtotBkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mtotBkg_cat%d",c));
     //wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c))); // Comment if you want to use wights in the limits
     wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
+
     wAll->import(*w->pdf(TString::Format("mtotBkg_cat%d",c)));
     wAll->factory(
         TString::Format("CMS_hgg_bkg_8TeV_cat%d_norm[%g,0.0,100000.0]",
@@ -617,20 +631,20 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
   for (int c = 0; c < ncat; ++c) {
     if(c==0)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
     if(c==1)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
-    sigToFit[c]->plotOn(plotmtot[c],LineColor(kWhite),MarkerColor(kWhite));
-    mtotSig[c] ->plotOn(plotmtot[c]);
+    sigToFit[c]->plotOn(plotmtot[c],LineColor(kWhite),MarkerColor(kWhite),Rescale(1./integral[c]));
+    mtotSig[c] ->plotOn(plotmtot[c],Rescale(1./integral[c]));
     double chi2n = plotmtot[c]->chiSquare(0) ;
     cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
     mtotSig[c] ->plotOn(
         plotmtot[c],
         Components(TString::Format("mtotGaussSig_cat%d",c)),
-        LineStyle(kDashed),LineColor(kGreen));
+        LineStyle(kDashed),LineColor(kGreen),Rescale(1./integral[c]));
     mtotSig[c] ->plotOn(
         plotmtot[c],
         Components(TString::Format("mtotCBSig_cat%d",c)),
-        LineStyle(kDashed),LineColor(kRed));
-    mtotSig[c] ->paramOn(plotmtot[c]);
-    sigToFit[c] ->plotOn(plotmtot[c]);
+        LineStyle(kDashed),LineColor(kRed),Rescale(1./integral[c]));
+    //mtotSig[c] ->paramOn(plotmtot[c]);
+    sigToFit[c] ->plotOn(plotmtot[c],MarkerStyle(25),Rescale(1./integral[c]),RooFit::XErrorSize(0));
 //    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 450, 450);
     //TH1F *hist = new TH1F("hist", "hist", 450, minMassFit, maxMassFit);
     TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
@@ -639,13 +653,20 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     plotmtot[c]->SetTitle("");
     //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
-    plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
+    plotmtot[c]->SetMaximum(0.21); // 500 mass-point
+    if(c==1) plotmtot[c]->SetMaximum(0.18); //500 mass-point
+    /*plotmtot[c]->SetMaximum(0.12); // 1000 mass-point
+    if(c==1) plotmtot[c]->SetMaximum(0.10); // 1000 mass-point*/
     plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    std::string Ytitle = std::string(plotmtot[c]->GetYaxis()->GetTitle());
+    Ytitle.replace(0,6,"Fraction of events");
+    plotmtot[c]->GetYaxis()->SetTitle(Ytitle.c_str());
+    plotmtot[c]->GetYaxis()->SetTitleSize(0.06);
+    plotmtot[c]->GetYaxis()->SetTitleOffset(1.4);
 
-
-    plotmtot[c]->Draw("SAME");
-    TLegend *legmc = new TLegend(0.58,0.7,0.95,0.9);
-    legmc->AddEntry(plotmtot[c]->getObject(5),"Simulation","LPE");
+    plotmtot[c]->Draw();
+    TLegend *legmc = new TLegend(0.57,0.7,0.94,0.9);
+    legmc->AddEntry(plotmtot[c]->getObject(4),"Simulation","PE");
     legmc->AddEntry(plotmtot[c]->getObject(1),"Parametric Model","L");
     legmc->AddEntry(plotmtot[c]->getObject(3),"Crystal Ball ","L");
     legmc->AddEntry(plotmtot[c]->getObject(2),"Gaussian ","L");
@@ -655,12 +676,15 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-        minMassFit+10.5,0.85*plotmtot[c]->GetMaximum(),
-        " M_{X} = 500 GeV");
+        minMassFit+10.5,0.7*plotmtot[c]->GetMaximum(),
+        "m_{X} = 500 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-        minMassFit+10.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
+        minMassFit+10.5,0.8*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
+    TLatex *lat3 = new TLatex(
+        minMassFit+10.5,0.9*plotmtot[c]->GetMaximum(),"X#rightarrow HH #rightarrow #gamma#gammab#bar{b}");
+    lat3->Draw();
 
     ////////////////////////////////////////////////////////////
     // calculate the chi2 -- on a rooplot
@@ -673,13 +697,13 @@ plotmtotAll->getAttText()->SetTextSize(0.03);
     //RooAbsReal* ChiSquare = mtotSig[c]->createChi2(*dataHist,
     // Range(minChiFit,maxChiFit),SumW2Error(kTRUE));
     //////////////////////////////////////////////////////////////////
-  TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
+  TPaveText *pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
   //   pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    //   pt->SetShadowColor(kWhite);
-   pt->AddText("               CMS Preliminary     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
-   pt->SetTextSize(0.04);
+   pt->AddText("CMS Preliminary Simulation");
+   pt->SetTextSize(0.035);
    pt->Draw();
     ////////////////////////////////////////////////////////////////////
     //float chi2 = ChiSquare->getVal();
@@ -759,7 +783,7 @@ return widmin;
 */
 // with reparametrization of BKG
 void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName) {
-  TString cardDir = "datacards/";
+  TString cardDir = "";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
   RooDataSet* sigToFit[ncat];
@@ -988,7 +1012,7 @@ cout<<"here"<<endl;
 } // close write datacard with LnU
 
 void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName) {
-  TString cardDir = "datacards/";
+  TString cardDir = "";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
   RooDataSet* sigToFit[ncat];
@@ -1023,7 +1047,7 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
 cout<<"here"<<endl;
   outFile << "# the name after w_all is the name of the rooextpdf we want to use, we have both saved" << endl;
   outFile << "# BKG" << endl;
-  outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:datadata_obs_cat0" << endl;
+  outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
   outFile << "shapes data_obs cat1 "<< TString(fileBkgName)+".root" << " w_all:data_obs_cat1" << endl;
   outFile << "############## shape with reparametrization" << endl;
   outFile << "shapes mtotBkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat0" << endl;
@@ -1143,8 +1167,8 @@ void style(){
     defaultStyle->SetStripDecimals(kTRUE);
     defaultStyle->SetTickLength(0.03, "XYZ");
     defaultStyle->SetNdivisions(510, "XYZ");
-//    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
-//    defaultStyle->SetPadTickY(1);
+    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
+    defaultStyle->SetPadTickY(1);
     defaultStyle->cd();
   return;
 }
