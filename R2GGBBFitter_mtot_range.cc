@@ -895,7 +895,7 @@ cout<<"here"<<endl;
 //////////////////////////////////////////////////
 // with reparametrization of BKG
 void MakeDataCardLnU(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName) {
-  TString cardDir = "datacards/";
+  TString cardDir = "";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
   RooDataSet* sigToFit[ncat];
