@@ -77,9 +77,9 @@ norm=l_50_sort[0]
 l_50 = [i/norm for i in l_50]
 
 for i in xrange(int(nsteps)*int(nsteps)) :
-   print i," - ",x[i]," - ",y[i]," - ",l_50[i]
-   if l_50[i] > 3.: 
-      continue   
+   #print i," - ",x[i]," - ",y[i]," - ",l_50[i]
+   #if l_50[i] > 3.: 
+   #   continue   
    h2.SetBinContent(h2.FindBin(x[i],y[i]),l_50[i])
 
 
