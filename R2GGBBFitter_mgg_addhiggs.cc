@@ -1294,8 +1294,8 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 	    << "0.988 - 0.988 0.988 0.988 0.988 0.988 "
 	    <<"# b tag efficiency uncertainty" << endl;
     outFile << "maajj_cut_acceptance lnN "
-	    << "1.02 - 1.02 1.02 1.02 1.02 1.02"
-	    << "1.02 - 1.02 1.02 1.02 1.02 1.02" << endl;
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 "
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 " << endl;
     outFile << " " << endl;
     outFile << "############## Theory uncertainties on SM Higgs production " << endl;
     outFile << "PDF lnN "
