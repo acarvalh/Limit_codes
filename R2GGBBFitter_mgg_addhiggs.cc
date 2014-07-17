@@ -38,11 +38,14 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
+TString FinalCuts = "";
+TString baseDir = "";
+
 RooArgSet* defineVariables()
 {
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
-  //RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gammajj)",200,1600,"GeV");
-  //RooRealVar* mjj = new RooRealVar("mjj","M(jj)",100,1600,"GeV");
+  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gammajj)",200,1600,"GeV");
+  RooRealVar* mjj = new RooRealVar("mjj","M(jj)",100,1600,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 4") ;
   //
@@ -51,15 +54,17 @@ RooArgSet* defineVariables()
   //
   RooArgSet* ntplVars = new RooArgSet(*mgg, * cut_based_ct, *evWeight);
   ntplVars->add(*mgg);
-  //ntplVars->add(*mtot);
-  //ntplVars->add(*mjj);
+  ntplVars->add(*mtot);
+  ntplVars->add(*mjj);
   ntplVars->add(*cut_based_ct);
   return ntplVars;
 }
 
-void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
+void runfits(const Float_t mass=120, const Float_t sampMASS, Int_t mode=1, Bool_t dobands = false,TString CUTS, TString BASEDIR)
 {
   style();
+  FinalCuts = CUTS;
+  baseDir = BASEDIR;
   TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
   TString fileHiggsNameggh(TString::Format("hgg.hig.mH%.1f_8TeV.ggh", mass));
   TString fileHiggsNametth(TString::Format("hgg.hig.mH%.1f_8TeV.tth", mass));
@@ -74,22 +79,22 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m270.root";
-  TString hhiggstth = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/tth_m125_8TeV_m270.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/vbf_m125_8TeV_m270.root";
-  TString hhiggsvh = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m270.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/bbh_m125_8TeV_m270.root";
+  TString hhiggsggh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggstth (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/tth_m125_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggsvbf (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/vbf_m125_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggsvh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m%d.root",int(sampMASS)));
+  TString hhiggsbbh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/bbh_m125_8TeV_m%d.root",int(sampMASS)));
   //
-  TString ssignal = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/Radion_m270_8TeV_m270.root ";
-  TString ddata = "/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/bkg_m270.root";
+  TString ssignal (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/ggHH_8TeV_m270.root",int(sampMASS),int(sampMASS)));
+  TString ddata (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/bkg_m%d.root",int(sampMASS)));
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m270_8TeV_nm_m270.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m270_8TeV_nm_m270.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m270.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m270_8TeV_nm_m270.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m270_8TeV_nm_m270.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m270.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -614,7 +619,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 270 GeV");
+    legmc->SetHeader(" 350 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -719,12 +724,12 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
     cout<<"here"<<endl;
     data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
 
-    RooDataHist* dataBinned = data[c]->binnedClone(); // Uncomment if you want to use wights in the limits
+    //RooDataHist* dataBinned = data[c]->binnedClone(); // Uncomment if you want to use wights in the limits
 
     mggBkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mggBkg_cat%d",c));
-    //wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));// Comment if you want to use wights in the limits
+    wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));// Comment if you want to use wights in the limits
 
-    wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
+    //wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
 
     cout<<"here"<<endl;
     wAll->import(*w->pdf(TString::Format("mggBkg_cat%d",c)));
@@ -870,7 +875,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 270 GeV");
+			     " Resonance - 350 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -989,7 +994,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 270 GeV");
+			       " Resonance - 350 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1222,7 +1227,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   ofstream outFile(filename);
 
   // outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH270.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 2700 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 6" << endl; // number of BKG
@@ -1376,7 +1381,7 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   ofstream outFile(filename);
 
   //outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH270.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 2700 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
   // outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "# Lumi = " << "19785" << " pb-1" << endl;
   outFile << "imax 1" << endl;
