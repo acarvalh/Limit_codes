@@ -72,7 +72,7 @@ void runfits(const Float_t mass=120, const Float_t sampMASS, Int_t mode=1, Bool_
   TString fileHiggsNamevh(TString::Format("hgg.hig.mH%.1f_8TeV.vh", mass));
   TString fileHiggsNamebbh(TString::Format("hgg.hig.mH%.1f_8TeV.bbh", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_test.rs"); // put the model parameters here!
+  TString card_name = baseDir+TString("models_test.rs"); // put the model parameters here!
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs();
   RooFitResult* fitresults;
@@ -187,12 +187,12 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   // we take only mtot to fit to the workspace, we include the cuts
   sigToFit[0] = (RooDataSet*) sigScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0+FinalCuts);
   w->import(*sigToFit[0],Rename(TString::Format("Sig_cat%d",0)));
   //
   sigToFit[1] = (RooDataSet*) sigScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1+FinalCuts);
   w->import(*sigToFit[1],Rename(TString::Format("Sig_cat%d",1)));
   // Create full signal data set without categorization
   RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mgg"),mainCut);
@@ -238,21 +238,21 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
 
   dataToFit[0] = (RooDataSet*) Data.reduce(
 					   *w->var("mgg"),
-					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0+cutj0);
+					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0+cutj0+FinalCuts);
   dataToPlot[0] = (RooDataSet*) Data.reduce(
 					    *w->var("mgg"),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)")// blind
-					    +cut0+cutj0);
+					    +cut0+cutj0+FinalCuts);
    
   dataToFit[1] = (RooDataSet*) Data.reduce(
 					   *w->var("mgg"),
-					   mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1);
+					   mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1+FinalCuts);
   dataToPlot[1] = (RooDataSet*) Data.reduce(
 					    *w->var("mgg"),
 					    mainCut+TString::Format(" && cut_based_ct==%d",1)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)") // blind
-					    +cut1);
+					    +cut1+FinalCuts);
 
   for (int c = 0; c < ncat; ++c) {
     w->import(*dataToFit[c],Rename(TString::Format("Data_cat%d",c)));
@@ -654,7 +654,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 } // close berestein 3
 ///////////////////////////////////////////////////////////////
 void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
-  TString wsDir = "workspaces/";
+  TString wsDir = "";
   const Int_t ncat = NCAT;
   //**********************************************************************//
   // Write pdfs and datasets into the workspace before to save
@@ -710,7 +710,7 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
-  TString wsDir = "workspaces/";
+  TString wsDir = "";
   const Int_t ncat = NCAT;
 
   //**********************************************************************//
@@ -1053,12 +1053,12 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
   // we take only mtot to fit to the workspace, we include the cuts
   higToFit[0] = (RooDataSet*) higScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0+FinalCuts);
   w->import(*higToFit[0],Rename(TString::Format("Hig_%d_cat%d",higgschannel,0)));
   //
   higToFit[1] = (RooDataSet*) higScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1+FinalCuts);
   w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1))); // Create full signal data set without categorization
   RooDataSet* higToFitAll = (RooDataSet*) higScaled->reduce(*w->var("mgg"),mainCut);
   w->import(*higToFitAll,Rename("Hig"));
@@ -1078,7 +1078,7 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
 } // end add higgs function
 ///////////////////////////////////////////////////////////////
 void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
-  TString wsDir = "workspaces/";
+  TString wsDir = "";
   const Int_t ncat = NCAT;
   //**********************************************************************//
   // Write pdfs and datasets into the workspace before to save to a file
@@ -1188,7 +1188,7 @@ Double_t effSigma(TH1 *hist) {
 //////////////////////////////////////////////////
 // with higgs
 void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName , const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHiggsNamevbf, const char* fileHiggsNamevh, const char* fileHiggsNamebbh) {
-  TString cardDir = "datacards/";
+  TString cardDir = "";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
   RooDataSet* sigToFit[ncat];
@@ -1351,7 +1351,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 
 
 void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName) {
-  TString cardDir = "datacards/";
+  TString cardDir = "";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
   RooDataSet* sigToFit[ncat];
