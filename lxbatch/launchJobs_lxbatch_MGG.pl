@@ -157,7 +157,19 @@ open(SAMPLEJOBLISTFILE, ">", $sampleJobListFile);
         $command = "combine -M Asymptotic ".$jobDir."/hgg.mH125.6_8TeV.txt >> limit_".$Mass."_".$cutMin."_".$cutMax.".txt";
         print SAMPLEJOBFILE $command."\n";
 
+        $command = "combine -M Asymptotic ".$jobDir."/hgg.mH125.6_8TeV_cat0.txt >> limit_".$Mass."_".$cutMin."_".$cutMax."_cat0.txt";
+        print SAMPLEJOBFILE $command."\n";
+
+        $command = "combine -M Asymptotic ".$jobDir."/hgg.mH125.6_8TeV_cat1.txt >> limit_".$Mass."_".$cutMin."_".$cutMax."_cat1.txt";
+        print SAMPLEJOBFILE $command."\n";
+
         $command = "cp limit_".$Mass."_".$cutMin."_".$cutMax.".txt ".$BASEDir;
+        print SAMPLEJOBFILE $command."\n";
+        
+        $command = "cp limit_".$Mass."_".$cutMin."_".$cutMax."_cat0.txt ".$BASEDir;
+        print SAMPLEJOBFILE $command."\n";
+
+        $command = "cp limit_".$Mass."_".$cutMin."_".$cutMax."_cat1.txt ".$BASEDir;
         print SAMPLEJOBFILE $command."\n";
 
     ############
