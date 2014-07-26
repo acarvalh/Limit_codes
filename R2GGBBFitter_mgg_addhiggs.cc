@@ -47,6 +47,8 @@ RooArgSet* defineVariables()
   RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gammajj)",200,1600,"GeV");
   RooRealVar* mjj = new RooRealVar("mjj","M(jj)",100,1600,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100,"");
+  RooRealVar* minDRgj = new RooRealVar("minDRgj","minDRgj",0.,100.,"");
+  RooRealVar* costhetastar_CS = new RooRealVar("costhetastar_CS","costhetastar_CS",-2.,2.,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 4") ;
   //
   cut_based_ct->defineType("cat4_0",0);
@@ -56,6 +58,8 @@ RooArgSet* defineVariables()
   ntplVars->add(*mgg);
   ntplVars->add(*mtot);
   ntplVars->add(*mjj);
+  ntplVars->add(*minDRgj);
+ ntplVars->add(*costhetastar_CS);
   ntplVars->add(*cut_based_ct);
   return ntplVars;
 }
@@ -79,14 +83,15 @@ void runfits(const Float_t mass=120, const Float_t sampMASS, Int_t mode=1, Bool_
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/ggh_m125_powheg_8TeV_m%d.root",int(sampMASS)));
-  TString hhiggstth (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/tth_m125_8TeV_m%d.root",int(sampMASS)));
-  TString hhiggsvbf (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/vbf_m125_8TeV_m%d.root",int(sampMASS)));
-  TString hhiggsvh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/wzh_m125_8TeV_zh_m%d.root",int(sampMASS)));
-  TString hhiggsbbh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/bbh_m125_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggsggh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/ggh_m125_powheg_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggstth (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/tth_m125_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggsvbf (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/vbf_m125_8TeV_m%d.root",int(sampMASS)));
+  TString hhiggsvh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/wzh_m125_8TeV_zh_m%d.root",int(sampMASS)));
+  TString hhiggsbbh (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/bbh_m125_8TeV_m%d.root",int(sampMASS)));
   //
-  TString ssignal (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/ggHH_8TeV_m270.root",int(sampMASS),int(sampMASS)));
-  TString ddata (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit/bkg_m%d.root",int(sampMASS)));
+  TString ssignal (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/ggHH_8TeV_m270.root",int(sampMASS),int(sampMASS)));
+  TString ddata (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/DataCS_m%d.root",int(sampMASS)));
+  //TString ddata (TString::Format("/afs/cern.ch/work/b/bmarzocc/public/LimitTrees/v33_fitToMgg_noKinFit_allVar/bkg_m%d.root",int(sampMASS)));
   //
   // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
   // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
@@ -1223,6 +1228,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     siglikeErr[c]=0.6*sigToFit[c]->sumEntries();
   }
   cout << "====================================================" << endl;
+
   TString filename(cardDir+TString(fileBaseName)+".txt");
   ofstream outFile(filename);
 
@@ -1344,6 +1350,222 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   /////////////////////////////////////
   outFile.close();
   cout << "Write data card in: " << filename << " file" << endl;
+
+
+  TString filename_cat0(cardDir+TString(fileBaseName)+"_cat0.txt");
+  ofstream outFile_cat0(filename_cat0);
+
+  // outFile_cat0 << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
+  outFile_cat0 << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile_cat0 << "# Lumi = " << "19785" << " pb-1" << endl;
+  outFile_cat0 << "imax 1" << endl;
+  outFile_cat0 << "jmax 6" << endl; // number of BKG
+  outFile_cat0 << "kmax *" << endl;
+  outFile_cat0 << "---------------" << endl;
+  outFile_cat0 << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
+  outFile_cat0 << "shapes data_obs cat1 "<< TString(fileBkgName)+".root" << " w_all:data_obs_cat1" << endl;
+  outFile_cat0 << "############## shape with reparametrization" << endl;
+  outFile_cat0 << "shapes mggBkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat0" << endl;
+  outFile_cat0 << "shapes mggBkg cat1 "<< TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat1" << endl;
+  outFile_cat0 << "# signal" << endl;
+  outFile_cat0 << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile_cat0 << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile_cat0 << "# ggh" << endl;
+  outFile_cat0 << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
+  outFile_cat0 << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat1" << endl;
+  outFile_cat0 << "# tth" << endl;
+  outFile_cat0 << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
+  outFile_cat0 << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat1" << endl;
+  outFile_cat0 << "# vbf" << endl;
+  outFile_cat0 << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
+  outFile_cat0 << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat1" << endl;
+  outFile_cat0 << "# vh" << endl;
+  outFile_cat0 << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
+  outFile_cat0 << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat1" << endl;
+  outFile_cat0 << "# bbh" << endl;
+  outFile_cat0 << "shapes mggHigbbh cat0 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hgg_hig_4_cat0" << endl;
+  outFile_cat0 << "shapes mggHigbbh cat1 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hgg_hig_4_cat1" << endl;
+  outFile_cat0 << "---------------" << endl;
+  /////////////////////////////////////
+  if(addHiggs) { //
+    outFile_cat0 << "bin cat0 " << endl;
+    cout<<"here"<<endl;
+    outFile_cat0 << "observation "<< data[0]->sumEntries() <<" "<< endl;
+    outFile_cat0 << "------------------------------" << endl;
+    outFile_cat0 << "bin cat0 cat0 cat0 cat0 cat0 cat0 cat0"<< endl;
+    outFile_cat0 << "process mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh mggHigbbh"<< endl;
+    outFile_cat0 << "process 0 1 2 3 4 5 6"<< endl;
+    outFile_cat0 << "rate "
+	    <<" "<<sigToFit[0]->sumEntries()<<" "<<1<<" "<<higToFitggh[0]->sumEntries()<<" "<<higToFittth[0]->sumEntries()<<" "<<higToFitvbf[0]->sumEntries()<<" "<<higToFitvh[0]->sumEntries()<< " "<<higToFitbbh[0]->sumEntries()
+	    <<" "<<endl;
+    outFile_cat0 << " " << endl;
+    outFile_cat0 << "############## Total normalisation" << endl;
+    outFile_cat0 << "lumi_8TeV lnN "
+	    << "1.026 - 1.026 1.026 1.026 1.026 1.026 " << endl;
+    outFile_cat0 << " " << endl;
+    outFile_cat0 << "############## Photon selection normalisation uncertainties " << endl;
+    outFile_cat0 << "DiphoTrigger lnN "
+	    << "1.01 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "# Trigger efficiency" << endl;
+    outFile_cat0 << "CMS_hgg_eff_g lnN "
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "# photon selection accep." << endl;
+    outFile_cat0 << " " << endl;
+    outFile_cat0 << "############## Jet selection and phase space cuts normalisation uncertainties " << endl;
+    outFile_cat0 << "Mjj_PTj_cut_acceptance lnN "
+	    << "1.015 - 1.015 1.015 1.015 1.015 1.015 "
+	    <<"# JER and JES " << endl;
+    outFile_cat0 << "btag_eff lnN "
+	    << "1.046 - 1.046 1.046 1.046 1.046 1.046 "
+	    <<"# b tag efficiency uncertainty" << endl;
+    outFile_cat0 << "maajj_cut_acceptance lnN "
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 "<< endl;
+    outFile_cat0 << " " << endl;
+    outFile_cat0 << "############## Theory uncertainties on SM Higgs production " << endl;
+    outFile_cat0 << "PDF lnN "
+	    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 " << endl;
+    outFile_cat0 << "QCD_scale lnN "
+	    << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 " << endl;
+    outFile_cat0 << "gg_migration lnN "
+	    << " - - 1.25 1.25 1.08 1.08 1.08 # UEPS" << endl;
+    outFile_cat0 << "gluonSplitting lnN "
+	    << " - - 1.40 1.40 1.40 1.40 1.40 "<< endl;
+    outFile_cat0 << " " << endl;
+    outFile_cat0 << "############## Signal parametric shape uncertainties " << endl;
+    outFile_cat0 << "CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) " << endl;
+    outFile_cat0 << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat0 << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
+    outFile_cat0 << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat0 << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat0 << "CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat0 << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat0 << "CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat0 << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat0 << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat0 << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat0 << "############## for mgg fit - slopes" << endl;
+    outFile_cat0 << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
+
+    outFile_cat0 << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
+
+  } // if ncat ==2
+  /////////////////////////////////////
+  outFile_cat0.close();
+  cout << "Write data card in: " << filename_cat0 << " file" << endl;
+    ////////////////////////////////////////////////////////////////////////////////////
+  
+
+  TString filename_cat1(cardDir+TString(fileBaseName)+"_cat1.txt");
+  ofstream outFile_cat1(filename_cat1);
+
+  // outFile_cat1 << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
+  outFile_cat1 << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile_cat1 << "# Lumi = " << "19785" << " pb-1" << endl;
+  outFile_cat1 << "imax 1" << endl;
+  outFile_cat1 << "jmax 6" << endl; // number of BKG
+  outFile_cat1 << "kmax *" << endl;
+  outFile_cat1 << "---------------" << endl;
+  outFile_cat1 << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
+  outFile_cat1 << "shapes data_obs cat1 "<< TString(fileBkgName)+".root" << " w_all:data_obs_cat1" << endl;
+  outFile_cat1 << "############## shape with reparametrization" << endl;
+  outFile_cat1 << "shapes mggBkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat0" << endl;
+  outFile_cat1 << "shapes mggBkg cat1 "<< TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat1" << endl;
+  outFile_cat1 << "# signal" << endl;
+  outFile_cat1 << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile_cat1 << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile_cat1 << "# ggh" << endl;
+  outFile_cat1 << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
+  outFile_cat1 << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat1" << endl;
+  outFile_cat1 << "# tth" << endl;
+  outFile_cat1 << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
+  outFile_cat1 << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat1" << endl;
+  outFile_cat1 << "# vbf" << endl;
+  outFile_cat1 << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
+  outFile_cat1 << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat1" << endl;
+  outFile_cat1 << "# vh" << endl;
+  outFile_cat1 << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
+  outFile_cat1 << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat1" << endl;
+  outFile_cat1 << "# bbh" << endl;
+  outFile_cat1 << "shapes mggHigbbh cat0 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hgg_hig_4_cat0" << endl;
+  outFile_cat1 << "shapes mggHigbbh cat1 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hgg_hig_4_cat1" << endl;
+  outFile_cat1 << "---------------" << endl;
+  /////////////////////////////////////
+  if(addHiggs) { //
+    outFile_cat1 << "bin cat1 " << endl;
+    cout<<"here"<<endl;
+    outFile_cat1 << "observation " << data[1]->sumEntries() <<" "<< endl;
+    outFile_cat1 << "------------------------------" << endl;
+    outFile_cat1 << "bin cat1 cat1 cat1 cat1 cat1 cat1 cat1" << endl;
+    outFile_cat1 << "process mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh mggHigbbh" << endl;
+    outFile_cat1 << "process 0 1 2 3 4 5 6"<< endl;
+    outFile_cat1 << "rate "
+	    <<" "<<sigToFit[1]->sumEntries()<<" "<<1<<" "<<higToFitggh[1]->sumEntries()<<" "<<higToFittth[1]->sumEntries()<<" "<<higToFitvbf[1]->sumEntries()<<" "<<higToFitvh[1]->sumEntries()<<" "<<higToFitbbh[1]->sumEntries()
+	    <<" "<<endl;
+    outFile_cat1 << " " << endl;
+    outFile_cat1 << "############## Total normalisation" << endl;
+    outFile_cat1 << "lumi_8TeV lnN "
+	    << "1.026 - 1.026 1.026 1.026 1.026 1.026 " << endl;
+    outFile_cat1 << " " << endl;
+    outFile_cat1 << "############## Photon selection normalisation uncertainties " << endl;
+    outFile_cat1 << "DiphoTrigger lnN "
+	    << "1.01 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "# Trigger efficiency" << endl;
+    outFile_cat1 << "CMS_hgg_eff_g lnN "
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "# photon selection accep." << endl;
+    outFile_cat1 << " " << endl;
+    outFile_cat1 << "############## Jet selection and phase space cuts normalisation uncertainties " << endl;
+    outFile_cat1 << "Mjj_PTj_cut_acceptance lnN "
+	    << "1.015 - 1.015 1.015 1.015 1.015 1.015 "
+	    <<"# JER and JES " << endl;
+    outFile_cat1 << "btag_eff lnN "
+	    << "0.988 - 0.988 0.988 0.988 0.988 0.988 "
+	    <<"# b tag efficiency uncertainty" << endl;
+    outFile_cat1 << "maajj_cut_acceptance lnN "
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 " << endl;
+    outFile_cat1 << " " << endl;
+    outFile_cat1 << "############## Theory uncertainties on SM Higgs production " << endl;
+    outFile_cat1 << "PDF lnN "
+	    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 " << endl;
+    outFile_cat1 << "QCD_scale lnN "
+	    << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 " << endl;
+    outFile_cat1 << "gg_migration lnN "
+	    << " - - 1.25 1.25 1.08 1.08 1.08 # UEPS" << endl;
+    outFile_cat1 << "gluonSplitting lnN "
+	    << " - - 1.40 1.40 1.40 1.40 1.40 " << endl;
+    outFile_cat1 << " " << endl;
+    outFile_cat1 << "############## Signal parametric shape uncertainties " << endl;
+    outFile_cat1 << "CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) " << endl;
+    outFile_cat1 << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat1 << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
+    outFile_cat1 << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat1 << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat1 << "CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat1 << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat1 << "CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat1 << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat1 << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile_cat1 << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    //
+    outFile_cat1 << "############## for mgg fit - slopes" << endl;
+    outFile_cat1 << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
+
+    outFile_cat1 << "CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+
+  } // if ncat ==2
+  /////////////////////////////////////
+  outFile_cat1.close();
+  cout << "Write data card in: " << filename_cat1 << " file" << endl;
+
   return;
 } // close write full datacard
 
