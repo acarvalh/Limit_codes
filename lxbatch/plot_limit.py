@@ -8,10 +8,10 @@ from ROOT import TFile, TTree, TLine, TChain, TCanvas, TH1D, TH2F, TLatex, TLege
 import math as m
 
 def usage():
-    print "Usage: plot_limit.py --mass=[mass] --min=[mjjmin] --max=[mjjmax] --step=[step] --nsteps=[nsteps]"
+    print "Usage: plot_limit.py --inputfile=[inputfile] --mass=[mass] --min=[mjjmin] --max=[mjjmax] --step=[step] --nsteps=[nsteps]"
     
 try:
-     opts, args = getopt.getopt(sys.argv[1:], "m:d:r:g:so:", ["mass=","min=","max=","step=","nsteps="])
+     opts, args = getopt.getopt(sys.argv[1:], "m:d:r:g:so:", ["inputfile=","mass=","min=","max=","step=","nsteps="])
 
 except getopt.GetoptError:
      #* print help information and exit:*
@@ -24,6 +24,8 @@ mjjmax = ''
 
 for opt, arg in opts:
     
+     if opt in ("--inputfile"):
+        inputfile = arg
      if opt in ("--mass"):
         mass = arg
      if opt in ("--min"):
@@ -41,9 +43,9 @@ print "Max     = ",mjjmax
 print "Step    = ",step
 print "nSteps  = ",nsteps
  
-file = "limits.txt"
+file = inputfile
 name  = "cut_Mjj_study_reweight_m" + mass # + "_zoom"
-title = "Expected Limits at mass = " + mass + " GeV in both category. Use of all bkg samples"
+title = "Expected Limits (normalized to the best value) at mass = " + mass + " GeV in both categories. Use of all bkg samples"
 XaxisTittle = "Mjj_Min (GeV)"
 YaxisTittle = "Mjj_Max (GeV)"
 #ZaxisTittle = "Expected Limit"
@@ -86,11 +88,12 @@ for i in xrange(int(nsteps)*int(nsteps)) :
 h2.GetXaxis().SetTitle(XaxisTittle)
 h2.GetYaxis().SetTitle(YaxisTittle)
 #h2.GetZaxis().SetTitle(ZaxisTittle)
-h2.GetZaxis().SetRangeUser(0.95,1.05)
+h2.GetZaxis().SetRangeUser(0.99,1.2)
 h2.Draw("colz")
 
 c1.Update()
 
+c1.Print(name + ".png");
 c1.Print(name + ".pdf");
 c1.Print(name + ".gif");
 c1.Print(name + ".root");
