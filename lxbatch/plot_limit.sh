@@ -69,13 +69,27 @@ rm limits.txt
 
 for((i = 0 ; i < ${inputNSteps} ; i++)); do 
  for((j = 0 ; j < ${inputNSteps} ; j++)); do
-    mjj_min=$(($inputMin-$i*$inputStep));
-    mjj_max=$(($inputMax+$j*$inputStep));
-    echo "Mjj window = ["$mjj_min "," $mjj_max"]"
+    mjj_min_tmp=`echo $inputMin-$i*$inputStep|bc| awk '{printf "%f", $0}'`
+    mjj_max_tmp=`echo $inputMax+$j*$inputStep|bc| awk '{printf "%f", $0}'`
+    mjj_min=$(echo $mjj_min_tmp  | awk ' {sub("\\.*0+$","");print} ')
+    mjj_max=$(echo $mjj_max_tmp  | awk ' {sub("\\.*0+$","");print} ')
+    echo "Window = ["$mjj_min "," $mjj_max"]"
     for file in `echo "limit_${inputMass}_${mjj_min}_${mjj_max}.txt"`; do
         for exp in `echo "2.5 16.0 50.0 84.0 97.5"`; do
             res=`cat ${file} | 'grep' "Expected" | 'grep' "${exp}%" | cut -d "<" -f 2 `
 	    echo "${inputMass} ${mjj_min} ${mjj_max} ${exp} ${res}" >> limits.txt
+        done
+    done
+    for file in `echo "limit_${inputMass}_${mjj_min}_${mjj_max}_cat0.txt"`; do
+        for exp in `echo "2.5 16.0 50.0 84.0 97.5"`; do
+            res=`cat ${file} | 'grep' "Expected" | 'grep' "${exp}%" | cut -d "<" -f 2 `
+	    echo "${inputMass} ${mjj_min} ${mjj_max} ${exp} ${res}" >> limits_cat0.txt
+        done
+    done
+    for file in `echo "limit_${inputMass}_${mjj_min}_${mjj_max}_cat1.txt"`; do
+        for exp in `echo "2.5 16.0 50.0 84.0 97.5"`; do
+            res=`cat ${file} | 'grep' "Expected" | 'grep' "${exp}%" | cut -d "<" -f 2 `
+	    echo "${inputMass} ${mjj_min} ${mjj_max} ${exp} ${res}" >> limits_cat1.txt
         done
     done
  done
