@@ -73,7 +73,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
-  TString ddata = "/afs/cern.ch/user/f/fajimene/public/v33_fitToMggjj_withKinFit/Data_m400.root";
+  TString ddata = "/afs/cern.ch/user/f/fajimene/public/v33_fitToMggjj_withKinFit/bkg_m400.root";
   TString ssignal = "/afs/cern.ch/user/f/fajimene/public/v33_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
 
   //
@@ -156,7 +156,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   weightVar.setVal(1.);
   TFile dataFile(datafile);
   TTree* dataTree = (TTree*) dataFile.Get("TCVARS");
-  RooDataSet Data("Data","dataset",dataTree,*ntplVars,"","weightVar");
+  RooDataSet Data("Data","dataset",dataTree,*ntplVars,"","evWeight");
 
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
@@ -463,10 +463,10 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
     RooDataHist* dataBinned = data[c]->binnedClone();
 
     mtotBkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mtotBkg_cat%d",c));
-    wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));
+    //wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));
     
     //comment this out if you want to use weighted data 
-    //wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c)));
+    wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c)));
 
     wAll->import(*w->pdf(TString::Format("mtotBkg_cat%d",c)));
     wAll->factory(

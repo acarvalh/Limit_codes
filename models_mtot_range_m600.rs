@@ -22,9 +22,9 @@ mtotGaussSig_cat1 = Gaussian(mtot, mtot_sig_m0_cat1, mtot_sig_gsigma_cat1);
 mtotCBSig_cat1 = CBShape(mtot, mtot_sig_m0_cat1, mtot_sig_sigma_cat1, mtot_sig_alpha_cat1, mtot_sig_n_cat1);
 mtotSig_cat1 = AddPdf(mtotGaussSig_cat1, mtotCBSig_cat1, mtot_sig_frac_cat1);
 
-mtot_bkg_8TeV_slope1_cat0[1.9, -10., 10.];
+mtot_bkg_8TeV_slope1_cat0[1.9, -100., 100.];
 
-mtot_bkg_8TeV_slope1_cat1[1.9, -10., 10.];
+mtot_bkg_8TeV_slope1_cat1[1.9, -100., 100.];
 mtot_bkg_8TeV_slope2_cat1[1000,800, 1200];
 
 wei[1,0,10];
