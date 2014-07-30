@@ -99,7 +99,8 @@ open(SAMPLEJOBLISTFILE, ">", $sampleJobListFile);
         $cutMax = $Max + $jobIt2*$Step;
 
         $tempo1 = "./tempo1" ;
-        $MACRO = $BASEDir."../R2GGBBFitter_mtot_range.cc";
+        #$MACRO = $BASEDir."../R2GGBBFitter_mtot_range_weighted.cc";
+        $MACRO = $BASEDir."../R2GGBBFitter_mtot_range_weighted.cc";
         system ("cat ".$JOBTemplate." | sed -e s%MACRO%".$MACRO.
 "%g > ".$tempo1) ;
 
@@ -157,7 +158,19 @@ open(SAMPLEJOBLISTFILE, ">", $sampleJobListFile);
         $command = "combine -M Asymptotic ".$jobDir."/hgg.mH".$Mass.".0_8TeVrep.txt >> limit_".$Mass."_".$cutMin."_".$cutMax.".txt";
         print SAMPLEJOBFILE $command."\n";
 
+        $command = "combine -M Asymptotic ".$jobDir."/hgg.mH".$Mass.".0_8TeVrep_cat0.txt >> limit_".$Mass."_".$cutMin."_".$cutMax."_cat0.txt";
+        print SAMPLEJOBFILE $command."\n";
+
+        $command = "combine -M Asymptotic ".$jobDir."/hgg.mH".$Mass.".0_8TeVrep_cat1.txt >> limit_".$Mass."_".$cutMin."_".$cutMax."_cat1.txt";
+        print SAMPLEJOBFILE $command."\n";
+
         $command = "cp limit_".$Mass."_".$cutMin."_".$cutMax.".txt ".$BASEDir;
+        print SAMPLEJOBFILE $command."\n";
+
+        $command = "cp limit_".$Mass."_".$cutMin."_".$cutMax."_cat0.txt ".$BASEDir;
+        print SAMPLEJOBFILE $command."\n";
+
+        $command = "cp limit_".$Mass."_".$cutMin."_".$cutMax."_cat1.txt ".$BASEDir;
         print SAMPLEJOBFILE $command."\n";
 
     ############
