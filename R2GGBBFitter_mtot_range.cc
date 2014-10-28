@@ -73,8 +73,8 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
-  TString ddata = "/afs/cern.ch/user/f/fajimene/public/v33_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/user/f/fajimene/public/v33_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Data_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
@@ -460,13 +460,12 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
   RooWorkspace *wAll = new RooWorkspace("w_all","w_all");
   for (int c = 0; c < ncat; ++c) {
     data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
-    RooDataHist* dataBinned = data[c]->binnedClone();
+    //RooDataHist* dataBinned = data[c]->binnedClone(); // Uncomment if you want to use wights in the limits
 
     mtotBkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mtotBkg_cat%d",c));
-    wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));
+    wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c))); // Comment if you want to use wights in the limits
     
-    //comment this out if you want to use weighted data 
-    //wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c)));
+    //wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
 
     wAll->import(*w->pdf(TString::Format("mtotBkg_cat%d",c)));
     wAll->factory(
