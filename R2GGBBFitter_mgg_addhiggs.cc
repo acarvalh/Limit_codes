@@ -74,22 +74,22 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/ggh_m125_powheg_8TeV_m300.root";
-  TString hhiggstth = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/tth_m125_8TeV_m300.root";
-  TString hhiggsvbf = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/vbf_m125_8TeV_m300.root";
-  TString hhiggsvh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/wzh_m125_8TeV_zh_m300.root";
-  TString hhiggsbbh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/bbh_m125_8TeV_m300.root";
+  TString hhiggsggh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/ggh_m125_powheg_8TeV_m350.root";
+  TString hhiggstth = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/tth_m125_8TeV_m350.root";
+  TString hhiggsvbf = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/vbf_m125_8TeV_m350.root";
+  TString hhiggsvh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/wzh_m125_8TeV_zh_m350.root";
+  TString hhiggsbbh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/bbh_m125_8TeV_m350.root";
   //
-  TString ssignal = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Radion_m300_8TeV_m300.root ";
-  TString ddata = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Data_m300.root";
+  TString ssignal = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Radion_m350_8TeV_m350.root ";
+  TString ddata = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Data_m350.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m300.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m300.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m300.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m300.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m300.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m300.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -614,7 +614,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 300 GeV");
+    legmc->SetHeader(" 350 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -870,7 +870,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 300 GeV");
+			     " Resonance - 350 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -989,7 +989,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 300 GeV");
+			       " Resonance - 350 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1327,6 +1327,9 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     //
     outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
     outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+     //
+    outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_4_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
     outFile << "############## for mgg fit - slopes" << endl;
     outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
