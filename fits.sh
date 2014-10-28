@@ -15,7 +15,7 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
 #   for (( j = 0 ; j < ${#radion[@]} ; j++ )); do # for each mass
 #  for (( j = 1 ; j < 7; j++ )); do # for each mass
 #   for (( j = 0 ; j < 1 ; j++ )); do # for each mass
-   for (( j = 1 ; j < 5 ; j++ )); do # for each mass
+   for (( j = 2 ; j < 5 ; j++ )); do # for each mass
         # the signal file
         sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mgg_addhiggs.cc
         sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mgg_addhiggs.cc 
@@ -69,25 +69,25 @@ for (( i = 4 ; i < 5 ; i++ )); do # for each working point
         ## create limits root files for each mass
         cd radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
 	#
-        combine -M Asymptotic hgg.mH125.6_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}.txt
-        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
-	echo did with reparametrization
+        #combine -M Asymptotic hgg.mH125.6_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}.txt
+        #mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
+	#echo did with reparametrization
 	#
         combine -M Asymptotic hgg.mH125.6_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_higgs.txt
         mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_higgs.root
 	echo did with Higgs
 	#
-        combine -M Asymptotic hgg.mH125.6_8TeVlnu.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}lnu.txt
-        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}lnu.root
-	echo did with lnu
+        #combine -M Asymptotic hgg.mH125.6_8TeVlnu.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}lnu.txt
+        #mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}lnu.root
+	#echo did with lnu
 	#
-        combine -M Asymptotic hgg.mH125.6_8TeVrep.txt  -S 0 >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_nosyst.txt
-        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.root
-	echo did no syst
+        #combine -M Asymptotic hgg.mH125.6_8TeVrep.txt  -S 0 >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_nosyst.txt
+        #mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.root
+	#echo did no syst
 	#
-        combine -M Asymptotic hgg.mH125.6_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_onecat.txt
-        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_onecat.root
-	echo did one categ with higgs
+        #combine -M Asymptotic hgg.mH125.6_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_onecat.txt
+        #mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_onecat.root
+	#echo did one categ with higgs
 	#
         combine -M Asymptotic hgg.mH125.6_8TeVonecatnohiggs.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${radion[$j]}_onecatnohiggs.txt
         mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_onecatnohiggs.root
