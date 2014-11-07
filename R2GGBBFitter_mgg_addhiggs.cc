@@ -1328,23 +1328,23 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 	    << " - - 1.40 1.40 1.40 1.40 1.40 " << endl;
     outFile << " " << endl;
     outFile << "############## Signal parametric shape uncertainties " << endl;
-    outFile << "CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) " << endl;
+    outFile << "CMS_hgg_sig_m0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2) " << endl;
     outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
     outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
-    outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
      //
-    outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_4_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
     outFile << "############## for mgg fit - slopes" << endl;
