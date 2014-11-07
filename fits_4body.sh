@@ -19,6 +19,7 @@ declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "900" "1000" "1
 
 # R2GGBBFitter_mtot_side.cc
 # models_mtot_exp.rs
+doBlinding=1
 
 for (( i = 4 ; i < 5 ; i++ )); do # for each working point
   mkdir radlim_CSV_WP$i
@@ -78,26 +79,35 @@ echo WP$i MR ${radion[$j]}
 #	echo did with lnu 
 	#
 #	text2workspace.py hgg.mH${radion[$j]}.0_8TeVonecat.txt -o hgg.mH${radion[$j]}.0_8TeVonecat.root -L ../../GaussExp_cxx.so
+        
+        if [ ${doBlinding} == 1 ]    
+        then
+                combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+        	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
+	        echo did with rep 2btag only
+	       
+	        combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
+	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
+	        echo with rep no syst	
 
-        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
-# -L ../../GaussExp_cxx.so
-	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
-	echo did with rep 2btag only
-	#
-#	text2workspace.py hgg.mH${radion[$j]}.0_8TeVrep.txt -o hgg.mH${radion[$j]}.0_8TeVrep.root -L ../../GaussExp_cxx.so
-	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
-#-L ../../GaussExp_cxx.so 
-	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
-	echo with rep no syst	
-	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
-	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
-	echo did with rep 
-	# lnu do not work in 4 body
-#	text2workspace.py hgg.mH${radion[$j]}.0_8TeVlnu.txt -o hgg.mH${radion[$j]}.0_8TeVlnu.root -L ../../GaussExp_cxx.so
-#	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVlnu.root -L ../../GaussExp_cxx.so >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_lnu.txt
-#	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}lnu.root
-#	echo did with lnu 
-	cd ../..
+	        combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
+	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
+	        echo did with rep 
+	        cd ../..
+        else
+                combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+        	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
+	        echo did with rep 2btag only
+	       
+	        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
+	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
+	        echo with rep no syst	
+
+	        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
+	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
+	        echo did with rep 
+	        cd ../..
+        fi   
   done # mass
 #  sed -i -r -e "s/WP[0-9]/WP$i/g" Brazilianflag.cc
 #  root -l -q Brazilianflag.cc

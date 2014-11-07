@@ -38,6 +38,8 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
+Bool_t doblinding = true; //True if you want to blind
+
 RooArgSet* defineVariables()
 {
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
@@ -74,22 +76,22 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/ggh_m125_powheg_8TeV_m350.root";
-  TString hhiggstth = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/tth_m125_8TeV_m350.root";
-  TString hhiggsvbf = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/vbf_m125_8TeV_m350.root";
-  TString hhiggsvh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/wzh_m125_8TeV_zh_m350.root";
-  TString hhiggsbbh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/bbh_m125_8TeV_m350.root";
+  TString hhiggsggh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/ggh_m125_powheg_8TeV_m270.root";
+  TString hhiggstth = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/tth_m125_8TeV_m270.root";
+  TString hhiggsvbf = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/vbf_m125_8TeV_m270.root";
+  TString hhiggsvh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/wzh_m125_8TeV_zh_m270.root";
+  TString hhiggsbbh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/bbh_m125_8TeV_m270.root";
   //
-  TString ssignal = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Radion_m350_8TeV_m350.root ";
-  TString ddata = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Data_m350.root";
+  TString ssignal = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Radion_m270_8TeV_m270.root ";
+  TString ddata = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Data_m270.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m270.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m270.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m270.root";
   //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m350.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m350.root";
+  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m270.root";
+  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m270.root";
+  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m270.root";
   //
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -156,7 +158,7 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   const Int_t ncat = NCAT;
   Float_t MASS(mass);
   // Luminosity:
-  Float_t Lum = 19785.0; // pb-1
+  Float_t Lum = 19712.0; // pb-1
   RooRealVar lumi("lumi","lumi",Lum);
   w->import(lumi);
   RooArgSet* ntplVars = defineVariables();
@@ -234,20 +236,34 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   dataToFit[0] = (RooDataSet*) Data.reduce(
 					   *w->var("mgg"),
 					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0+cutj0);
-  dataToPlot[0] = (RooDataSet*) Data.reduce(
+  if(doblinding){ dataToPlot[0] = (RooDataSet*) Data.reduce(
 					    *w->var("mgg"),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)")// blind
 					    +cut0+cutj0);
+  }else{
+
+                  dataToPlot[0] = (RooDataSet*) Data.reduce(
+					    *w->var("mgg"),
+					    mainCut+TString::Format(" && cut_based_ct==%d",0)
+					    +cut0+cutj0);
+
+  }
    
   dataToFit[1] = (RooDataSet*) Data.reduce(
 					   *w->var("mgg"),
 					   mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1);
-  dataToPlot[1] = (RooDataSet*) Data.reduce(
+  if(doblinding){ dataToPlot[1] = (RooDataSet*) Data.reduce(
 					    *w->var("mgg"),
 					    mainCut+TString::Format(" && cut_based_ct==%d",1)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)") // blind
 					    +cut1);
+  }else{
+                  dataToPlot[1] = (RooDataSet*) Data.reduce(
+					    *w->var("mgg"),
+					    mainCut+TString::Format(" && cut_based_ct==%d",1)
+					    +cut1);  
+  }
 
   for (int c = 0; c < ncat; ++c) {
     w->import(*dataToFit[c],Rename(TString::Format("Data_cat%d",c)));
@@ -614,7 +630,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 350 GeV");
+    legmc->SetHeader(" 270 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -870,7 +886,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 350 GeV");
+			     " Resonance - 270 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -989,7 +1005,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 350 GeV");
+			       " Resonance - 270 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1205,13 +1221,22 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   ////////////////////////////////////////////////////////////////////////////////////
   //RooRealVar* lumi = w->var("lumi");
   cout << "======== Expected Events Number =====================" << endl;
-  cout << ".........Measured Data for L = " << "19785" << " pb-1 ............................" << endl;
-  cout << "#Events data: " << w->data("Data")->sumEntries() << endl;
-  for (int c = 0; c < ncat; ++c) {
-    cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+  cout << ".........Measured Data for L = " << "19712" << " pb-1 ............................" << endl;
+  if(!doblinding){ cout << "#Events data: " << w->data("Data")->sumEntries() << endl; }
+  else cout << "#Events data: -1 " << endl;
+
+  if(!doblinding){
+     for (int c = 0; c < ncat; ++c) {
+          cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+     }
+  }else{
+     for (int c = 0; c < ncat; ++c) {
+          cout << TString::Format("#Events data cat%d: ",c) << -1 << endl;
+     }
   }
-  cout << ".........Expected Signal for L = " << "19785" << " pb-1 ............................" << endl;
-  cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl;
+  cout << ".........Expected Signal for L = " << "19712" << " pb-1 ............................" << endl;
+  if(!doblinding){ cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl; }
+  else cout << "#Events Signal: -1 " << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
     cout << TString::Format("#Events Signal cat%d: ",c) << sigToFit[c]->sumEntries() << endl;
@@ -1223,7 +1248,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 
   // outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
   outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
-  outFile << "# Lumi = " << "19785" << " pb-1" << endl;
+  outFile << "# Lumi = " << "19712" << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 6" << endl; // number of BKG
   outFile << "kmax *" << endl;
@@ -1256,7 +1281,8 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   if(addHiggs) { //
     outFile << "bin cat0 cat1 " << endl;
     cout<<"here"<<endl;
-    outFile << "observation "<< data[0]->sumEntries() <<" " << data[1]->sumEntries() <<" "<< endl;
+    if(!doblinding){ outFile << "observation "<< data[0]->sumEntries() <<" " << data[1]->sumEntries() <<" "<< endl; }
+    else outFile << "observation -1 -1 " << endl;
     outFile << "------------------------------" << endl;
     outFile << "bin cat0 cat0 cat0 cat0 cat0 cat0 cat0"
 	    <<" cat1 cat1 cat1 cat1 cat1 cat1 cat1" << endl;
@@ -1312,23 +1338,23 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 	    << " - - 1.40 1.40 1.40 1.40 1.40 " << endl;
     outFile << " " << endl;
     outFile << "############## Signal parametric shape uncertainties " << endl;
-    outFile << "CMS_hgg_sig_m0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2) " << endl;
+    outFile << "CMS_hgg_sig_m0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2) " << endl;
     outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
     outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
-    outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
      //
-    outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0057 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.35^ 2)" << endl;
+    outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_4_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
     outFile << "############## for mgg fit - slopes" << endl;
@@ -1361,14 +1387,19 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   }
   //RooRealVar* lumi = w->var("lumi");
   cout << "======== Expected Events Number =====================" << endl;
-  cout << ".........Measured Data for L = " << "19785" << " pb-1 ............................" << endl;
-  cout << "#Events data: " << w->data("Data")->sumEntries() << endl;
-  for (int c = 0; c < ncat; ++c) {
-    cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+  cout << ".........Measured Data for L = " << "19712" << " pb-1 ............................" << endl;
+  if(!doblinding){ cout << "#Events data: " << w->data("Data")->sumEntries() << endl; }
+  else cout << "#Events data: -1 " << endl;
+  if(!doblinding){
+     for (int c = 0; c < ncat; ++c) cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+  }
+  else{
+     for (int c = 0; c < ncat; ++c) cout << TString::Format("#Events data cat%d: ",c) << -1 << endl;
   }
   // cout << ".........Expected Signal for L = " << lumi->getVal() << " pb-1 ............................" << endl;
-  cout << ".........Expected Signal for L = " << "19785" << " pb-1 ............................" << endl;
-  cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl;
+  cout << ".........Expected Signal for L = " << "19712" << " pb-1 ............................" << endl;
+  if(!doblinding){ cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl; }
+  else cout << "#Events Signal: -1 " << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
     cout << TString::Format("#Events Signal cat%d: ",c) << sigToFit[c]->sumEntries() << endl;
@@ -1381,7 +1412,7 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   //outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
   outFile << "#Run with: combine -d hgg.mH350.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3500 -i 50000 --optimizeSim=1 --tries 30" << endl;
   // outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
-  outFile << "# Lumi = " << "19785" << " pb-1" << endl;
+  outFile << "# Lumi = " << "19712" << " pb-1" << endl;
   outFile << "imax 1" << endl;
   outFile << "jmax 1" << endl; // number of BKG
   outFile << "kmax *" << endl;
@@ -1399,8 +1430,12 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   /////////////////////////////////////
   if(addHiggs) { //
     outFile << "bin cat0 " << endl;
+    if(!doblinding){ 
     outFile << "observation "
-	    << data[0]->sumEntries() << " " << endl;
+	    << data[0]->sumEntries() << " " << endl; 
+    }else{
+    outFile << "observation -1 " << endl;   
+    }
     outFile << "------------------------------" << endl;
     outFile << "bin cat0 cat0 " << endl;
     outFile << "process mggSig mggBkg " << endl;

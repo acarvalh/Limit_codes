@@ -37,6 +37,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
 const int minfit =320,minfit =320, maxfit=1200;
 
+Bool_t doblinding = true; //True if you want to blind
+
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
@@ -101,7 +103,7 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   const Int_t ncat = NCAT;
   Float_t MASS(mass);
   // Luminosity:
-  Float_t Lum = 19620.0; // pb-1
+  Float_t Lum = 19712.0; // pb-1
   RooRealVar lumi("lumi","lumi",Lum);
   w->import(lumi);
   RooArgSet* ntplVars = defineVariables();
@@ -160,7 +162,11 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
 
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
-  TString cut0 = "&& mgg > 120 && mgg < 130 && mjj > 90 && mjj < 165 "; // " && 1>0";//
+
+  TString cut0;
+  if(doblinding){ cut0 = "&& mgg > 120 && mgg < 130 && mjj > 90 && mjj < 165 "; }
+  else{ cut0 = "&& 1>0 "; }
+
   for (int c = 0; c < ncat; ++c) {
     if(c==0) dataToFit[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
@@ -634,12 +640,20 @@ void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* file
   RooRealVar* lumi = w->var("lumi");
   cout << "======== Expected Events Number =====================" << endl;
   cout << ".........Measured Data for L = " << lumi->getVal() << " pb-1 ............................" << endl;
-  cout << "#Events data: " << data[0]->sumEntries() + data[1]->sumEntries() << endl;
-  for (int c = 0; c < ncat; ++c) {
-    cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+  if(!doblinding){ cout << "#Events data: " << data[0]->sumEntries() + data[1]->sumEntries() << endl;}
+  else cout << "#Events data: -1 " << endl;
+  if(!doblinding){
+     for (int c = 0; c < ncat; ++c) {
+          cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+     }
+  }else{
+     for (int c = 0; c < ncat; ++c) {
+          cout << TString::Format("#Events data cat%d: ",c) << -1 << endl;
+     }
   }
   cout << ".........Expected Signal for L = " << lumi->getVal() << " pb-1 ............................" << endl;
-  cout << "#Events Signal: " << sigToFit[0]->sumEntries()+sigToFit[1]->sumEntries()  << endl;
+  if(!doblinding){ cout << "#Events Signal: " << sigToFit[0]->sumEntries()+sigToFit[1]->sumEntries()  << endl; }
+  else cout << "#Events Signal: -1 "  << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
     cout << TString::Format("#Events Signal cat%d: ",c) << sigToFit[c]->sumEntries() << endl;
@@ -670,10 +684,11 @@ cout<<"here"<<endl;
   /////////////////////////////////////
   /////////////////////////////////////
   outFile << "bin cat0 cat1 " << endl;
-  outFile << "observation "
+  if(!doblinding){ outFile << "observation "
         << data[0]->sumEntries() << " "
         << data[1]->sumEntries() << " "
-        << endl;
+        << endl; 
+  }else outFile << "observation -1 -1 " << endl;
   outFile << "------------------------------" << endl;
   outFile << "bin cat0 cat0 cat1 cat1" << endl;
   outFile << "process mtotSig mtotBkg mtotSig mtotBkg" << endl;
@@ -747,9 +762,14 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
   RooRealVar* lumi = w->var("lumi");
   cout << "======== Expected Events Number =====================" << endl;
   cout << ".........Measured Data for L = " << lumi->getVal() << " pb-1 ............................" << endl;
-  cout << "#Events data: " << data[0]->sumEntries() << endl;
-  for (int c = 0; c < ncat; ++c) {
-    cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+  if(!doblinding){ cout << "#Events data: " << data[0]->sumEntries() << endl; }
+  else cout << "#Events data: -1 " << endl;
+  if(!doblinding){ 
+     for (int c = 0; c < ncat; ++c) 
+          cout << TString::Format("#Events data cat%d: ",c) << data[c]->sumEntries() << endl;
+  }else{
+     for (int c = 0; c < ncat; ++c) 
+          cout << TString::Format("#Events data cat%d: ",c) << -1 << endl;
   }
   cout << ".........Expected Signal for L = " << lumi->getVal() << " pb-1 ............................" << endl;
   cout << "#Events Signal: " << sigToFit[0]->sumEntries() << endl;
@@ -783,9 +803,12 @@ cout<<"here"<<endl;
   /////////////////////////////////////
   /////////////////////////////////////
   outFile << "bin cat0 " << endl;
-  outFile << "observation "
+  if(!doblinding){ outFile << "observation "
         << data[0]->sumEntries() << " "
         << endl;
+  }else{
+     outFile << "observation -1 " << endl;
+  }
   outFile << "------------------------------" << endl;
   outFile << "bin cat0 cat0 " << endl;
   outFile << "process mtotSig mtotBkg" << endl;
