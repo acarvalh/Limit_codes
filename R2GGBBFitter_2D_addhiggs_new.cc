@@ -272,15 +272,10 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
   // four categories to fit
   RooDataSet* sigToFit[ncat];
   RooAbsPdf* mggSig[ncat];
+  RooAbsPdf* mjjSig[ncat];
   // fit range
-  /*
-    const int minsigfit =mass - 120, maxsigfit=mass +120;
-    RooDataSet* sigToFit[ncat];
-    RooAbsPdf* mtotSig[ncat];
-    // fit range
-    Float_t minMassFit2(minfit2),minMassFit1(minsigfit),maxMassFit(maxsigfit);
-  */
-  Float_t minSigFit(115),maxSigFit(135);
+  Float_t minSigMggFit(115),maxSigMggFit(135);
+  Float_t minSigMjjFit(60),maxSigMjjFit(180);
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     sigToFit[c] = (RooDataSet*) w->data(TString::Format("Sig_cat%d",c));
@@ -291,14 +286,19 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
     cout << "OK up to now..." <<MASS<< endl;
     // Fit model as M(x|y) to D(x,y)
 
-    mggSig[c]->fitTo(*sigToFit[c],Range(minSigFit,maxSigFit),SumW2Error(kTRUE));
+    mggSig[c]->fitTo(*sigToFit[c],Range(minSigMggFit,maxSigMggFit),SumW2Error(kTRUE));
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal() << endl;
 
-    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal()+0.6; // shift the peak
+    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal()+(MASS-125.0); // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->setVal(mPeak); // shift the peak
 
     cout << "mPeak = " << mPeak << endl;
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal() << endl;
+
+    mjjSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjSig_cat%d",c));
+    cout << "OK up to now..." <<MASS<< endl;
+    // Fit model as M(x|y) to D(x,y)
+    mjjSig[c]->fitTo(*sigToFit[c],Range(minSigMjjFit,maxSigMjjFit),SumW2Error(kTRUE));
 
     // IMPORTANT: fix all pdf parameters to constant, why?
     w->defineSet(TString::Format("SigPdfParam_cat%d",c),
@@ -308,8 +308,18 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 			   *w->var(TString::Format("mgg_sig_alpha_cat%d",c)),
 			   *w->var(TString::Format("mgg_sig_n_cat%d",c)),
 			   *w->var(TString::Format("mgg_sig_gsigma_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_frac_cat%d",c))) );
+			   *w->var(TString::Format("mgg_sig_frac_cat%d",c))),
+                           *w->var(TString::Format("mjj_sig_m0_cat%d",c)),
+		           *w->var(TString::Format("mjj_sig_sigma_cat%d",c)),
+		           *w->var(TString::Format("mjj_sig_alpha_cat%d",c)),
+		           *w->var(TString::Format("mjj_sig_n_cat%d",c)),
+		           *w->var(TString::Format("mjj_sig_gsigma_cat%d",c)),
+		           *w->var(TString::Format("mjj_sig_frac_cat%d",c))) );
     SetConstantParams(w->set(TString::Format("SigPdfParam_cat%d",c)));
+
+    RooProdPdf SigPdf(TString::Format("SigPdf_cat%d",c),"",RooArgSet(*mggSig[c], *mjjSig[c]));    
+    w->import(SigPdf);
+
   } // close for ncat
 } // close signal model fit
 /////////////////////////////////////////
@@ -332,7 +342,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     cout << "OK up to now..." <<MASS<< endl;
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
 
-    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+0.6; // shift the peak
+    double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+(MASS-125.0); // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(mPeak); // shift the peak
 
     cout << "mPeak = " << mPeak << endl;
