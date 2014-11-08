@@ -65,18 +65,18 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   style();
   TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m400.rs"); // fit model parameters to kinfit
+  TString card_name("models_mtot_range_m1100.rs"); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs(); // Get models and variables
   RooFitResult* fitresults;
 
-  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
+  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
   TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
@@ -390,7 +390,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    //legmc->SetHeader("M_{X} = 500 GeV");
+    //legmc->SetHeader("M_{X} = 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -603,7 +603,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
         minMassFit+10.5,0.85*plotmtot[c]->GetMaximum(),
-        " M_{X} = 400 GeV");
+        " M_{X} = 1100 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+10.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
