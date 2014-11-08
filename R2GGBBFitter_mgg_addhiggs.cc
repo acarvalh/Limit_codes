@@ -76,23 +76,15 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/ggh_m125_powheg_8TeV_m270.root";
-  TString hhiggstth = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/tth_m125_8TeV_m270.root";
-  TString hhiggsvbf = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/vbf_m125_8TeV_m270.root";
-  TString hhiggsvh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/wzh_m125_8TeV_zh_m270.root";
-  TString hhiggsbbh = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/bbh_m125_8TeV_m270.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/ggh_m125_powheg_8TeV_m270.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/tth_m125_8TeV_m270.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/vbf_m125_8TeV_m270.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/wzh_m125_8TeV_zh_m270.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/bbh_m125_8TeV_m270.root";
   //
-  TString ssignal = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Radion_m270_8TeV_m270.root ";
-  TString ddata = "/afs/cern.ch/user/h/hebda/public/forRadion/v35_fitToMgg_resSearch_withKinFit/Data_m270.root";
-  //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m270.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Radion_m350_8TeV_nm_m270.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v16_base_mgg_0_massCutVersion0/02013-11-05-Data_m270.root";
-  //
-  // TString hhiggs = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m270.root";
-  // TString ssignal = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Radion_m350_8TeV_nm_m270.root";
-  // TString ddata = "MiniTrees/OlivierOc13/v15_regkin_mgg_0_massCutVersion0/02013-10-30-Data_m270.root";
-  //
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/Radion_m270_8TeV_m270.root ";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMgg_resSearch_withKinFit/Data_m270.root";
+
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
   //
