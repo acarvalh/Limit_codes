@@ -387,8 +387,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 					     TString::Format("p1mod_cat%d",c),
 					     "","@0*@0",
 					     *w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c)));
-    RooAbsPdf* mggBkgTmp0 = new RooGenericPdf( // if exp function
-					      TString::Format("DijetBackground_%d",c),
+    RooAbsPdf* mggBkgTmp0 = new RooGenericPdf(
+					      TString::Format("MggNonresBkg_%d",c),
 					      "1./pow(@0,@1)",
 					      RooArgList(*mgg, *p1mod));
     // we first wrap the normalization of mggBkgTmp0
