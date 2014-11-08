@@ -1,5 +1,6 @@
 #!/bin/bash
 
+doBlinding=1
 
 #change for signal
 #declare -a sigfiles=( "radion_300" "radion_500" "radion_700" "radion_1000") 
@@ -17,13 +18,9 @@ declare -a radion=("350" "400" "450" "500" "550" "600" "650" "700" "800" "900" "
 declare -a winl=("300" "350" "400" "450" "500" "550" "600" "650" "750" "800" "900" "1000" "1100" "1200" "1300")
 declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "900" "1000" "1100" "1200" "1300" "1400" "1500")
 
-# R2GGBBFitter_mtot_side.cc
-# models_mtot_exp.rs
-doBlinding=1
-
 mkdir radlim_Mggjj
 
-for (( j = 0 ; j < 12 ; j++ )); do # for each mass 
+for (( j = 1 ; j < 12 ; j++ )); do # for each mass 
 
     sed -i -r -e "s/m[0-9]+.rs/m${radion[$j]}.rs/g" R2GGBBFitter_mtot_range.cc
     sed -i -r -e "s/m[0-9]+_8TeV_m[0-9]+.root/m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
