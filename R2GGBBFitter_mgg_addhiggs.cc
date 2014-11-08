@@ -273,13 +273,6 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
   RooDataSet* sigToFit[ncat];
   RooAbsPdf* mggSig[ncat];
   // fit range
-  /*
-    const int minsigfit =mass - 120, maxsigfit=mass +120;
-    RooDataSet* sigToFit[ncat];
-    RooAbsPdf* mtotSig[ncat];
-    // fit range
-    Float_t minMassFit2(minfit2),minMassFit1(minsigfit),maxMassFit(maxsigfit);
-  */
   Float_t minSigFit(115),maxSigFit(135);
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
