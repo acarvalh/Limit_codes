@@ -21,97 +21,69 @@ declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "900" "1000" "1
 # models_mtot_exp.rs
 doBlinding=1
 
-for (( i = 4 ; i < 5 ; i++ )); do # for each working point
-  mkdir radlim_CSV_WP$i
+mkdir radlim_Mggjj
 
-#  for (( j = 11 ; j < ${#radion[@]} ; j++ )); do # for each mass 
-  for (( j = 3 ; j < 4 ; j++ )); do # for each mass 
-#  for (( j = 0 ; j < 11 ; j++ )); do # for each mass 
-	# create the datacard and the workspaces
-	#check the name on R2GGBBFitter.cc!!   legmc->SetHeader("300 GeV | CIC + X jets selection");
-        # TString ssignal   = "./MiniTrees/jetwin/WP1/1000.root";
-        # TString ddata   = "./MiniTrees/jetwin/WP1/Data_1000.root";
-	# things to choose on the runcard
-	# the signal file
-	sed -i -r -e "s/WP[0-9]/WP$i/g" R2GGBBFitter_mtot_range.cc
-        #sed -i -r -e "s/m[0-9]+.root/m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
-        sed -i -r -e "s/m[0-9]+.rs/m${radion[$j]}.rs/g" R2GGBBFitter_mtot_range.cc
-        sed -i -r -e "s/m[0-9]+_8TeV_m[0-9]+.root/m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
-#	sed -i -r -e "s/[0-9]+\_minimal.root/${radion[$j]}\_minimal.root/g" R2GGBBFitter_mtot_range.cc
-#	sed -i -r -e "s/[0-9]+\_regression/${radion[$j]}\_regression/g" R2GGBBFitter_mtot_range.cc
-#	sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" R2GGBBFitter_mtot_range.cc
-	#sed -i -r -e "s/m[0-9]+\_/m${radion[$j]}\_/g" models_mtot_range.rs
-	sed -i -r -e "s/mtot_sig_m0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
-sed -i -r -e "s/mtot_sig_m0_cat0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
-sed -i -r -e "s/mtot_sig_m0_cat1\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat1\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+for (( j = 0 ; j < 12 ; j++ )); do # for each mass 
 
-	# the legend
-	sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mtot_range.cc
-	# the window mtot > 550 || mtot < 450
-	sed -i -r -e "s/mtot > [0-9]+ \|\| mtot < [0-9]+/mtot > ${winu[$j]} \|\| mtot < ${winl[$j]}/g" R2GGBBFitter_mtot_range.cc
-echo WP$i MR ${radion[$j]}
-	# the mass to fit around
-	sed -i -r -e "s/runfits\([0-9]+/runfits\(${radion[$j]}/g" runfits.C
-	# the fit model
-	# mtot_sig_m0[500.0, 450, 550];
-	# mtot_sig_m0_cat0[500.0, 450, 550];
-	# mtot_sig_m0_cat1[500.0, 450, 550];
-	# mtot_sig_m0_cat2[500.0, 450, 550];
-#	sed -i -r -e "s/mtot_sig_m0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
-#	sed -i -r -e "s/mtot_sig_m0_cat0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
-#	sed -i -r -e "s/mtot_sig_m0_cat1\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat1\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
-#	sed -i -r -e "s/mtot_sig_m0_cat2\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat2\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range_m400.rs
-	mkdir radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-	root -l -q runfits.C >> radlim_CSV_WP$i/radlim${radion[$j]}_CSV/log_radlim${radion[$j]}.txt
-	mv workspaces/hgg.* radlim_CSV_WP$i/radlim${radion[$j]}_CSV
-	mv datacards/* radlim_CSV_WP$i/radlim${radion[$j]}_CSV
-	#also colect the plots
-	mv databkgoversig*  radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-	mv sigmodel*  radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-	mv remenber.txt radlim${radion[$j]}_CSV
-	## create limits root files for each mass
-#	cd radlim${radion[$j]}_CSV
-	cd radlim_CSV_WP$i/radlim${radion[$j]}_CSV/
-        cp ../../models_mtot_range_m${radion[$j]}.rs .
-	# ### gROOT->ProcessLine(".L /afs/cern.ch/work/a/acarvalh/CMSSW_6_1_1/src/ggfits/GaussExp.cxx+")
-#	combine hgg.mH${radion[$j]}.0_8TeVlnu.txt -M Asymptotic -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_lnu.txt
-#	mv higgsCombineTest.Asymptotic.mH${radion[$j]}.root higgsCombineTest.Asymptotic.mR${radion[$j]}_lnu.root
-#	echo did with lnu 
-	#
-#	text2workspace.py hgg.mH${radion[$j]}.0_8TeVonecat.txt -o hgg.mH${radion[$j]}.0_8TeVonecat.root -L ../../GaussExp_cxx.so
-        
-        if [ ${doBlinding} == 1 ]    
-        then
-                combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
-        	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
-	        echo did with rep 2btag only
+    sed -i -r -e "s/m[0-9]+.rs/m${radion[$j]}.rs/g" R2GGBBFitter_mtot_range.cc
+    sed -i -r -e "s/m[0-9]+_8TeV_m[0-9]+.root/m${radion[$j]}_8TeV_m${radion[$j]}.root/g" R2GGBBFitter_mtot_range.cc
+
+    sed -i -r -e "s/mtot_sig_m0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+    sed -i -r -e "s/mtot_sig_m0_cat0\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat0\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+    sed -i -r -e "s/mtot_sig_m0_cat1\[[0-9]+, [0-9]+, [0-9]+/mtot_sig_m0_cat1\[${radion[$j]}, ${winl[$j]}, ${winu[$j]}/g" models_mtot_range.rs
+
+    # the legend
+    sed -i -r -e "s/[0-9]+ GeV\"\);/${radion[$j]} GeV\"\);/g" R2GGBBFitter_mtot_range.cc
+    sed -i -r -e "s/mtot > [0-9]+ \|\| mtot < [0-9]+/mtot > ${winu[$j]} \|\| mtot < ${winl[$j]}/g" R2GGBBFitter_mtot_range.cc
+
+    echo MR ${radion[$j]}
+    # the mass to fit around
+    sed -i -r -e "s/runfits\([0-9]+/runfits\(${radion[$j]}/g" runfits.C
+
+    outputdir="radlim_Mggjj/radlim${radion[$j]}"
+    mkdir $outputdir
+    root -l -q runfits.C >> ${outputdir}/log_radlim${radion[$j]}.txt
+    mv workspaces/hgg.* ${outputdir}
+    mv datacards/* ${outputdir}
+    #also colect the plots
+    mv databkgoversig*  ${outputdir}
+    mv sigmodel*  ${outputdir}
+
+    # create limits root files for each mass
+    cd ${outputdir}/
+    cp ../../models_mtot_range_m${radion[$j]}.rs .
+
+    if [ ${doBlinding} == 1 ]    
+    then
+	combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
+	echo did with rep 2btag only
 	       
-	        combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
-	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
-	        echo with rep no syst	
+	combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
+	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
+	echo with rep no syst	
 
-	        combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
-	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
-	        echo did with rep 
-	        cd ../..
-        else
-                combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
-        	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
-	        echo did with rep 2btag only
-	       
-	        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
-	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
-	        echo with rep no syst	
+	combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
+	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
+	echo did with rep 
+	cd ../..
+    else
+	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
+	echo did with rep 2btag only
+	
+	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
+	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
+	echo with rep no syst	
 
-	        combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
-	        mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
-	        echo did with rep 
-	        cd ../..
-        fi   
-  done # mass
-#  sed -i -r -e "s/WP[0-9]/WP$i/g" Brazilianflag.cc
+	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
+	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
+	echo did with rep 
+	cd ../..
+    fi   
+done # mass
+
 #  root -l -q Brazilianflag.cc
-done # wp
 #sed -i -r -e "s/mR300.Xcut/Mcut_cutbased/g" Brazilianflag.cc #adapt this name to the cut
 #root -l Brazilianflag.cc
 
