@@ -332,8 +332,8 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
   RooAbsPdf* mggHig[ncat];
   RooAbsPdf* mjjHig[ncat];
   // fit range
-  Float_t minSigMggFit(115),maxSigMggFit(135);
-  Float_t minSigMjjFit(60),maxSigMjjFit(180);
+  Float_t minHigMggFit(115),maxHigMggFit(135);
+  Float_t minHigMjjFit(60),maxHigMjjFit(180);
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",higgschannel,c));
@@ -351,12 +351,12 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
 
     // Fit model as M(x|y) to D(x,y)
-    mggHig[c]->fitTo(*higToFit[c],Range(minSigMggFit,maxSigMggFit),SumW2Error(kTRUE));
+    mggHig[c]->fitTo(*higToFit[c],Range(minHigMggFit,maxHigMggFit),SumW2Error(kTRUE));
 
     mjjHig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
     cout << "OK up to now..." <<MASS<< endl;
     // Fit model as M(x|y) to D(x,y)
-    mjjHig[c]->fitTo(*higToFit[c],Range(minSigMjjFit,maxSigMjjFit),SumW2Error(kTRUE));
+    mjjHig[c]->fitTo(*higToFit[c],Range(minHigMjjFit,maxHigMjjFit),SumW2Error(kTRUE));
 
     // IMPORTANT: fix all pdf parameters to constant
     w->defineSet(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c),
@@ -395,18 +395,24 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooDataSet* data[ncat];
   RooDataSet* dataplot[ncat]; // the data
   RooBernstein* mggBkg[ncat];// the polinomial of 4* order
-  RooGaussian* Higgs[ncat]; // the higgs to sum
+  RooBernstein* mjjBkg[ncat];// the polinomial of 4* order
   RooPlot* plotmggBkg[ncat];
+  RooPlot* plotmjjBkg[ncat];
   RooDataSet* sigToFit0[ncat];
   RooDataSet* sigToFit1[ncat];
   RooDataSet* sigToFit2[ncat];
   RooDataSet* sigToFit3[ncat];
   RooAbsPdf* mggSig[ncat];
+  RooAbsPdf* mjjSig[ncat];
   Float_t minMggMassFit(100),maxMggMassFit(180);
   Float_t minMjjMassFit(60),maxMjjMassFit(180);
   // Fit data with background pdf for data limit
   RooRealVar* mgg = w->var("mgg");
+  RooRealVar* mjj = w->var("mjj");
   mgg->setUnit("GeV");
+  mjj->setUnit("GeV");
+  mgg->setRange("MassRange",minMggMassFit,maxMggMassFit);
+  mjj->setRange("MassRange",minMjjMassFit,maxMjjMassFit);
   //
   TLatex *text = new TLatex();
   text->SetNDC();
@@ -419,29 +425,31 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     // these are the parameters for the bkg polinomial
     // one slope by category - float from -10 > 10
     // the parameters are squared
-    RooFormulaVar *p1mod = new RooFormulaVar(
-					     TString::Format("p1mod_cat%d",c),
+    RooFormulaVar *mgg_p1mod = new RooFormulaVar(
+					     TString::Format("mgg_p1mod_cat%d",c),
 					     "","@0*@0",
 					     *w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c)));
-    RooAbsPdf* mggBkgTmp0 = new RooGenericPdf( // if exp function
-					      TString::Format("DijetBackground_%d",c),
+    RooFormulaVar *mjj_p1mod = new RooFormulaVar(
+					     TString::Format("mjj_p1mod_cat%d",c),
+					     "","@0*@0",
+					     *w->var(TString::Format("mjj_bkg_8TeV_slope1_cat%d",c)));
+
+    RooAbsPdf* mggBkgTmp0 = new RooGenericPdf(
+					      TString::Format("MggNonresBkg_%d",c),
 					      "1./pow(@0,@1)",
-					      RooArgList(*mgg, *p1mod));
+					      RooArgList(*mgg, *mgg_p1mod));
+    RooAbsPdf* mjjBkgTmp0 = new RooGenericPdf(
+					      TString::Format("MjjNonresBkg_%d",c),
+					      "1./pow(@0,@1)",
+					      RooArgList(*mjj, *mjj_p1mod));
+
     // we first wrap the normalization of mggBkgTmp0
-    w->factory(TString::Format("mgg_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c));
-    RooExtendPdf mggBkgTmp( // we copy the pdf? normalized
-			   TString::Format("mggBkg_cat%d",c),
-			   "",*mggBkgTmp0,
-			   *w->var(TString::Format("mgg_bkg_8TeV_norm_cat%d",c)) // normalization only on full bkg
-			   );
-    fitresult[c] = mggBkgTmp.fitTo( // fit with normalized pdf,and return values
-				   *data[c], // bkg
-				   Strategy(1), // MINUIT strategy
-				   Minos(kFALSE), // interpretation on the errors, nonlinearities
-				   Range(minMassFit,maxMassFit),
-				   SumW2Error(kTRUE),
-				   Save(kTRUE));
-    w->import(mggBkgTmp);
+    RooProdPdf BkgPdfTmp(TString::Format("BkgPdfTmp%d",c), "Background Pdf", RooArgList(*mggBkgTmp0, *mjjBkgTmp0));
+    w->factory(TString::Format("bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c));
+    RooExtendPdf BkgPdf(TString::Format("BkgPdf_cat%d",c),"", BkgPdfTmp,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
+    fitresult[c] = BkgPdf.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("MassRange"),SumW2Error(kTRUE), Save(kTRUE));
+    w->import(BkgPdf);
+
     //************************************************//
     // Plot mgg background fit results per categories
     //************************************************//
