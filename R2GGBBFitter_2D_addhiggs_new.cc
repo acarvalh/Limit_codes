@@ -308,7 +308,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 			   *w->var(TString::Format("mgg_sig_alpha_cat%d",c)),
 			   *w->var(TString::Format("mgg_sig_n_cat%d",c)),
 			   *w->var(TString::Format("mgg_sig_gsigma_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_frac_cat%d",c))),
+			   *w->var(TString::Format("mgg_sig_frac_cat%d",c)),
                            *w->var(TString::Format("mjj_sig_m0_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_sigma_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_alpha_cat%d",c)),
@@ -330,8 +330,10 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
   // four categories to fit
   RooDataSet* higToFit[ncat];
   RooAbsPdf* mggHig[ncat];
+  RooAbsPdf* mjjHig[ncat];
   // fit range
-  Float_t minSigFit(115),maxSigFit(135);
+  Float_t minSigMggFit(115),maxSigMggFit(135);
+  Float_t minSigMjjFit(60),maxSigMjjFit(180);
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",higgschannel,c));
@@ -349,7 +351,13 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
 
     // Fit model as M(x|y) to D(x,y)
-    mggHig[c]->fitTo(*higToFit[c],Range(minSigFit,maxSigFit),SumW2Error(kTRUE));
+    mggHig[c]->fitTo(*higToFit[c],Range(minSigMggFit,maxSigMggFit),SumW2Error(kTRUE));
+
+    mjjHig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
+    cout << "OK up to now..." <<MASS<< endl;
+    // Fit model as M(x|y) to D(x,y)
+    mjjHig[c]->fitTo(*higToFit[c],Range(minSigMjjFit,maxSigMjjFit),SumW2Error(kTRUE));
+
     // IMPORTANT: fix all pdf parameters to constant
     w->defineSet(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c),
 		 RooArgSet(
@@ -358,8 +366,17 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
 			   *w->var(TString::Format("mgg_hig_alpha_%d_cat%d",higgschannel,c)),
 			   *w->var(TString::Format("mgg_hig_n_%d_cat%d",higgschannel,c)),
 			   *w->var(TString::Format("mgg_hig_gsigma_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mgg_hig_frac_%d_cat%d",higgschannel,c))) );
+			   *w->var(TString::Format("mgg_hig_frac_%d_cat%d",higgschannel,c)),
+			   *w->var(TString::Format("mjj_hig_m0_%d_cat%d",higgschannel,c)),
+			   *w->var(TString::Format("mjj_hig_sigma_%d_cat%d",higgschannel,c)),
+			   *w->var(TString::Format("mjj_hig_alpha_%d_cat%d",higgschannel,c)),
+			   *w->var(TString::Format("mjj_hig_n_%d_cat%d",higgschannel,c)),
+			   *w->var(TString::Format("mjj_hig_gsigma_%d_cat%d",higgschannel,c)),
+			   *w->var(TString::Format("mjj_hig_frac_%d_cat%d",higgschannel,c))) );
     SetConstantParams(w->set(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c)));
+
+    RooProdPdf HigPdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c),"",RooArgSet(*mggHig[c], *mjjHig[c]));
+    w->import(HigPdf);
   } // close for ncat
 } // close higgs model fit
 ////////////////////////////////////////////////////////////
@@ -385,7 +402,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooDataSet* sigToFit2[ncat];
   RooDataSet* sigToFit3[ncat];
   RooAbsPdf* mggSig[ncat];
-  Float_t minMassFit(100),maxMassFit(180);
+  Float_t minMggMassFit(100),maxMggMassFit(180);
+  Float_t minMjjMassFit(60),maxMjjMassFit(180);
   // Fit data with background pdf for data limit
   RooRealVar* mgg = w->var("mgg");
   mgg->setUnit("GeV");
@@ -405,41 +423,6 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 					     TString::Format("p1mod_cat%d",c),
 					     "","@0*@0",
 					     *w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c)));
-    // if(c==1){RooFormulaVar *p2mod = new RooFormulaVar(
-    //TString::Format("p2mod_cat%d",c)
-    //,"","@0*@0",
-    //*w->var(TString::Format("mgg_bkg_8TeV_slope2_cat%d",c)));
-    // RooFormulaVar *p3mod = new RooFormulaVar(
-    //TString::Format("p3mod_cat%d",c)
-    //,"","@0*@0",
-    //*w->var(TString::Format("mgg_bkg_8TeV_slope3_cat%d",c)));
-    /*
-      RooFormulaVar *p4mod = new RooFormulaVar(
-      TString::Format("p4mod_cat%d",c)
-      ,"","@0*@0",
-      *w->var(TString::Format("mgg_bkg_8TeV_slope4_cat%d",c)));
-      RooFormulaVar *p5mod = new RooFormulaVar(
-      TString::Format("p5mod_cat%d",c)
-      ,"","@0*@0",
-      *w->var(TString::Format("mgg_bkg_8TeV_slope5_cat%d",c)));
-      */
-    // }
-    ////////////////////////////////////////////////////////////////////
-    /* RooAbsPdf* mggBkgTmp0 = 0; // declare a empty pdf
-    // adding pdf's, using the variables
-    if(c==0){
-    mggBkgTmp0 = new RooBernstein( // fill the pdf with the floating parameters
-    TString::Format("mggBkgTmp0_cat%d",c),
-    "", *mgg,
-    RooArgList(RooConst(1.0),*p1mod));
-    }
-    if(c==1){
-    mggBkgTmp0 = new RooBernstein( // fill the pdf with the floating parameters
-    TString::Format("mggBkgTmp0_cat%d",c),
-    "", *mgg,
-    RooArgList(RooConst(1.0),*p1mod, *p2mod, *p3mod));//, *p4mod, *p5mod));
-    }
-    */
     RooAbsPdf* mggBkgTmp0 = new RooGenericPdf( // if exp function
 					      TString::Format("DijetBackground_%d",c),
 					      "1./pow(@0,@1)",
