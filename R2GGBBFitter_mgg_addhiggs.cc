@@ -314,7 +314,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
   RooDataSet* higToFit[ncat];
   RooAbsPdf* mggHig[ncat];
   // fit range
-  Float_t minSigFit(115),maxSigFit(135);
+  Float_t minHigFit(115),maxHigFit(135);
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",higgschannel,c));
@@ -332,7 +332,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
 
     // Fit model as M(x|y) to D(x,y)
-    mggHig[c]->fitTo(*higToFit[c],Range(minSigFit,maxSigFit),SumW2Error(kTRUE));
+    mggHig[c]->fitTo(*higToFit[c],Range(minHigFit,maxHigFit),SumW2Error(kTRUE));
     // IMPORTANT: fix all pdf parameters to constant
     w->defineSet(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c),
 		 RooArgSet(
