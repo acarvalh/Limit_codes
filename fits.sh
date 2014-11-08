@@ -43,7 +43,7 @@ for i in `echo ${runLimits[@]}`; do
 	elif [ ${imass} == "260" ]; then
 	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/MSSM_m260_8TeV_m260.root\";" $fitterScript
 	else
-	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/Radion_m${imass}_8TeV_${imass}.root\";" $fitterScript
+	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/Radion_m${imass}_8TeV_m${imass}.root\";" $fitterScript
 	fi
 
         # the legend
