@@ -2,18 +2,6 @@
 
 doBlinding=1
 
-#change for signal
-#declare -a sigfiles=( "radion_300" "radion_500" "radion_700" "radion_1000") 
-# n files of 500 events
-#declare -a MR=(300 500 700) 
-#change for radion mass cut
-#sed -i -r -e "s/RadMass > [0-9]+\-50/RadMass \> ${MR[$j]}-50/g" ggAnalysis_full_fit_tree.C
-#sed -i -r -e "s/RadMass < [0-9]+\+50/RadMass \< ${MR[$j]}+50/g" ggAnalysis_full_fit_tree.C
-#change for data file
-#declare -a radion=("300" "500" "700" "1000")
-#declare -a winl=("270" "470" "670" "970")
-#declare -a winu=("330" "530" "730" "1030")
-
 declare -a radion=("350" "400" "450" "500" "550" "600" "650" "700" "800" "900" "1000" "1100" "1200" "1300" "1400")
 declare -a winl=("300" "350" "400" "450" "500" "550" "600" "650" "750" "800" "900" "1000" "1100" "1200" "1300")
 declare -a winu=("400" "450" "500" "550" "600" "650" "700" "750" "900" "1000" "1100" "1200" "1300" "1400" "1500")
