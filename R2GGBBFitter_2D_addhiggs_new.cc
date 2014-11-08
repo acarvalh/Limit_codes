@@ -62,13 +62,13 @@ RooArgSet* defineVariables()
 void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 {
   style();
-  TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
-  TString fileHiggsNameggh(TString::Format("hgg.hig.mH%.1f_8TeV.ggh", mass));
-  TString fileHiggsNametth(TString::Format("hgg.hig.mH%.1f_8TeV.tth", mass));
-  TString fileHiggsNamevbf(TString::Format("hgg.hig.mH%.1f_8TeV.vbf", mass));
-  TString fileHiggsNamevh(TString::Format("hgg.hig.mH%.1f_8TeV.vh", mass));
-  TString fileHiggsNamebbh(TString::Format("hgg.hig.mH%.1f_8TeV.bbh", mass));
-  TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
+  TString fileBaseName(TString::Format("hgghbb.mH%.1f_8TeV", mass));
+  TString fileHiggsNameggh(TString::Format("hgghbb.hig.mH%.1f_8TeV.ggh", mass));
+  TString fileHiggsNametth(TString::Format("hgghbb.hig.mH%.1f_8TeV.tth", mass));
+  TString fileHiggsNamevbf(TString::Format("hgghbb.hig.mH%.1f_8TeV.vbf", mass));
+  TString fileHiggsNamevh(TString::Format("hgghbb.hig.mH%.1f_8TeV.vh", mass));
+  TString fileHiggsNamebbh(TString::Format("hgghbb.hig.mH%.1f_8TeV.bbh", mass));
+  TString fileBkgName(TString::Format("hgghbb.inputbkg_8TeV", mass));
   TString card_name("models_test.rs"); // put the model parameters here!
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs();
@@ -843,47 +843,40 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   // Write pdfs and datasets into the workspace before to save
   // for statistical tests.
   //**********************************************************************//
-  RooAbsPdf* mggSigPdf[ncat];
+  RooAbsPdf* SigPdf[ncat];
   RooWorkspace *wAll = new RooWorkspace("w_all","w_all");
   for (int c = 0; c < ncat; ++c) {
-    mggSigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mggSig_cat%d",c));
-    wAll->import(*w->pdf(TString::Format("mggSig_cat%d",c)));
+    SigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("Sig_cat%d",c));
+    wAll->import(*w->pdf(TString::Format("SigPdf_cat%d",c)));
   }
   // (2) Systematics on energy scale and resolution
   // 1,1,1 statistical to be treated on the datacard
   wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_m0_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
   wAll->factory("prod::CMS_hgg_sig_m0_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
+  wAll->factory("CMS_hbb_sig_m0_absShift[1,1,1]");
+  wAll->factory("prod::CMS_hbb_sig_m0_cat0(mjj_sig_m0_cat0, CMS_hbb_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hbb_sig_m0_cat1(mjj_sig_m0_cat1, CMS_hbb_sig_m0_absShift)");
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
-  //wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
-
   wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
-  // save the other parameters
-  /* for (int c = 0; c < ncat; ++c) {
-     wAll->factory(
-     TString::Format("CMS_hgg_sig_alpha_cat%d[%g,0.5,5]",
-     c, wAll->var(TString::Format("mgg_sig_alpha_cat%d",c))->getVal()));
-     wAll->factory(
-     TString::Format("CMS_hgg_sig_n_cat%d[%g,0.5,20]",
-     c, wAll->var(TString::Format("mgg_sig_n_cat%d",c))->getVal()));
-     wAll->factory(
-     TString::Format("CMS_hgg_sig_frac_cat%d[%g,0.0,1.0]",
-     c, wAll->var(TString::Format("mgg_sig_frac_cat%d",c))->getVal()));
-     }
-  */
+  wAll->factory("CMS_hbb_sig_sigmaScale[1,1,1]");
+  wAll->factory("prod::CMS_hbb_sig_sigma_cat0(mjj_sig_sigma_cat0, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_sigma_cat1(mjj_sig_sigma_cat1, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_gsigma_cat0(mjj_sig_gsigma_cat0, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_gsigma_cat1(mjj_sig_gsigma_cat1, CMS_hbb_sig_sigmaScale)");
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
-					       TString::Format("EDIT::CMS_hgg_sig_cat%d(mggSig_cat%d,",c,c) +
+					       TString::Format("EDIT::CMS_sig_cat%d(SigPdf_cat%d,",c,c) +
 					       TString::Format(" mgg_sig_m0_cat%d=CMS_hgg_sig_m0_cat%d, ", c,c) +
 					       TString::Format(" mgg_sig_sigma_cat%d=CMS_hgg_sig_sigma_cat%d, ", c,c) +
-					       // TString::Format(" mgg_sig_alpha_cat%d=CMS_hgg_sig_alpha_cat%d, ", c,c) +
-					       // TString::Format(" mgg_sig_n_cat%d=CMS_hgg_sig_n_cat%d, ", c,c) +
-					       // TString::Format(" mgg_sig_frac_cat%d=CMS_hgg_sig_frac_cat%d, ", c,c) +
-					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c)
+					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c) +
+					       TString::Format(" mjj_sig_m0_cat%d=CMS_hbb_sig_m0_cat%d, ", c,c) +
+					       TString::Format(" mjj_sig_sigma_cat%d=CMS_hbb_sig_sigma_cat%d, ", c,c) + 
+					       TString::Format(" mjj_sig_gsigma_cat%d=CMS_hbb_sig_gsigma_cat%d)", c,c)  );
 					       );
   TString filename(wsDir+TString(fileBaseName)+".inputsig.root");
   wAll->writeToFile(filename);
@@ -901,7 +894,7 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
   // for statistical tests.
   //**********************************************************************//
   RooDataSet* data[ncat];
-  RooAbsPdf* mggBkgPdf[ncat];
+  RooAbsPdf* BkgPdf[ncat];
   RooWorkspace *wAll = new RooWorkspace("w_all","w_all");
   for (int c = 0; c < ncat; ++c) {
     cout<<"here"<<endl;
@@ -909,40 +902,36 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
 
     //RooDataHist* dataBinned = data[c]->binnedClone(); // Uncomment if you want to use wights in the limits
 
-    mggBkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mggBkg_cat%d",c));
+    BkgPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("BkgPdf_cat%d",c));
     wAll->import(*data[c], Rename(TString::Format("data_obs_cat%d",c)));// Comment if you want to use wights in the limits
 
     //wAll->import(*dataBinned, Rename(TString::Format("data_obs_cat%d",c))); // Uncomment if you want to use wights in the limits
 
     cout<<"here"<<endl;
-    wAll->import(*w->pdf(TString::Format("mggBkg_cat%d",c)));
+    wAll->import(*w->pdf(TString::Format("BkgPdf_cat%d",c)));
     cout<<"here"<<endl;
     wAll->factory(
-		  TString::Format("CMS_hgg_bkg_8TeV_cat%d_norm[%g,0.0,100000.0]",
-				  c, w->var(TString::Format("mgg_bkg_8TeV_norm_cat%d",c))->getVal()));
+		  TString::Format("CMS_bkg_8TeV_cat%d_norm[%g,0.0,100000.0]",
+				  c, w->var(TString::Format("bkg_8TeV_norm_cat%d",c))->getVal()));
     cout<<"here"<<endl;
-    wAll->factory(
-		  TString::Format("CMS_hgg_bkg_8TeV_slope1_cat%d[%g,-10,10]",
-				  c, w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c))->getVal()));
+    wAll->factory(TString::Format("CMS_hgg_bkg_8TeV_slope1_cat%d[%g,-10,10]",c, w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c))->getVal()));
+    wAll->factory(TString::Format("CMS_hbb_bkg_8TeV_slope1_cat%d[%g,-10,10]",c, w->var(TString::Format("mjj_bkg_8TeV_slope1_cat%d",c))->getVal()));
+
     cout<<"here"<<endl;
   } // close ncat
   // (2) do reparametrization of background
   for (int c = 0; c < ncat; ++c){
     if(c==0) wAll->factory(
-			   TString::Format("EDIT::CMS_hgg_bkg_8TeV_cat%d(mggBkg_cat%d,",c,c) +
-			   TString::Format(" mgg_bkg_8TeV_norm_cat%d=CMS_hgg_bkg_8TeV_cat%d_norm,", c,c)+
-			   TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c)
-			   //TString::Format(" mgg_bkg_8TeV_slope2_cat%d=CMS_hgg_bkg_8TeV_slope2_cat%d,", c,c)+
-			   //TString::Format(" mgg_bkg_8TeV_slope3_cat%d=CMS_hgg_bkg_8TeV_slope3_cat%d)", c,c)
+			   TString::Format("EDIT::CMS_bkg_8TeV_cat%d(BkgPdf_cat%d,",c,c) +
+			   TString::Format(" bkg_8TeV_norm_cat%d=CMS_bkg_8TeV_cat%d_norm,", c,c)+
+			   TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c) +
+			   TString::Format(" mjj_bkg_8TeV_slope1_cat%d=CMS_hbb_bkg_8TeV_slope1_cat%d)", c,c)
 			   );
     if(c==1) wAll->factory(
-			   TString::Format("EDIT::CMS_hgg_bkg_8TeV_cat%d(mggBkg_cat%d,",c,c) +
-			   TString::Format(" mgg_bkg_8TeV_norm_cat%d=CMS_hgg_bkg_8TeV_cat%d_norm,", c,c)+
-			   TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c)//+
-			   //TString::Format(" mgg_bkg_8TeV_slope2_cat%d=CMS_hgg_bkg_8TeV_slope2_cat%d,", c,c)+
-			   //TString::Format(" mgg_bkg_8TeV_slope3_cat%d=CMS_hgg_bkg_8TeV_slope3_cat%d)", c,c)
-			   // TString::Format(" mgg_bkg_8TeV_slope4_cat%d=CMS_hgg_bkg_8TeV_slope4_cat%d,", c,c)+
-			   // TString::Format(" mgg_bkg_8TeV_slope5_cat%d=CMS_hgg_bkg_8TeV_slope5_cat%d)", c,c)
+			   TString::Format("EDIT::CMS_bkg_8TeV_cat%d(BkgPdf_cat%d,",c,c) +
+			   TString::Format(" bkg_8TeV_norm_cat%d=CMS_bkg_8TeV_cat%d_norm,", c,c)+
+			   TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c) +
+			   TString::Format(" mjj_bkg_8TeV_slope1_cat%d=CMS_hbb_bkg_8TeV_slope1_cat%d)", c,c)
 			   );
   } // close for cat
 
