@@ -443,7 +443,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 					      "1./pow(@0,@1)",
 					      RooArgList(*mjj, *mjj_p1mod));
 
-    // we first wrap the normalization of mggBkgTmp0
+    // we first wrap the normalization of mggBkgTmp0, mjjBkgTmp0
     RooProdPdf BkgPdfTmp(TString::Format("BkgPdfTmp%d",c), "Background Pdf", RooArgList(*mggBkgTmp0, *mjjBkgTmp0));
     w->factory(TString::Format("bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c));
     RooExtendPdf BkgPdf(TString::Format("BkgPdf_cat%d",c),"", BkgPdfTmp,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
@@ -460,7 +460,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
     cout<<" here 1"<<endl;
     data[c]->plotOn(plotmggBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
-    mggBkgTmp.plotOn(
+    mggBkgTmp0.plotOn(
 		     plotmggBkg[c],
 		     LineColor(kBlue),
 		     Range("fitrange"),NormRange("fitrange"));
@@ -514,7 +514,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
         delete nll;
         delete epdf;
       } // close for bin
-      mgg->setRange("errRange",minMassFit,maxMassFit);
+      mgg->setRange("errRange",minMggMassFit,maxMggMassFit);
       twosigma->SetLineColor(kYellow);
       twosigma->SetFillColor(kYellow);
       twosigma->SetMarkerColor(kYellow);
@@ -623,18 +623,204 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmc->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
-    TLatex *lat2 = new TLatex(minMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(minMggMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
+    ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.pdf",c));
+    ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.png",c));
 
     if(c==0)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
     if(c==1)plotmggBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
     ctmp->SetLogy(1);
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.pdf",c));
-    ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.png",c));
-    // ctmp->SaveAs(TString::Format("databkgoversig_cat%d.C",c));
+    ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d_log.pdf",c));
+    ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d_log.png",c));
+    // ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.C",c));
+
+    //************************************************//
+    // Plot mjj background fit results per categories
+    //************************************************//
+    ctmp = new TCanvas("ctmp","mjj Background Categories",0,0,500,500);
+    nBinsMass = 60;
+    plotmjjBkg[c] = mjj->frame(nBinsMass);
+    cout<<" here 1"<<endl;
+    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
+    cout<<" here 1"<<endl;
+    data[c]->plotOn(plotmjjBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
+    mjjBkgTmp0.plotOn(
+		     plotmjjBkg[c],
+		     LineColor(kBlue),
+		     Range("fitrange"),NormRange("fitrange"));
+    dataplot[c]->plotOn(plotmjjBkg[c]);
+
+    cout << "!!!!!!!!!!!!!!!!!" << endl;
+    cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
+    //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
+    if(c==0)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1)plotmjjBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
+    plotmjjBkg[c]->Draw();
+    plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
+    plotmjjBkg[c]->SetMaximum(1.40*plotmjjBkg[c]->GetMaximum());
+    plotmjjBkg[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
+    //double test = sigToFit[c]->sumEntries();
+    //cout<<"number of events on dataset "<<test<<endl;
+    if (dobands) {
+      RooAbsPdf *cpdf; cpdf = mjjBkgTmp0;
+      TGraphAsymmErrors *onesigma = new TGraphAsymmErrors();
+      TGraphAsymmErrors *twosigma = new TGraphAsymmErrors();
+      RooRealVar *nlim = new RooRealVar(TString::Format("nlim%d",c),"",0.0,0.0,10.0);
+      nlim->removeRange();
+      RooCurve *nomcurve = dynamic_cast<RooCurve*>(plotmjjBkg[c]->getObject(1));
+      for (int i=1; i<(plotmjjBkg[c]->GetXaxis()->GetNbins()+1); ++i) {
+        double lowedge = plotmjjBkg[c]->GetXaxis()->GetBinLowEdge(i);
+        double upedge = plotmjjBkg[c]->GetXaxis()->GetBinUpEdge(i);
+        double center = plotmjjBkg[c]->GetXaxis()->GetBinCenter(i);
+        double nombkg = nomcurve->interpolate(center);
+        nlim->setVal(nombkg);
+        mjj->setRange("errRange",lowedge,upedge);
+        RooAbsPdf *epdf = 0;
+        epdf = new RooExtendPdf("epdf","",*cpdf,*nlim,"errRange");
+        RooAbsReal *nll = epdf->createNLL(*(data[c]),Extended());
+        RooMinimizer minim(*nll);
+        minim.setStrategy(0);
+        double clone = 1.0 - 2.0*RooStats::SignificanceToPValue(1.0);
+        double cltwo = 1.0 - 2.0*RooStats::SignificanceToPValue(2.0);
+        minim.migrad();
+        minim.minos(*nlim);
+        // printf("errlo = %5f, errhi = %5f\n",nlim->getErrorLo(),nlim->getErrorHi());
+        onesigma->SetPoint(i-1,center,nombkg);
+        onesigma->SetPointError(i-1,0.,0.,-nlim->getErrorLo(),nlim->getErrorHi());
+        minim.setErrorLevel(0.5*pow(ROOT::Math::normal_quantile(1-0.5*(1-cltwo),1.0), 2));
+        // the 0.5 is because qmu is -2*NLL
+        // eventually if cl = 0.95 this is the usual 1.92!
+        minim.migrad();
+        minim.minos(*nlim);
+        twosigma->SetPoint(i-1,center,nombkg);
+        twosigma->SetPointError(i-1,0.,0.,-nlim->getErrorLo(),nlim->getErrorHi());
+        delete nll;
+        delete epdf;
+      } // close for bin
+      mjj->setRange("errRange",minMjjMassFit,maxMjjMassFit);
+      twosigma->SetLineColor(kYellow);
+      twosigma->SetFillColor(kYellow);
+      twosigma->SetMarkerColor(kYellow);
+      twosigma->Draw("L3 SAME");
+      onesigma->SetLineColor(kGreen);
+      onesigma->SetFillColor(kGreen);
+      onesigma->SetMarkerColor(kGreen);
+      onesigma->Draw("L3 SAME");
+      plotmjjBkg[c]->Draw("SAME");
+    } else plotmjjBkg[c]->Draw("SAME"); // close dobands
+    //plotmjjBkg[c]->getObject(1)->Draw("SAME");
+    //plotmjjBkg[c]->getObject(2)->Draw("P SAME");
+    ////////////////////////////////////////////////////////// plot higgs
+    sigToFit0[c] = (RooDataSet*) w->data(TString::Format("Hig_0_cat%d",c));
+    norm0 = 1.0*sigToFit0[c]->sumEntries(); //
+    //norm0 = 0.0000001;
+    mjjSig0[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_0_cat%d",c));
+    // we are not constructing signal pdf, this is constructed on sig to fit function...
+    mjjSig0[c] ->plotOn(
+			plotmjjBkg[c],
+			Normalization(norm0,RooAbsPdf::NumEvent),
+			DrawOption("F"),
+			LineColor(kRed),FillStyle(1001),FillColor(19));
+    mjjSig0[c]->plotOn(
+		       plotmjjBkg[c],
+		       Normalization(norm0,RooAbsPdf::NumEvent),LineColor(kRed),LineStyle(1));
+    //
+    sigToFit1[c] = (RooDataSet*) w->data(TString::Format("Hig_1_cat%d",c));
+    norm1 = 1.0*sigToFit1[c]->sumEntries(); //
+    mjjSig1[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_1_cat%d",c));
+    // we are not constructing signal pdf, this is constructed on sig to fit function...
+    mjjSig1[c] ->plotOn(
+			plotmjjBkg[c],
+			Normalization(norm1,RooAbsPdf::NumEvent),
+			DrawOption("F"),
+			LineColor(kGreen),FillStyle(1001),FillColor(19));
+    mjjSig1[c]->plotOn(
+		       plotmjjBkg[c],
+		       Normalization(norm1,RooAbsPdf::NumEvent),LineColor(kGreen),LineStyle(1));
+    //
+    sigToFit2[c] = (RooDataSet*) w->data(TString::Format("Hig_2_cat%d",c));
+    //if(sigToFit2[c]->sumEntries()>0)
+    norm2 = 1.0*sigToFit2[c]->sumEntries(); //else
+    //norm2 = 0.0000000000001; //
+    mjjSig2[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_2_cat%d",c));
+    // we are not constructing signal pdf, this is constructed on sig to fit function...
+    mjjSig2[c] ->plotOn(
+			plotmjjBkg[c],
+			Normalization(norm2,RooAbsPdf::NumEvent),
+			DrawOption("F"),
+			LineColor(kMagenta),FillStyle(1001),FillColor(19));
+    mjjSig2[c]->plotOn(
+		       plotmjjBkg[c],
+		       Normalization(norm2,RooAbsPdf::NumEvent),LineColor(kMagenta),LineStyle(1));
+    //
+    sigToFit3[c] = (RooDataSet*) w->data(TString::Format("Hig_3_cat%d",c));
+    norm3 = 1.0*sigToFit1[c]->sumEntries(); //
+    mjjSig3[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_3_cat%d",c));
+    // we are not constructing signal pdf, this is constructed on sig to fit function...
+    mjjSig3[c] ->plotOn(
+			plotmjjBkg[c],
+			Normalization(norm3,RooAbsPdf::NumEvent),
+			DrawOption("F"),
+			LineColor(kCyan),FillStyle(1001),FillColor(19));
+    mjjSig3[c]->plotOn(
+		       plotmjjBkg[c],
+		       Normalization(norm3,RooAbsPdf::NumEvent),LineColor(kCyan),LineStyle(1));
+
+    sigToFit4[c] = (RooDataSet*) w->data(TString::Format("Hig_4_cat%d",c));
+    norm4 = 1.0*sigToFit1[c]->sumEntries(); //
+    mjjSig4[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_4_cat%d",c));
+    // we are not constructing signal pdf, this is constructed on sig to fit function...
+    mjjSig4[c] ->plotOn(
+			plotmjjBkg[c],
+			Normalization(norm4,RooAbsPdf::NumEvent),
+			DrawOption("F"),
+			LineColor(kBlue),FillStyle(1001),FillColor(19));
+    mjjSig4[c]->plotOn(
+		       plotmjjBkg[c],
+		       Normalization(norm4,RooAbsPdf::NumEvent),LineColor(kBlue),LineStyle(1));
+
+    //////////////////////////////////////////////////////////
+    plotmjjBkg[c]->Draw("SAME");
+    if(c==0)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1)plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
+    if(c==0)plotmjjBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
+    if(c==1)plotmjjBkg[c]->SetMaximum(20); // no error bar in bins with zero events
+    // plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    //plotmjjBkg[c]->SetLogy(0);
+    cout << "!!!!!!!!!!!!!!!!!" << endl;
+    legmc = new TLegend(0.40,0.72,0.62,0.9);
+    legmcH = new TLegend(0.66,0.72,0.94,0.9);
+    legmc->AddEntry(plotmjjBkg[c]->getObject(2),"Data ","LPE"); // not...
+    legmc->AddEntry(plotmjjBkg[c]->getObject(1),"Fit","L");
+    if(dobands)legmc->AddEntry(twosigma,"two sigma ","F"); // not...
+    if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
+    legmcH->AddEntry(plotmjjBkg[c]->getObject(3),"ggH ","LPE"); // not...
+    legmcH->AddEntry(plotmjjBkg[c]->getObject(5),"ttH ","LPE"); // not...
+    legmcH->AddEntry(plotmjjBkg[c]->getObject(7),"VBF ","LPE"); // not...
+    legmcH->AddEntry(plotmjjBkg[c]->getObject(9),"VH ","LPE"); // not...
+    legmcH->AddEntry(plotmjjBkg[c]->getObject(11),"bbH ","LPE"); // not...
+    legmc->SetHeader(" 0 GeV");
+    legmcH->SetHeader(" Higgs");
+    legmc->SetBorderSize(0);
+    legmc->SetFillStyle(0);
+    legmc->Draw();
+    legmcH->Draw();
+    lat2 = new TLatex(minMjjMassFit+1.5,0.75*plotmjjBkg[c]->GetMaximum(),catdesc.at(c));
+    lat2->Draw();
+    //
+    ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.pdf",c));
+    ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.png",c));
+
+    if(c==0)plotmjjBkg[c]->SetMaximum(100); // no error bar in bins with zero events
+    if(c==1)plotmjjBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
+    ctmp->SetLogy(1);
+    ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d_log.pdf",c));
+    ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d_log.png",c));
+    // ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.C",c));
+
   } // close to each category
   RooBernstein mggBkgAll("mggBkgAll", "", *mgg,
 			 RooArgList(RooConst(1.0),
@@ -645,7 +831,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooFitResult* fitresults;
   fitresults = w->pdf("mggBkgAll")->fitTo( // save results to workspace
 					  *w->data("Data"),
-					  Range(minMassFit,maxMassFit),
+					  Range(minMggMassFit,maxMggMassFit),
 					  SumW2Error(kTRUE), Save(kTRUE));
   fitresults->Print();
   return fitresults;
