@@ -220,33 +220,33 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   cout<<" HERE TAKE DATASET"<<endl;
 
   dataToFit[0] = (RooDataSet*) Data.reduce(
-					   *w->var("mgg"),
+					   *w->var("mgg"),*w->var("mjj")),
 					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0);
   if(doblinding){ dataToPlot[0] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),
+					    *w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)")// blind
 					    +cut0);
   }else{
 
                   dataToPlot[0] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),
+					    *w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +cut0);
 
   }
    
   dataToFit[1] = (RooDataSet*) Data.reduce(
-					   *w->var("mgg"),
+					   *w->var("mgg"),*w->var("mjj")),
 					   mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1);
   if(doblinding){ dataToPlot[1] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),
+					    *w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",1)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)") // blind
 					    +cut1);
   }else{
                   dataToPlot[1] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),
+					    *w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",1)
 					    +cut1);  
   }
@@ -256,7 +256,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
     w->import(*dataToPlot[c],Rename(TString::Format("Dataplot_cat%d",c)));
   }
   // Create full data set without categorization
-  RooDataSet* data = (RooDataSet*) Data.reduce(*w->var("mgg"),mainCut);
+  RooDataSet* data = (RooDataSet*) Data.reduce(*w->var("mgg"),*w->var("mjj")),mainCut);
   w->import(*data, Rename("Data"));
   data->Print("v");
   return;
