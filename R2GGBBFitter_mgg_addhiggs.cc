@@ -361,7 +361,6 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooDataSet* data[ncat];
   RooDataSet* dataplot[ncat]; // the data
   RooBernstein* mggBkg[ncat];// the polinomial of 4* order
-  RooGaussian* Higgs[ncat]; // the higgs to sum
   RooPlot* plotmggBkg[ncat];
   RooDataSet* sigToFit0[ncat];
   RooDataSet* sigToFit1[ncat];
