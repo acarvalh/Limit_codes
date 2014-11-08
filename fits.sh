@@ -9,8 +9,8 @@ doResLimits=("0" "1" "1" "0" "1" "1" "0")
 do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
-runLimits=("0" "1" "2" "3" "4" "5" "6")
-runLimits=("0")
+#runLimits=("0" "1" "2" "3" "4" "5" "6")
+runLimits=("0" "1" "2")
 
 for i in `echo ${runLimits[@]}`; do
 
@@ -67,29 +67,29 @@ for i in `echo ${runLimits[@]}`; do
 	
 	if [ ${doBlinding} == 1 ]    
 	then
-	    combine -M Asymptotic --run blind hgg.mH125.0_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${imass}_higgs.txt
+	    combine -M Asymptotic --run blind hgg.mH125.0_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_higgs.txt
 	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_higgs.root
 	    echo did with Higgs
 	        
-	    combine -M Asymptotic --run blind hgg.mH125.0_8TeVonecatnohiggs.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${imass}_onecatnohiggs.txt
+	    combine -M Asymptotic --run blind hgg.mH125.0_8TeVonecatnohiggs.txt >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_onecatnohiggs.txt
 	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_onecatnohiggs.root
 	    echo did one categ no higgs
 
-	    combine -M Asymptotic --run blind hgg.mH125.0_8TeV.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.6.mR${imass}_nosyst_higgs.txt
+	    combine -M Asymptotic --run blind hgg.mH125.0_8TeV.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_nosyst_higgs.txt
 	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_nosyst_higgs.root
 	    echo did with no syst with higgs
 	    rm roostats*
 	    cd ../..
 	else
-	    combine -M Asymptotic hgg.mH125.0_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${imass}_higgs.txt
+	    combine -M Asymptotic hgg.mH125.0_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_higgs.txt
 	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_higgs.root
 	    echo did with Higgs
 	        
-	    combine -M Asymptotic hgg.mH125.0_8TeVonecatnohiggs.txt >> higgsCombineTest.Asymptotic.mH125.6.mR${imass}_onecatnohiggs.txt
+	    combine -M Asymptotic hgg.mH125.0_8TeVonecatnohiggs.txt >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_onecatnohiggs.txt
 	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_onecatnohiggs.root
 	    echo did one categ no higgs
 
-	    combine -M Asymptotic hgg.mH125.0_8TeV.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.6.mR${imass}_nosyst_higgs.txt
+	    combine -M Asymptotic hgg.mH125.0_8TeV.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_nosyst_higgs.txt
 	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_nosyst_higgs.root
 	    echo did with no syst with higgs
 	    rm roostats*
