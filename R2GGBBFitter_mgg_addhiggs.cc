@@ -167,21 +167,18 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
 		       "evWeight");
   cout << "======================================================================" << endl;
   RooDataSet* sigToFit[ncat];
-  TString cut0 = " && 1>0";// "&& mtot > 955 && mtot < 1150 "; //
-  TString cut1 = " && 1>0";//"&& mtot > 955 && mtot < 1150 "; // "&& 1>0";//
-  //
-  TString cutj0 = " && 1>0";//"&& mjj_wokinfit > 90 && mjj_wokinfit < 170 "; //"&& 1>0";//
-  TString cutj1 = " && 1>0";//"&& mjj_wokinfit > 100 && mjj_wokinfit < 160 "; // "&& 1>0";//
+  TString cut0 = " && 1>0";
+  TString cut1 = " && 1>0";
   //
   // we take only mtot to fit to the workspace, we include the cuts
   sigToFit[0] = (RooDataSet*) sigScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0);
   w->import(*sigToFit[0],Rename(TString::Format("Sig_cat%d",0)));
   //
   sigToFit[1] = (RooDataSet*) sigScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1);
   w->import(*sigToFit[1],Rename(TString::Format("Sig_cat%d",1)));
   // Create full signal data set without categorization
   RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mgg"),mainCut);
@@ -217,28 +214,25 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   // evweight is 1 anyway...
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
-  TString cut0 = "&& 1>0";//"&& mtot > 955 && mtot < 1150 "; //"&& 1>0";//
-  TString cut1 = "&& 1>0";//"&& mtot > 955 && mtot < 1150 "; //"&& 1>0";//
-  //
-  TString cutj0 = "&& 1>0";//"&& mjj_wokinfit > 90 && mjj_wokinfit < 170 "; //"&& 1>0";//
-  TString cutj1 = "&& 1>0";//"&& mjj_wokinfit > 100 && mjj_wokinfit < 160 "; // "&& 1>0";//
+  TString cut0 = "&& 1>0";
+  TString cut1 = "&& 1>0";
   //
   cout<<" HERE TAKE DATASET"<<endl;
 
   dataToFit[0] = (RooDataSet*) Data.reduce(
 					   *w->var("mgg"),
-					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0+cutj0);
+					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0);
   if(doblinding){ dataToPlot[0] = (RooDataSet*) Data.reduce(
 					    *w->var("mgg"),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)")// blind
-					    +cut0+cutj0);
+					    +cut0);
   }else{
 
                   dataToPlot[0] = (RooDataSet*) Data.reduce(
 					    *w->var("mgg"),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
-					    +cut0+cutj0);
+					    +cut0);
 
   }
    
@@ -1047,21 +1041,18 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
   */
   //
   RooDataSet* higToFit[ncat];
-  TString cut0 = "&& 1>0";//"&& mtot > 955 && mtot < 1150 "; //
-  TString cut1 = "&& 1>0";//"&& mtot > 955 && mtot < 1150 "; // "&& 1>0";//
-  //
-  TString cutj0 = "&& 1>0";//"&& mjj_wokinfit > 90 && mjj_wokinfit < 160 "; //"&& 1>0";//
-  TString cutj1 = "&& 1>0";//"&& mjj_wokinfit > 100 && mjj_wokinfit < 170 "; // "&& 1>0";//
+  TString cut0 = "&& 1>0";
+  TString cut1 = "&& 1>0";
   //
   // we take only mtot to fit to the workspace, we include the cuts
   higToFit[0] = (RooDataSet*) higScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0+cutj0);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0);
   w->import(*higToFit[0],Rename(TString::Format("Hig_%d_cat%d",higgschannel,0)));
   //
   higToFit[1] = (RooDataSet*) higScaled.reduce(
 					       *w->var("mgg"),
-					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1+cutj1);
+					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1);
   w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1))); // Create full signal data set without categorization
   RooDataSet* higToFitAll = (RooDataSet*) higScaled->reduce(*w->var("mgg"),mainCut);
   w->import(*higToFitAll,Rename("Hig"));
