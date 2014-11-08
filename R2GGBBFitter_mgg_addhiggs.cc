@@ -628,24 +628,9 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
-  //wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
-
   wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
-  // save the other parameters
-  /* for (int c = 0; c < ncat; ++c) {
-     wAll->factory(
-     TString::Format("CMS_hgg_sig_alpha_cat%d[%g,0.5,5]",
-     c, wAll->var(TString::Format("mgg_sig_alpha_cat%d",c))->getVal()));
-     wAll->factory(
-     TString::Format("CMS_hgg_sig_n_cat%d[%g,0.5,20]",
-     c, wAll->var(TString::Format("mgg_sig_n_cat%d",c))->getVal()));
-     wAll->factory(
-     TString::Format("CMS_hgg_sig_frac_cat%d[%g,0.0,1.0]",
-     c, wAll->var(TString::Format("mgg_sig_frac_cat%d",c))->getVal()));
-     }
-  */
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
 					       TString::Format("EDIT::CMS_hgg_sig_cat%d(mggSig_cat%d,",c,c) +
@@ -1011,11 +996,11 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
 					       *w->var("mgg"),
 					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1);
   w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1))); // Create full signal data set without categorization
-  RooDataSet* higToFitAll = (RooDataSet*) higScaled->reduce(*w->var("mgg"),mainCut);
+  RooDataSet* higToFitAll = (RooDataSet*) higScaled.reduce(*w->var("mgg"),mainCut);
   w->import(*higToFitAll,Rename("Hig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
-  cout << "---- one channel: " << higScaled->sumEntries() << endl;
+  cout << "---- one channel: " << higScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
     Float_t nExpEvt = higToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
