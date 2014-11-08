@@ -388,41 +388,6 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 					     TString::Format("p1mod_cat%d",c),
 					     "","@0*@0",
 					     *w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c)));
-    // if(c==1){RooFormulaVar *p2mod = new RooFormulaVar(
-    //TString::Format("p2mod_cat%d",c)
-    //,"","@0*@0",
-    //*w->var(TString::Format("mgg_bkg_8TeV_slope2_cat%d",c)));
-    // RooFormulaVar *p3mod = new RooFormulaVar(
-    //TString::Format("p3mod_cat%d",c)
-    //,"","@0*@0",
-    //*w->var(TString::Format("mgg_bkg_8TeV_slope3_cat%d",c)));
-    /*
-      RooFormulaVar *p4mod = new RooFormulaVar(
-      TString::Format("p4mod_cat%d",c)
-      ,"","@0*@0",
-      *w->var(TString::Format("mgg_bkg_8TeV_slope4_cat%d",c)));
-      RooFormulaVar *p5mod = new RooFormulaVar(
-      TString::Format("p5mod_cat%d",c)
-      ,"","@0*@0",
-      *w->var(TString::Format("mgg_bkg_8TeV_slope5_cat%d",c)));
-      */
-    // }
-    ////////////////////////////////////////////////////////////////////
-    /* RooAbsPdf* mggBkgTmp0 = 0; // declare a empty pdf
-    // adding pdf's, using the variables
-    if(c==0){
-    mggBkgTmp0 = new RooBernstein( // fill the pdf with the floating parameters
-    TString::Format("mggBkgTmp0_cat%d",c),
-    "", *mgg,
-    RooArgList(RooConst(1.0),*p1mod));
-    }
-    if(c==1){
-    mggBkgTmp0 = new RooBernstein( // fill the pdf with the floating parameters
-    TString::Format("mggBkgTmp0_cat%d",c),
-    "", *mgg,
-    RooArgList(RooConst(1.0),*p1mod, *p2mod, *p3mod));//, *p4mod, *p5mod));
-    }
-    */
     RooAbsPdf* mggBkgTmp0 = new RooGenericPdf( // if exp function
 					      TString::Format("DijetBackground_%d",c),
 					      "1./pow(@0,@1)",
