@@ -822,18 +822,17 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     // ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.C",c));
 
   } // close to each category
-  RooBernstein mggBkgAll("mggBkgAll", "", *mgg,
-			 RooArgList(RooConst(1.0),
-				    *w->var("mgg_bkg_8TeV_slope1"),
-				    //*w->var("mgg_bkg_8TeV_slope2"),
-				    *w->var("mgg_bkg_8TeV_slope3")));
-  w->import(mggBkgAll);
-  RooFitResult* fitresults;
-  fitresults = w->pdf("mggBkgAll")->fitTo( // save results to workspace
-					  *w->data("Data"),
-					  Range(minMggMassFit,maxMggMassFit),
-					  SumW2Error(kTRUE), Save(kTRUE));
+
+  RooGenericPdf *mggBkgAll = new RooGenericPdf("mggBkgAll", "1./pow(@0,@1)", RooArgList(*mgg,*w->var("mgg_bkg_8TeV_slope1")));
+  RooGenericPdf *mjjBkgAll = new RooGenericPdf("mjjBkgAll", "1./pow(@0,@1)", RooArgList(*mjj,*w->var("mjj_bkg_8TeV_slope1")));
+
+  RooProdPdf BkgPdfAll("BkgPdfAll", "Background Pdf", *mggBkgAll, *mjjBkgAll);
+  RooFitResult* fitresults = BkgPdfAll.fitTo( // save results to workspace
+					     *w->data("Data"),
+					     Range("MassRange"),
+					     SumW2Error(kTRUE), Save(kTRUE));
   fitresults->Print();
+  w->import(BkgPdfAll);
   return fitresults;
 } // close berestein 3
 ///////////////////////////////////////////////////////////////
