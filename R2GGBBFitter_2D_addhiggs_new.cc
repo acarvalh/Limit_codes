@@ -1937,5 +1937,62 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
     // RooRealVar* mgg_bkg_8TeV_frac = w->var(TString::Format("mgg_bkg_8TeV_frac_cat%d",c));
     // mgg_bkg_8TeV_frac ->SetName("f");
   }
+
+  //****************************//
+  // mjj signal all categories
+  //****************************//
+  RooRealVar* mjj_sig_m0 = w->var("mjj_sig_m0");
+  RooRealVar* mjj_sig_sigma = w->var("mjj_sig_sigma");
+  RooRealVar* mjj_sig_alpha = w->var("mjj_sig_alpha");
+  RooRealVar* mjj_sig_n = w->var("mjj_sig_n");
+  RooRealVar* mjj_sig_gsigma = w->var("mjj_sig_gsigma");
+  RooRealVar* mjj_sig_frac = w->var("mjj_sig_frac");
+  mjj_sig_m0 ->SetName("m_{0}");
+  mjj_sig_sigma ->SetName("#sigma_{CB}");
+  mjj_sig_alpha ->SetName("#alpha");
+  mjj_sig_n ->SetName("n");
+  mjj_sig_gsigma->SetName("#sigma_G");
+  mjj_sig_frac ->SetName("f_G");
+  mjj_sig_m0 ->setUnit("GeV");
+  mjj_sig_sigma ->setUnit("GeV");
+  mjj_sig_gsigma->setUnit("GeV");
+  //****************************//
+  // mjj background
+  //****************************//
+  RooRealVar* mjj_bkg_8TeV_slope1 = w->var("mjj_bkg_8TeV_slope1");
+  mjj_bkg_8TeV_slope1 ->SetName("a_{B}");
+  mjj_bkg_8TeV_slope1 ->setUnit("1/GeV");
+  RooRealVar* mjj_bkg_8TeV_slope2 = w->var("mjj_bkg_8TeV_slope2");
+  mjj_bkg_8TeV_slope2 ->SetName("a_{B}");
+  mjj_bkg_8TeV_slope2 ->setUnit("1/GeV");
+  //****************************//
+  // mjj per category
+  //****************************//
+  for (int c = 0; c < ncat; ++c) {
+    mjj_sig_m0 = (RooRealVar*) w->var(TString::Format("mjj_sig_m0_cat%d",c));
+    mjj_sig_sigma = (RooRealVar*) w->var(TString::Format("mjj_sig_sigma_cat%d",c));
+    mjj_sig_alpha = (RooRealVar*) w->var(TString::Format("mjj_sig_alpha_cat%d",c));
+    mjj_sig_n = (RooRealVar*) w->var(TString::Format("mjj_sig_n_cat%d",c));
+    mjj_sig_gsigma = (RooRealVar*) w->var(TString::Format("mjj_sig_gsigma_cat%d",c));
+    mjj_sig_frac = (RooRealVar*) w->var(TString::Format("mjj_sig_frac_cat%d",c));
+    mjj_sig_m0 ->SetName("m_{0}");
+    mjj_sig_sigma ->SetName("#sigma_{CB}");
+    mjj_sig_alpha ->SetName("#alpha");
+    mjj_sig_n ->SetName("n");
+    mjj_sig_gsigma ->SetName("#sigma_{G}");
+    mjj_sig_frac ->SetName("f_{G}");
+    mjj_sig_m0 ->setUnit("GeV");
+    mjj_sig_sigma ->setUnit("GeV");
+    mjj_sig_gsigma ->setUnit("GeV");
+    mjj_bkg_8TeV_slope1 = w->var(TString::Format("mjj_bkg_8TeV_slope1_cat%d",c));
+    mjj_bkg_8TeV_slope1 ->SetName("p_{B}^{1}");
+    mjj_bkg_8TeV_slope1 ->setUnit("1/GeV");
+    mjj_bkg_8TeV_slope2 = w->var(TString::Format("mjj_bkg_8TeV_slope2_cat%d",c));
+    mjj_bkg_8TeV_slope2 ->SetName("p_{B}^{2}");
+    mjj_bkg_8TeV_slope2 ->setUnit("1/GeV^{2}");
+    // RooRealVar* mjj_bkg_8TeV_frac = w->var(TString::Format("mjj_bkg_8TeV_frac_cat%d",c));
+    // mjj_bkg_8TeV_frac ->SetName("f");
+  }
+
 } // close setparameters
 
