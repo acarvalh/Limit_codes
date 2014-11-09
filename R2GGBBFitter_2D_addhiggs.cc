@@ -62,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/Data_m0.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/Data_m0.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -209,34 +209,28 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
 
   dataToFit[0] = (RooDataSet*) Data.reduce(
 					   RooArgList(*w->var("mgg"),*w->var("mjj")),
-					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0);
-  if(doblinding){ dataToPlot[0] = (RooDataSet*) Data.reduce(
-					    RooArgList(*w->var("mgg"),*w->var("mjj")),
-					    mainCut+TString::Format(" && cut_based_ct==%d",0)
-					    +TString::Format(" && (mgg > 130 || mgg < 120)")// blind
-					    +cut0);
-  }else{
-
-                  dataToPlot[0] = (RooDataSet*) Data.reduce(
-					    RooArgList*w->var("mgg"),*w->var("mjj")),
-					    mainCut+TString::Format(" && cut_based_ct==%d",0)
-					    +cut0);
-
-  }
-   
+					   mainCut+TString::Format(" && cut_based_ct==%d",0));
   dataToFit[1] = (RooDataSet*) Data.reduce(
 					   RooArgList(*w->var("mgg"),*w->var("mjj")),
-					   mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1);
-  if(doblinding){ dataToPlot[1] = (RooDataSet*) Data.reduce(
-					    RooArgList(*w->var("mgg"),*w->var("mjj")),
-					    mainCut+TString::Format(" && cut_based_ct==%d",1)
-					    +TString::Format(" && (mgg > 130 || mgg < 120)") // blind
-					    +cut1);
-  }else{
-                  dataToPlot[1] = (RooDataSet*) Data.reduce(
-					    RooArgList(*w->var("mgg"),*w->var("mjj")),
-					    mainCut+TString::Format(" && cut_based_ct==%d",1)
-					    +cut1);  
+					   mainCut+TString::Format(" && cut_based_ct==%d",1) );
+
+  if(doblinding){
+    dataToPlot[0] = (RooDataSet*) Data.reduce(
+					      RooArgList(*w->var("mgg"),*w->var("mjj")),
+					      mainCut+TString::Format(" && cut_based_ct==%d",0)
+					      +cut0);
+    dataToPlot[1] = (RooDataSet*) Data.reduce(
+					      RooArgList(*w->var("mgg"),*w->var("mjj")),
+					      mainCut+TString::Format(" && cut_based_ct==%d",1)
+					      +cut0);
+  }
+  else{
+    dataToPlot[0] = (RooDataSet*) Data.reduce(
+					      RooArgList(*w->var("mgg"),*w->var("mjj")),
+					      mainCut+TString::Format(" && cut_based_ct==%d",0) );
+    dataToPlot[1] = (RooDataSet*) Data.reduce(
+					      RooArgList(*w->var("mgg"),*w->var("mjj")),
+					      mainCut+TString::Format(" && cut_based_ct==%d",1) );
   }
 
   for (int c = 0; c < ncat; ++c) {
@@ -450,13 +444,14 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout<<" here 1"<<endl;
     dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
     cout<<" here 1"<<endl;
-    data[c]->plotOn(plotmggBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
+    if(doblinding) dataplot[c]->plotOn(plotmggBkg[c],Invisible());
+    else dataplot[c]->plotOn(plotmggBkg[c]);
     mggBkgTmp0->plotOn(
 		     plotmggBkg[c],
 		     LineColor(kBlue),
 		     Range("fitrange"),NormRange("fitrange"));
-    dataplot[c]->plotOn(plotmggBkg[c]);
-
+    if(doblinding) dataplot[c]->plotOn(plotmggBkg[c], Invisible());
+    else dataplot[c]->plotOn(plotmggBkg[c]);
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
@@ -599,10 +594,11 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     TLegend *legmc = new TLegend(0.40,0.72,0.62,0.9);
     TLegend *legmcH = new TLegend(0.66,0.72,0.94,0.9);
-    legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data ","LPE"); // not...
-    legmc->AddEntry(plotmggBkg[c]->getObject(1),"Fit","L");
-    if(dobands)legmc->AddEntry(twosigma,"two sigma ","F"); // not...
-    if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
+    if(doblinding) legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data ","");
+    else  legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data ","LPE");
+    legmc->AddEntry(plotmggBkg[c]->getObject(1),"Bkg Fit","L");
+    if(dobands)legmc->AddEntry(onesigma,"Fit #pm1 #sigma","F");
+    if(dobands)legmc->AddEntry(twosigma,"Fit #pm2 #sigma ","F"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(3),"ggH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
@@ -612,6 +608,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
+    legmcH->SetBorderSize(0);
+    legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
     TLatex *lat2 = new TLatex(minMggMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
@@ -636,12 +634,14 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout<<" here 1"<<endl;
     dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
     cout<<" here 1"<<endl;
-    data[c]->plotOn(plotmjjBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
+    if(doblinding) dataplot[c]->plotOn(plotmjjBkg[c],Invisible());
+    else dataplot[c]->plotOn(plotmjjBkg[c]);
     mjjBkgTmp0->plotOn(
 		     plotmjjBkg[c],
 		     LineColor(kBlue),
 		     Range("fitrange"),NormRange("fitrange"));
-    dataplot[c]->plotOn(plotmjjBkg[c]);
+    if(doblinding) dataplot[c]->plotOn(plotmjjBkg[c],Invisible());
+    else dataplot[c]->plotOn(plotmjjBkg[c]);
 
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
@@ -784,7 +784,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     legmc = new TLegend(0.40,0.72,0.62,0.9);
     legmcH = new TLegend(0.66,0.72,0.94,0.9);
-    legmc->AddEntry(plotmjjBkg[c]->getObject(2),"Data ","LPE"); // not...
+    if(doblinding) legmc->AddEntry(plotmjjBkg[c]->getObject(2),"Data ","");
+    else legmc->AddEntry(plotmjjBkg[c]->getObject(2),"Data ","LPE");
     legmc->AddEntry(plotmjjBkg[c]->getObject(1),"Fit","L");
     if(dobands)legmc->AddEntry(twosigma,"two sigma ","F"); // not...
     if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
@@ -797,6 +798,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
+    legmcH->SetBorderSize(0);
+    legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
     lat2 = new TLatex(minMjjMassFit+1.5,0.75*plotmjjBkg[c]->GetMaximum(),catdesc.at(c));
@@ -1011,7 +1014,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   RooPlot* plotmgg[ncat];
   for (int c = 0; c < ncat; ++c) {
     plotmgg[c] = mgg->frame(Range(minSigFitMgg,maxSigFitMgg),Bins(nBinsMass));
-    sigToFit[c]->plotOn(plotmgg[c],LineColor(kWhite),MarkerColor(kWhite));
+    sigToFit[c]->plotOn(plotmgg[c]);
     mggSig[c] ->plotOn(plotmgg[c]);
     double chi2n = plotmgg[c]->chiSquare(0) ;
     cout << "------------------------- Experimental chi2 = " << chi2n << endl;
@@ -1075,7 +1078,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   RooPlot* plotmjj[ncat];
   for (int c = 0; c < ncat; ++c) {
     plotmjj[c] = mjj->frame(Range(minSigFitMjj,maxSigFitMjj),Bins(nBinsMass));
-    sigToFit[c]->plotOn(plotmjj[c],LineColor(kWhite),MarkerColor(kWhite));
+    sigToFit[c]->plotOn(plotmjj[c]);
     mjjSig[c] ->plotOn(plotmjj[c]);
     double chi2n = plotmjj[c]->chiSquare(0) ;
     cout << "------------------------- Experimental chi2 = " << chi2n << endl;
@@ -1205,10 +1208,10 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 
     for (int c = 0; c < ncat; ++c) {
       plotmgg[c] = mgg->frame(Range(minSigFitMgg,maxSigFitMgg),Bins(nBinsMass));
-      sigToFit[c]->plotOn(plotmgg[c],LineColor(kWhite),MarkerColor(kWhite));
+      sigToFit[c]->plotOn(plotmgg[c]);
       mggSig[c] ->plotOn(plotmgg[c]);
       double chi2n = plotmgg[c]->chiSquare(0) ;
-      cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
+      cout << "------------------------- Experimental chi2 = " << chi2n << endl;
       mggSig[c] ->plotOn(
 			 plotmgg[c],
 			 Components(TString::Format("mggGaussHig_%d_cat%d",d,c)),
@@ -1271,10 +1274,10 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 
     for (int c = 0; c < ncat; ++c) {
       plotmjj[c] = mgg->frame(Range(minSigFitMjj,maxSigFitMjj),Bins(nBinsMass));
-      sigToFit[c]->plotOn(plotmjj[c],LineColor(kWhite),MarkerColor(kWhite));
+      sigToFit[c]->plotOn(plotmjj[c]);
       mjjSig[c] ->plotOn(plotmjj[c]);
       double chi2n = plotmjj[c]->chiSquare(0) ;
-      cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
+      cout << "------------------------- Experimental chi2 = " << chi2n << endl;
       mjjSig[c] ->plotOn(
 			 plotmjj[c],
 			 Components(TString::Format("mjjGaussHig_%d_cat%d",d,c)),
