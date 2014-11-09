@@ -62,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/ggh_m125_powheg_8TeV_m500.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/tth_m125_8TeV_m500.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/vbf_m125_8TeV_m500.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/wzh_m125_8TeV_zh_m500.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/bbh_m125_8TeV_m500.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_nonresSearch_withKinFit/Data_m0.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/Radion_m500_8TeV_m500.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMgg_resSearch_withRegKinFit/Data_m500.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -559,7 +559,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 0 GeV");
+    legmc->SetHeader(" 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -802,7 +802,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 0 GeV");
+			     " Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -921,7 +921,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 0 GeV");
+			       " Resonance - 260 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
