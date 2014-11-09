@@ -56,11 +56,12 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   RooWorkspace* w = hlf.GetWs(); // Get models and variables
   RooFitResult* fitresults;
 
+  //PAS limit trees
   //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMggjj_withKinFit/Data_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
