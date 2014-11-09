@@ -49,7 +49,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   style();
   TString fileBaseName(TString::Format("hgghbb.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgghbb.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m400.rs"); // fit model parameters to kinfit
+  TString card_name("models_mtot_range_m1100.rs"); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
@@ -57,11 +57,11 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   RooFitResult* fitresults;
 
   //PAS limit trees
-  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
+  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
   TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
@@ -374,7 +374,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Fit","L");
     if(dobands)legmc->AddEntry(onesigma,"Fit #pm1 #sigma","F");
     if(dobands)legmc->AddEntry(twosigma,"Fit #pm2 #sigma","F");
-    //legmc->SetHeader("M_{X} = 400 GeV");
+    //legmc->SetHeader("M_{X} = 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -593,7 +593,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     lat->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+10.5,0.81*plotmtot[c]->GetMaximum(),
-        "m_{X} = 400 GeV");
+        "m_{X} = 1100 GeV");
     lat2->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+10.5,0.71*plotmtot[c]->GetMaximum(),catdesc.at(c));
