@@ -550,10 +550,10 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     TLegend *legmc = new TLegend(0.40,0.72,0.62,0.9);
     TLegend *legmcH = new TLegend(0.66,0.72,0.94,0.9);
-    legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data ","LPE"); // not...
-    legmc->AddEntry(plotmggBkg[c]->getObject(1),"Fit","L");
-    if(dobands)legmc->AddEntry(twosigma,"two sigma ","F"); // not...
-    if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
+    legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data","LPE"); // not...
+    legmc->AddEntry(plotmggBkg[c]->getObject(1),"Bkg Fit","L");
+    if(dobands)legmc->AddEntry(onesigma,"#pm1 #sigma","F");
+    if(dobands)legmc->AddEntry(twosigma,"#pm2 #sigma","F"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(3),"ggH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
@@ -563,6 +563,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
+    legmcH->SetBorderSize(0);
+    legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
     TLatex *lat2 = new TLatex(minMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
