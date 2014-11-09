@@ -59,8 +59,8 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMggjj_withKinFit/Data_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
@@ -348,7 +348,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
-    if (c==1) plotmtotBkg[c]->SetMaximum(8.0);
+    if (c==1) plotmtotBkg[c]->SetMaximum(20);
     plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
