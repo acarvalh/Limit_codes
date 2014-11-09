@@ -10,7 +10,7 @@ do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
 #runLimits=("0" "1" "2" "3" "4" "5" "6")
-runLimits=("0" "1" "2")
+runLimits=("3")
 
 for i in `echo ${runLimits[@]}`; do
 
@@ -53,7 +53,13 @@ for i in `echo ${runLimits[@]}`; do
 
 	outputdir="radlim_${limitdirs[$i]}/radlim${imass}"
 	mkdir -p $outputdir
-	root -l -b -q runmgg.C >> ${outputdir}/log_radlim${imass}.txt
+
+	if [ ${do2DLimits[$i]} == "0" ]; then
+	    root -l -b -q runmgg.C >> ${outputdir}/log_radlim${imass}.txt
+	else
+	    root -l -b -q run2D.C >> ${outputdir}/log_radlim${imass}.txt
+	fi
+
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
 
