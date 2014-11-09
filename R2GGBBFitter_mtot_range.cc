@@ -1,20 +1,8 @@
-/** \macro H2GGFitter.cc
-*
-* $Id$
-*
-* Software developed for the CMS Detector at LHC
-*
-*
-* Template Serguei Ganjour - CEA/IRFU/SPP, Saclay
-*
-*
-* Macro is implementing the unbinned maximum-likelihood model for
-* the Higgs to gamma gamma analysis. PDF model and RooDataSets
-* are stored in the workspace which is feeded to HiggsAnalysis/CombinedLimit tools:
-*
-*/
-  // this one is for 4 body fit
+//Important options first
+Bool_t doblinding = true; //True if you want to blind
+const int minfit =320, maxfit=1200;
 
+// this one is for 4 body fit
 using namespace RooFit;
 using namespace RooStats ;
 
@@ -35,14 +23,10 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
-const int minfit =320,minfit =320, maxfit=1200;
-
-Bool_t doblinding = true; //True if you want to blind
-
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
-  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",320,1200,"GeV");
+  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gammajj)",320,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
   RooRealVar* mjj = new RooRealVar("mjj","M(jj)",0,500,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100000000,"");
@@ -63,20 +47,20 @@ RooArgSet* defineVariables()
 void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 {
   style();
-  TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
-  TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m400.rs"); // fit model parameters to kinfit
+  TString fileBaseName(TString::Format("hgghbb.mH%.1f_8TeV", mass));
+  TString fileBkgName(TString::Format("hgghbb.inputbkg_8TeV", mass));
+  TString card_name("models_mtot_range_m1100.rs"); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs(); // Get models and variables
   RooFitResult* fitresults;
 
-  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m500_8TeV_m500.root";
+  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
   TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v35/v35_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
@@ -130,20 +114,20 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
     w->import(*sigToFit[c],Rename(TString::Format("Sig_cat%d",c)));
   } // close ncat
   // Create full signal data set without categorization
-  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled->reduce(*w->var("mtot"),mainCut);
+  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mtot"),mainCut);
   w->import(*sigToFitAll,Rename("Sig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFit[c].sumEntries();
+    Float_t nExpEvt = sigToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
          << TString::Format(" eff x Acc cat%d : ",c)
          << "%"
          << endl;
   }
   cout << "======================================================================" << endl;
-  sigScaled->Print("v");
+  sigScaled.Print("v");
   return;
 } // end add signal function
 ///////////////////////////////////////////////////////////////////////////////////
@@ -164,16 +148,13 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   RooDataSet* dataToPlot[ncat];
 
   TString cut0;
-  if(doblinding){ cut0 = "&& mgg > 120 && mgg < 130 && mjj > 90 && mjj < 165 "; }
+  if(doblinding){ cut0 = "&& 1"; }//do not show any data
   else{ cut0 = "&& 1>0 "; }
 
   for (int c = 0; c < ncat; ++c) {
-    if(c==0) dataToFit[c] = (RooDataSet*) Data.reduce(
+    dataToFit[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit)+cut0);
-    if(c==1) dataToFit[c] = (RooDataSet*) Data.reduce(
-        *w->var("mtot"),
-        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit)+cut0);
+        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit));
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit)+ cut0);
@@ -289,14 +270,14 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    //************************************************//
    // Plot mtot background fit results per categories
    //************************************************//
-   TCanvas* ctmp = new TCanvas("ctmp","mtot Background Categories",0,0,501,501);
+   TCanvas* ctmp = new TCanvas(TString::Format("ctmpBkg_cat%d",c),"mtot Background Categories",0,0,501,501);
     ctmp->cd();
    int binning; if(c==0) binning=22; else binning = 22;
    Int_t nBinsMass(binning);
-   plotmtotBkg[c] = mtot->frame(nBinsMass);
+   plotmtotBkg[c] = mtot->frame(minfit,maxfit,nBinsMass);
    //plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
-   data[c]->plotOn(plotmtotBkg[c]);
+   dataplot[c]->plotOn(plotmtotBkg[c], Invisible());
  
    mtotBkgTmp.plotOn(
         plotmtotBkg[c],
@@ -363,13 +344,12 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
 
    //plotlinemtotBkg[c]->Draw("SAME");
    // //plotmtotBkg[c]->getObject(1)->Draw("SAME");
-   dataplot[c]->plotOn(plotmtotBkg[c]); // blind
-   data[c]->plotOn(plotmtotBkg[c]);//  blind
+    dataplot[c]->plotOn(plotmtotBkg[c],Invisible());//This is a second level of blinding.
    plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
     if (c==1) plotmtotBkg[c]->SetMaximum(8.0);
-    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
   TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
@@ -386,15 +366,18 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    cout << "!!!!!!!!!!!!!!!!!" << endl;
 
     TLegend *legmc = new TLegend(0.6,0.7,0.9,0.9);
-    legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ",""); //"LPE" blind
-    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
-    if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
-    if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
-    //legmc->SetHeader("M_{X} = 500 GeV");
+    if(doblinding) legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ","");
+    else legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ","LPE");
+    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Fit","L");
+    if(dobands)legmc->AddEntry(onesigma,"Fit #pm1 #sigma","F");
+    if(dobands)legmc->AddEntry(twosigma,"Fit #pm2 #sigma","F");
+    //legmc->SetHeader("M_{X} = 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    TLatex *lat2 = new TLatex(363.0,0.91*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat1 = new TLatex(minfit+43.0,0.91*plotmtotBkg[c]->GetMaximum(),"X#rightarrowHH#rightarrow#gamma#gammab#bar{b}");
+    lat1->Draw();
+    TLatex *lat2 = new TLatex(minfit+43.0,0.81*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
 
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
@@ -576,18 +559,18 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
         plotmtot[c],
         Components(TString::Format("mtotCBSig_cat%d",c)),
         LineStyle(kDashed),LineColor(kRed));
-    mtotSig[c] ->paramOn(plotmtot[c]);
+    //mtotSig[c] ->paramOn(plotmtot[c]);
     sigToFit[c] ->plotOn(plotmtot[c]);
 //    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 450, 450);
     //TH1F *hist = new TH1F("hist", "hist", 450, minMassFit, maxMassFit);
-    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
+    TCanvas* ctmp = new TCanvas(TString::Format("ctmpSig_cat%d",c),"Background Categories",0,0,501,501);
     ctmp->cd();
    plotmtot[c]->Draw("AC");
     plotmtot[c]->SetTitle("");
     //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
-    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
 
 
     plotmtot[c]->Draw("SAME");
@@ -602,11 +585,15 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-        minMassFit+10.5,0.85*plotmtot[c]->GetMaximum(),
-        " M_{X} = 400 GeV");
+        minMassFit+10.5,0.91*plotmtot[c]->GetMaximum(),
+        "X#rightarrowHH#rightarrow#gamma#gammab#bar{b}");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-        minMassFit+10.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
+        minMassFit+10.5,0.81*plotmtot[c]->GetMaximum(),
+        "m_{X} = 1100 GeV");
+    lat2->Draw();
+    TLatex *lat2 = new TLatex(
+        minMassFit+10.5,0.71*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
 
  
@@ -652,8 +639,7 @@ void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* file
      }
   }
   cout << ".........Expected Signal for L = " << lumi->getVal() << " pb-1 ............................" << endl;
-  if(!doblinding){ cout << "#Events Signal: " << sigToFit[0]->sumEntries()+sigToFit[1]->sumEntries()  << endl; }
-  else cout << "#Events Signal: -1 "  << endl;
+  cout << "#Events Signal: " << sigToFit[0]->sumEntries()+sigToFit[1]->sumEntries()  << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
     cout << TString::Format("#Events Signal cat%d: ",c) << sigToFit[c]->sumEntries() << endl;
@@ -663,7 +649,7 @@ void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* file
   TString filename(cardDir+TString(fileBaseName)+"rep.txt");
   ofstream outFile(filename);
   outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgghbb.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 1" << endl;
@@ -782,7 +768,7 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
   TString filename(cardDir+TString(fileBaseName)+"onecat.txt");
   ofstream outFile(filename);
   outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgghbb.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "imax 1" << endl;
   outFile << "jmax 1" << endl;
