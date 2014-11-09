@@ -277,7 +277,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    plotmtotBkg[c] = mtot->frame(nBinsMass);
    //plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
-   data[c]->plotOn(plotmtotBkg[c]);
+   data[c]->plotOn(plotmtotBkg[c], Invisible(doBlinding));//This is a second level of blinding.
  
    mtotBkgTmp.plotOn(
         plotmtotBkg[c],

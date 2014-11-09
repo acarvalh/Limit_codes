@@ -1,18 +1,6 @@
-/** \macro H2GGFitter.cc
- *
- * $Id$
- *
- * Software developed for the CMS Detector at LHC
- *
- *
- * Template Serguei Ganjour - CEA/IRFU/SPP, Saclay
- *
- *
- * Macro is implementing the unbinned maximum-likelihood model for
- * the Higgs to gamma gamma analysis. PDF model and RooDataSets
- * are stored in the workspace which is feeded to HiggsAnalysis/CombinedLimit tools:
- *
- */
+//Important options first
+Bool_t doblinding = true; //True if you want to blind
+
 // this one is for mgg fit
 using namespace RooFit;
 using namespace RooStats ;
@@ -37,8 +25,6 @@ void SetConstantParams(const RooArgSet* params);
 
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
-
-Bool_t doblinding = true; //True if you want to blind
 
 RooArgSet* defineVariables()
 {
@@ -1160,7 +1146,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
      }
   }
   cout << ".........Expected Signal for L = " << "19712" << " pb-1 ............................" << endl;
-  if(!doblinding){ cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl; }
+  cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl;
   else cout << "#Events Signal: -1 " << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
@@ -1323,7 +1309,7 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   }
   // cout << ".........Expected Signal for L = " << lumi->getVal() << " pb-1 ............................" << endl;
   cout << ".........Expected Signal for L = " << "19712" << " pb-1 ............................" << endl;
-  if(!doblinding){ cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl; }
+  cout << "#Events Signal: " << w->data("Data")->sumEntries() << endl;
   else cout << "#Events Signal: -1 " << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
