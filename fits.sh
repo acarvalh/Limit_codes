@@ -53,7 +53,7 @@ for i in `echo ${runLimits[@]}`; do
 
 	outputdir="radlim_${limitdirs[$i]}/radlim${imass}"
 	mkdir -p $outputdir
-	root -l -q runmgg.C >> ${outputdir}/log_radlim${imass}.txt
+	root -l -b -q runmgg.C >> ${outputdir}/log_radlim${imass}.txt
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
 
