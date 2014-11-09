@@ -28,7 +28,7 @@ for (( j = 1 ; j < 12 ; j++ )); do # for each mass
     outputdir="radlim_Mggjj/radlim${radion[$j]}"
     mkdir $outputdir
     root -l -q runfits.C >> ${outputdir}/log_radlim${radion[$j]}.txt
-    mv workspaces/hgg.* ${outputdir}
+    mv workspaces/hgghbb.* ${outputdir}
     mv datacards/* ${outputdir}
     #also colect the plots
     mv databkgoversig*  ${outputdir}
@@ -40,28 +40,28 @@ for (( j = 1 ; j < 12 ; j++ )); do # for each mass
 
     if [ ${doBlinding} == 1 ]    
     then
-	combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+	combine -M Asymptotic --run blind hgghbb.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
 	echo did with rep 2btag only
 	       
-	combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
+	combine -M Asymptotic --run blind hgghbb.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
 	echo with rep no syst	
 
-	combine -M Asymptotic --run blind hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
+	combine -M Asymptotic --run blind hgghbb.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
 	echo did with rep 
 	cd ../..
     else
-	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
+	combine -M Asymptotic hgghbb.mH${radion[$j]}.0_8TeVonecat.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}onecat.txt
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_onecat.root
 	echo did with rep 2btag only
 	
-	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
+	combine -M Asymptotic hgghbb.mH${radion[$j]}.0_8TeVrep.txt -S 0 >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_nosyst.txt
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mR${radion[$j]}_nosyst.root
 	echo with rep no syst	
 
-	combine -M Asymptotic hgg.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
+	combine -M Asymptotic hgghbb.mH${radion[$j]}.0_8TeVrep.txt >> higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}_reparametrization.txt
 	mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${radion[$j]}.root
 	echo did with rep 
 	cd ../..
