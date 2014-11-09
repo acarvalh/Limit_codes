@@ -782,7 +782,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     mggSig[c] ->paramOn(plotmgg[c]);
     sigToFit[c] ->plotOn(plotmgg[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F("hist", "hist", 400, minSigFit, maxSigFit);
+    TH1F *hist = new TH1F(TString::Format("hist_cat%d",c), "hist", 400, minSigFit, maxSigFit);
     plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
@@ -900,7 +900,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       mggSig[c] ->paramOn(plotmgg[c]);
       sigToFit[c] ->plotOn(plotmgg[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-      TH1F *hist = new TH1F("hist", "hist", 400, minSigFit, maxSigFit);
+      TH1F *hist = new TH1F(TString::Format("hist_%d_cat%d",d,c), "hist", 400, minSigFit, maxSigFit);
       plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmgg[c]->SetMinimum(0.0);
       plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
