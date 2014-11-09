@@ -26,7 +26,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 RooArgSet* defineVariables()
 {
   // define variables of the input ntuple
-  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gamma jj)",320,1200,"GeV");
+  RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gammajj)",320,1200,"GeV");
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
   RooRealVar* mjj = new RooRealVar("mjj","M(jj)",0,500,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100000000,"");
@@ -350,7 +350,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
     if (c==1) plotmtotBkg[c]->SetMaximum(8.0);
-    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj} (GeV)");
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
   TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
@@ -368,9 +368,9 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
 
     TLegend *legmc = new TLegend(0.6,0.7,0.9,0.9);
     legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ",""); //"LPE" blind
-    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Power law","L");
-    if(dobands)legmc->AddEntry(twosigma,"two sigma ","F");
-    if(dobands)legmc->AddEntry(onesigma,"one sigma","F");
+    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Bkg Fit","L");
+    if(dobands)legmc->AddEntry(onesigma,"#pm1 #sigma","F");
+    if(dobands)legmc->AddEntry(twosigma,"#pm2 #sigma","F");
     //legmc->SetHeader("M_{X} = 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -568,7 +568,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
-    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gamma jj} (GeV)");
+    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj} (GeV)");
 
 
     plotmtot[c]->Draw("SAME");
