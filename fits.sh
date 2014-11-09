@@ -10,7 +10,7 @@ do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
 #runLimits=("0" "1" "2" "3" "4" "5" "6")
-runLimits=("3")
+runLimits=("3" "4" "5" "6")
 
 for i in `echo ${runLimits[@]}`; do
 
