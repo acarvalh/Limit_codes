@@ -1411,23 +1411,33 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   // for statistical tests.
   //**********************************************************************//
   RooAbsPdf* mggHigPdf[ncat];
+  RooAbsPdf* mjjHigPdf[ncat];
   RooWorkspace *wAll = new RooWorkspace("w_all","w_all");
   for (int c = 0; c < ncat; ++c) {
     mggHigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mggHig_%d_cat%d",higgschannel,c));
     wAll->import(*w->pdf(TString::Format("mggHig_%d_cat%d",higgschannel,c)));
+    mjjHigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
+    wAll->import(*w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c)));
   }
   // (2) Systematics on energy scale and resolution
   // 1,1,1 statistical to be treated on the datacard
   wAll->factory(TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("CMS_hbb_hig_%d_m0_absShift[1,1,1]",higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat0(mjj_hig_m0_%d_cat0, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat1(mjj_hig_m0_%d_cat1, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   // (3) Systematics on resolution
   wAll->factory(TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("CMS_hbb_hig_%d_sigmaScale[1,1,1]",higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat0(mjj_hig_sigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat1(mjj_hig_sigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat0(mjj_hig_gsigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat1(mjj_hig_gsigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   // save the other parameters
   /* for (int c = 0; c < ncat; ++c) {
      wAll->factory(
@@ -1443,10 +1453,13 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   */
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
-					       TString::Format("EDIT::CMS_hgg_hig_%d_cat%d(mggHig_%d_cat%d,",higgschannel,c,higgschannel,c) +
+					       TString::Format("EDIT::CMS_hig_%d_cat%d(mggHig_%d_cat%d,",higgschannel,c,higgschannel,c) +
 					       TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d, ",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d, ",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
+					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mjj_hig_m0_%d_cat%d=CMS_hbb_hig_m0_%d_cat%d, ",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mjj_hig_sigma_%d_cat%d=CMS_hbb_hig_sigma_%d_cat%d, ",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mjj_hig_gsigma_%d_cat%d=CMS_hbb_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
 					       );
   TString filename(wsDir+TString(fileHiggsName)+".inputhig.root");
   wAll->writeToFile(filename);
@@ -1571,26 +1584,26 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
   outFile << "shapes data_obs cat1 "<< TString(fileBkgName)+".root" << " w_all:data_obs_cat1" << endl;
   outFile << "############## shape with reparametrization" << endl;
-  outFile << "shapes mggBkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat0" << endl;
-  outFile << "shapes mggBkg cat1 "<< TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat1" << endl;
+  outFile << "shapes Bkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat0" << endl;
+  outFile << "shapes Bkg cat1 "<< TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat1" << endl;
   outFile << "# signal" << endl;
-  outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
-  outFile << "shapes mggSig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat1" << endl;
+  outFile << "shapes Sig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat0" << endl;
+  outFile << "shapes Sig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat1" << endl;
   outFile << "# ggh" << endl;
-  outFile << "shapes mggHigggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat0" << endl;
-  outFile << "shapes mggHigggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hgg_hig_0_cat1" << endl;
+  outFile << "shapes Higggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hig_0_cat0" << endl;
+  outFile << "shapes Higggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hig_0_cat1" << endl;
   outFile << "# tth" << endl;
-  outFile << "shapes mggHigtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat0" << endl;
-  outFile << "shapes mggHigtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hgg_hig_1_cat1" << endl;
+  outFile << "shapes Higtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hig_1_cat0" << endl;
+  outFile << "shapes Higtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hig_1_cat1" << endl;
   outFile << "# vbf" << endl;
-  outFile << "shapes mggHigvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat0" << endl;
-  outFile << "shapes mggHigvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hgg_hig_2_cat1" << endl;
+  outFile << "shapes Higvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hig_2_cat0" << endl;
+  outFile << "shapes Higvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hig_2_cat1" << endl;
   outFile << "# vh" << endl;
-  outFile << "shapes mggHigvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat0" << endl;
-  outFile << "shapes mggHigvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hgg_hig_3_cat1" << endl;
+  outFile << "shapes Higvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hig_3_cat0" << endl;
+  outFile << "shapes Higvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hig_3_cat1" << endl;
   outFile << "# bbh" << endl;
-  outFile << "shapes mggHigbbh cat0 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hgg_hig_4_cat0" << endl;
-  outFile << "shapes mggHigbbh cat1 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hgg_hig_4_cat1" << endl;
+  outFile << "shapes Higbbh cat0 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hig_4_cat0" << endl;
+  outFile << "shapes Higbbh cat1 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hig_4_cat1" << endl;
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
@@ -1601,8 +1614,8 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     outFile << "------------------------------" << endl;
     outFile << "bin cat0 cat0 cat0 cat0 cat0 cat0 cat0"
 	    <<" cat1 cat1 cat1 cat1 cat1 cat1 cat1" << endl;
-    outFile << "process mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh mggHigbbh"
-	    <<" mggSig mggBkg mggHigggh mggHigtth mggHigvbf mggHigvh mggHigbbh" << endl;
+    outFile << "process Sig Bkg Higggh Higtth Higvbf Higvh Higbbh"
+	    <<" Sig Bkg Higggh Higtth Higvbf Higvh Higbbh" << endl;
     outFile << "process 0 1 2 3 4 5 6"
 	    <<" 0 1 2 3 4 5 6 " << endl;
     outFile << "rate "
@@ -1672,12 +1685,15 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
     outFile << "CMS_hgg_hig_4_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     //
-    outFile << "############## for mgg fit - slopes" << endl;
-    outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
-    outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
+    outFile << "############## for mggxmjj fit - slopes" << endl;
+    outFile << "CMS_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
+    outFile << "CMS_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
 
     outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
     outFile << "CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+
+    outFile << "CMS_hbb_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    outFile << "CMS_hbb_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
 
   } // if ncat ==2
   /////////////////////////////////////
@@ -1736,9 +1752,9 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
   cout<<"here"<<endl;
   outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
   outFile << "############## shape with reparametrization" << endl;
-  outFile << "shapes mggBkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_hgg_bkg_8TeV_cat0" << endl;
+  outFile << "shapes Bkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat0" << endl;
   outFile << "# signal" << endl;
-  outFile << "shapes mggSig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_hgg_sig_cat0" << endl;
+  outFile << "shapes Sig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat0" << endl;
 
 
   outFile << "---------------" << endl;
@@ -1753,7 +1769,7 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
     }
     outFile << "------------------------------" << endl;
     outFile << "bin cat0 cat0 " << endl;
-    outFile << "process mggSig mggBkg " << endl;
+    outFile << "process Sig Bkg " << endl;
     outFile << "process 0 1 " << endl;
     outFile << "rate "
 	    << " " << sigToFit[0]->sumEntries() << " " << 1
@@ -1785,12 +1801,11 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
     outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs " << endl;
     outFile << "CMS_hgg_hig_m0_absShift param 1 0.045 # displacement of the dipho mean" << endl;
     outFile << "CMS_hgg_hig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
-    outFile << "############## for mgg fit - slopes" << endl;
-    outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
-    outFile << "CMS_hgg_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
+    outFile << "############## for mggxmjj fit - slopes" << endl;
+    outFile << "CMS_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
 
     outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
-
+    outFile << "CMS_hbb_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
 
   } // if ncat ==2
   /////////////////////////////////////
