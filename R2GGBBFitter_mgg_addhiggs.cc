@@ -401,7 +401,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout<<" here 1"<<endl;
     dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
     cout<<" here 1"<<endl;
-    data[c]->plotOn(plotmggBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
+    dataplot[c]->plotOn(plotmggBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
     mggBkgTmp.plotOn(
 		     plotmggBkg[c],
 		     LineColor(kBlue),
