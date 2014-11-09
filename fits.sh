@@ -9,8 +9,7 @@ doResLimits=("0" "1" "1" "0" "1" "1" "0")
 do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
-#runLimits=("0" "1" "2" "3" "4" "5" "6")
-runLimits=("3" "4" "5" "6")
+runLimits=("0" "1" "2" "3" "4" "5" "6")
 
 for i in `echo ${runLimits[@]}`; do
 
@@ -19,7 +18,7 @@ for i in `echo ${runLimits[@]}`; do
     if [ ${doResLimits[$i]} == "0" ]; then
 	masses=("0")
     else
-	masses=("260" "270" "300" "350" "400" "450" "500")
+	masses=("260" "270" "300" "350" "400") #the limit trees exist to do 450 and 500 too
     fi
 
     if [ ${do2DLimits[$i]} == "0" ]; then
