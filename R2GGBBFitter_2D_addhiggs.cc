@@ -1,18 +1,6 @@
-/** \macro H2GGFitter.cc
- *
- * $Id$
- *
- * Software developed for the CMS Detector at LHC
- *
- *
- * Template Serguei Ganjour - CEA/IRFU/SPP, Saclay
- *
- *
- * Macro is implementing the unbinned maximum-likelihood model for
- * the Higgs to gamma gamma analysis. PDF model and RooDataSets
- * are stored in the workspace which is feeded to HiggsAnalysis/CombinedLimit tools:
- *
- */
+//Important options first
+Bool_t doblinding = true; //True if you want to blind
+
 // this one is for 2D fit
 using namespace RooFit;
 using namespace RooStats ;
@@ -38,13 +26,11 @@ void SetConstantParams(const RooArgSet* params);
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
-Bool_t doblinding = true; //True if you want to blind
-
 RooArgSet* defineVariables()
 {
   RooRealVar* mgg = new RooRealVar("mgg","M(#gamma#gamma)",100,180,"GeV");
   //RooRealVar* mtot = new RooRealVar("mtot","M(#gamma#gammajj)",200,1600,"GeV");
-  RooRealVar* mjj = new RooRealVar("mjj","M(jj)",100,1600,"GeV");
+  RooRealVar* mjj = new RooRealVar("mjj","M(jj)",60,180,"GeV");
   RooRealVar* evWeight = new RooRealVar("evWeight","HqT x PUwei",0,100,"");
   RooCategory* cut_based_ct = new RooCategory("cut_based_ct","event category 4") ;
   //
@@ -62,13 +48,13 @@ RooArgSet* defineVariables()
 void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 {
   style();
-  TString fileBaseName(TString::Format("hgghbb.mH%.1f_8TeV", mass));
-  TString fileHiggsNameggh(TString::Format("hgghbb.hig.mH%.1f_8TeV.ggh", mass));
-  TString fileHiggsNametth(TString::Format("hgghbb.hig.mH%.1f_8TeV.tth", mass));
-  TString fileHiggsNamevbf(TString::Format("hgghbb.hig.mH%.1f_8TeV.vbf", mass));
-  TString fileHiggsNamevh(TString::Format("hgghbb.hig.mH%.1f_8TeV.vh", mass));
-  TString fileHiggsNamebbh(TString::Format("hgghbb.hig.mH%.1f_8TeV.bbh", mass));
-  TString fileBkgName(TString::Format("hgghbb.inputbkg_8TeV", mass));
+  TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
+  TString fileHiggsNameggh(TString::Format("hgg.hig.mH%.1f_8TeV.ggh", mass));
+  TString fileHiggsNametth(TString::Format("hgg.hig.mH%.1f_8TeV.tth", mass));
+  TString fileHiggsNamevbf(TString::Format("hgg.hig.mH%.1f_8TeV.vbf", mass));
+  TString fileHiggsNamevh(TString::Format("hgg.hig.mH%.1f_8TeV.vh", mass));
+  TString fileHiggsNamebbh(TString::Format("hgg.hig.mH%.1f_8TeV.bbh", mass));
+  TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
   TString card_name("models_2D.rs"); // put the model parameters here!
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs();
@@ -76,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/ggh_m125_powheg_8TeV_m270.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/tth_m125_8TeV_m270.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/vbf_m125_8TeV_m270.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/wzh_m125_8TeV_zh_m270.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/bbh_m125_8TeV_m270.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/ggHH_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_nonresSearch_withKinFit/Data_m0.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/Radion_m270_8TeV_m270.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v37/v37_fitTo2D_resSearch_withRegKinFit/Data_m270.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -172,23 +158,25 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   //
   // we take only mtot to fit to the workspace, we include the cuts
   sigToFit[0] = (RooDataSet*) sigScaled.reduce(
-					       *w->var("mgg"),*w->var("mjj")),
+					       RooArgList(*w->var("mgg"),*w->var("mjj")),
 					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0);
   w->import(*sigToFit[0],Rename(TString::Format("Sig_cat%d",0)));
   //
   sigToFit[1] = (RooDataSet*) sigScaled.reduce(
-					       *w->var("mgg"),*w->var("mjj")),
+					       RooArgList(*w->var("mgg"),*w->var("mjj")),
 					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1);
   w->import(*sigToFit[1],Rename(TString::Format("Sig_cat%d",1)));
   // Create full signal data set without categorization
-  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mgg"),*w->var("mjj")),mainCut);
+  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(
+							   RooArgList(*w->var("mgg"),*w->var("mjj")),
+							   mainCut);
   cout << "======================================================================" << endl;
   w->import(*sigToFitAll,Rename("Sig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFitAll[c]->sumEntries();
+    Float_t nExpEvt = sigToFitAll[c].sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
 	 << TString::Format(" eff x Acc cat%d : ",c)
 	 << "%"
@@ -220,33 +208,33 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   cout<<" HERE TAKE DATASET"<<endl;
 
   dataToFit[0] = (RooDataSet*) Data.reduce(
-					   *w->var("mgg"),*w->var("mjj")),
+					   RooArgList(*w->var("mgg"),*w->var("mjj")),
 					   mainCut+TString::Format(" && cut_based_ct==%d",0)+cut0);
   if(doblinding){ dataToPlot[0] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),*w->var("mjj")),
+					    RooArgList(*w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)")// blind
 					    +cut0);
   }else{
 
                   dataToPlot[0] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),*w->var("mjj")),
+					    RooArgList*w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",0)
 					    +cut0);
 
   }
    
   dataToFit[1] = (RooDataSet*) Data.reduce(
-					   *w->var("mgg"),*w->var("mjj")),
+					   RooArgList(*w->var("mgg"),*w->var("mjj")),
 					   mainCut+TString::Format(" && cut_based_ct==%d",1)+cut1);
   if(doblinding){ dataToPlot[1] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),*w->var("mjj")),
+					    RooArgList(*w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",1)
 					    +TString::Format(" && (mgg > 130 || mgg < 120)") // blind
 					    +cut1);
   }else{
                   dataToPlot[1] = (RooDataSet*) Data.reduce(
-					    *w->var("mgg"),*w->var("mjj")),
+					    RooArgList(*w->var("mgg"),*w->var("mjj")),
 					    mainCut+TString::Format(" && cut_based_ct==%d",1)
 					    +cut1);  
   }
@@ -256,7 +244,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
     w->import(*dataToPlot[c],Rename(TString::Format("Dataplot_cat%d",c)));
   }
   // Create full data set without categorization
-  RooDataSet* data = (RooDataSet*) Data.reduce(*w->var("mgg"),*w->var("mjj")),mainCut);
+  RooDataSet* data = (RooDataSet*) Data.reduce(RooArgList(*w->var("mgg"),*w->var("mjj")),mainCut);
   w->import(*data, Rename("Data"));
   data->Print("v");
   return;
@@ -301,20 +289,21 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
     mjjSig[c]->fitTo(*sigToFit[c],Range(minSigMjjFit,maxSigMjjFit),SumW2Error(kTRUE));
 
     // IMPORTANT: fix all pdf parameters to constant, why?
-    w->defineSet(TString::Format("SigPdfParam_cat%d",c),
-		 RooArgSet(
-			   *w->var(TString::Format("mgg_sig_m0_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_sigma_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_alpha_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_n_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_gsigma_cat%d",c)),
-			   *w->var(TString::Format("mgg_sig_frac_cat%d",c)),
-                           *w->var(TString::Format("mjj_sig_m0_cat%d",c)),
+    RooArgSet sigParams( *w->var(TString::Format("mgg_sig_m0_cat%d",c)),
+			 *w->var(TString::Format("mgg_sig_sigma_cat%d",c)),
+			 *w->var(TString::Format("mgg_sig_alpha_cat%d",c)),
+			 *w->var(TString::Format("mgg_sig_n_cat%d",c)),
+			 *w->var(TString::Format("mgg_sig_gsigma_cat%d",c)),
+			 *w->var(TString::Format("mgg_sig_frac_cat%d",c)));
+    sigParams.add(RooArgSet(
+			   *w->var(TString::Format("mjj_sig_m0_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_sigma_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_alpha_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_n_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_gsigma_cat%d",c)),
 		           *w->var(TString::Format("mjj_sig_frac_cat%d",c))) );
+
+    w->defineSet(TString::Format("SigPdfParam_cat%d",c), sigParams);
     SetConstantParams(w->set(TString::Format("SigPdfParam_cat%d",c)));
 
     RooProdPdf SigPdf(TString::Format("SigPdf_cat%d",c),"",RooArgSet(*mggSig[c], *mjjSig[c]));    
@@ -359,20 +348,22 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     mjjHig[c]->fitTo(*higToFit[c],Range(minHigMjjFit,maxHigMjjFit),SumW2Error(kTRUE));
 
     // IMPORTANT: fix all pdf parameters to constant
-    w->defineSet(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c),
-		 RooArgSet(
-			   *w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mgg_hig_sigma_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mgg_hig_alpha_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mgg_hig_n_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mgg_hig_gsigma_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mgg_hig_frac_%d_cat%d",higgschannel,c)),
+    RooArgSet sigParams( *w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)),
+			 *w->var(TString::Format("mgg_hig_sigma_%d_cat%d",higgschannel,c)),
+			 *w->var(TString::Format("mgg_hig_alpha_%d_cat%d",higgschannel,c)),
+			 *w->var(TString::Format("mgg_hig_n_%d_cat%d",higgschannel,c)),
+			 *w->var(TString::Format("mgg_hig_gsigma_%d_cat%d",higgschannel,c)),
+			 *w->var(TString::Format("mgg_hig_frac_%d_cat%d",higgschannel,c)) );
+    sigParams.add(RooArgSet(
 			   *w->var(TString::Format("mjj_hig_m0_%d_cat%d",higgschannel,c)),
 			   *w->var(TString::Format("mjj_hig_sigma_%d_cat%d",higgschannel,c)),
 			   *w->var(TString::Format("mjj_hig_alpha_%d_cat%d",higgschannel,c)),
 			   *w->var(TString::Format("mjj_hig_n_%d_cat%d",higgschannel,c)),
 			   *w->var(TString::Format("mjj_hig_gsigma_%d_cat%d",higgschannel,c)),
-			   *w->var(TString::Format("mjj_hig_frac_%d_cat%d",higgschannel,c))) );
+			   *w->var(TString::Format("mjj_hig_frac_%d_cat%d",higgschannel,c)) ) );
+
+    w->defineSet(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c), sigParams);
+
     SetConstantParams(w->set(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c)));
 
     RooProdPdf HigPdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c),"",RooArgSet(*mggHig[c], *mjjHig[c]));
@@ -453,14 +444,14 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     //************************************************//
     // Plot mgg background fit results per categories
     //************************************************//
-    TCanvas* ctmp = new TCanvas("ctmp","mgg Background Categories",0,0,500,500);
+    TCanvas* ctmp = new TCanvas(TString::Format("ctmpBkgMgg_cat%d",c),"mgg Background Categories",0,0,500,500);
     Int_t nBinsMass(80);
     plotmggBkg[c] = mgg->frame(nBinsMass);
     cout<<" here 1"<<endl;
     dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
     cout<<" here 1"<<endl;
     data[c]->plotOn(plotmggBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
-    mggBkgTmp0.plotOn(
+    mggBkgTmp0->plotOn(
 		     plotmggBkg[c],
 		     LineColor(kBlue),
 		     Range("fitrange"),NormRange("fitrange"));
@@ -617,7 +608,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 0 GeV");
+    legmc->SetHeader(" 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -639,14 +630,14 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     //************************************************//
     // Plot mjj background fit results per categories
     //************************************************//
-    ctmp = new TCanvas("ctmp","mjj Background Categories",0,0,500,500);
+    ctmp = new TCanvas(TString::Format("ctmpBkgMjj_cat%d",c),"mjj Background Categories",0,0,500,500);
     nBinsMass = 60;
     plotmjjBkg[c] = mjj->frame(nBinsMass);
     cout<<" here 1"<<endl;
     dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
     cout<<" here 1"<<endl;
     data[c]->plotOn(plotmjjBkg[c],LineColor(kWhite),MarkerColor(kWhite)); //
-    mjjBkgTmp0.plotOn(
+    mjjBkgTmp0->plotOn(
 		     plotmjjBkg[c],
 		     LineColor(kBlue),
 		     Range("fitrange"),NormRange("fitrange"));
@@ -802,7 +793,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmjjBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 0 GeV");
+    legmc->SetHeader(" 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -877,7 +868,7 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
 					       TString::Format(" mjj_sig_m0_cat%d=CMS_hbb_sig_m0_cat%d, ", c,c) +
 					       TString::Format(" mjj_sig_sigma_cat%d=CMS_hbb_sig_sigma_cat%d, ", c,c) + 
 					       TString::Format(" mjj_sig_gsigma_cat%d=CMS_hbb_sig_gsigma_cat%d)", c,c)  );
-					       );
+
   TString filename(wsDir+TString(fileBaseName)+".inputsig.root");
   wAll->writeToFile(filename);
   cout << "Write signal workspace in: " << filename << " file" << endl;
@@ -1012,10 +1003,10 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   Float_t minSigFitMjj(60),maxSigFitMjj(180);
   Float_t MASS(Mass);
   Int_t nBinsMass(20); // just need to plot
-  RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
+  RooPlot* plotmggAll = mgg->frame(Range(minSigFitMgg,maxSigFitMgg),Bins(nBinsMass));
   signalAll->plotOn(plotmggAll);
   gStyle->SetOptTitle(0);
-  TCanvas* c1 = new TCanvas("c1","mgg",0,0,500,500);
+  TCanvas* c1 = new TCanvas("cMgg","mgg",0,0,500,500);
   c1->cd(1);
   //********************************************//
   // Plot Signal Categories
@@ -1041,12 +1032,12 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     mggSig[c] ->paramOn(plotmgg[c]);
     sigToFit[c] ->plotOn(plotmgg[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F("hist", "hist", 400, minSigFitMgg, maxSigFitMgg);
+    TH1F *hist = new TH1F(TString::Format("histMgg_cat%d",c), "hist", 400, minSigFitMgg, maxSigFitMgg);
     plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
     plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
-    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,500,500);
+    TCanvas* ctmp = new TCanvas(TString::Format("ctmpSigMgg_cat%d",c),"Background Categories",0,0,500,500);
     plotmgg[c]->Draw();
     plotmgg[c]->Draw("SAME");
     TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
@@ -1061,7 +1052,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigFitMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 0 GeV");
+			     " Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFitMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1079,7 +1070,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     //ctmp->SaveAs(TString::Format("sigmodelMgg_cat%d.C",c));
   } // close categories
 
-  c1 = new TCanvas("c1","mgg",0,0,500,500);
+  c1 = new TCanvas("cMjj","mgg",0,0,500,500);
   c1->cd(1);
   //********************************************//
   // Plot Signal Categories
@@ -1105,12 +1096,12 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     mjjSig[c] ->paramOn(plotmjj[c]);
     sigToFit[c] ->plotOn(plotmjj[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F("hist", "hist", 400, minSigFitMjj, maxSigFitMjj);
+    TH1F *hist = new TH1F(TString::Format("histMjj_cat%d",c), "hist", 400, minSigFitMjj, maxSigFitMjj);
     plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmjj[c]->SetMinimum(0.0);
     plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
     plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
-    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,500,500);
+    TCanvas* ctmp = new TCanvas(TString::Format("ctmpSigMjj_cat%d",c),"Background Categories",0,0,500,500);
     plotmjj[c]->Draw();
     plotmjj[c]->Draw("SAME");
     TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
@@ -1125,7 +1116,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigFitMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-			     " Resonance - 0 GeV");
+			     " Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFitMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
@@ -1208,7 +1199,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
     //RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
     //higgsAll->plotOn(plotmggAll);
     gStyle->SetOptTitle(0);
-    TCanvas* c1 = new TCanvas("c1","mgg",0,0,500,500);
+    TCanvas* c1 = new TCanvas(TString::Format("cMgg_%d",d),"mgg",0,0,500,500);
     c1->cd(1);
     //********************************************//
     // Plot Signal Categories
@@ -1235,12 +1226,12 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       mggSig[c] ->paramOn(plotmgg[c]);
       sigToFit[c] ->plotOn(plotmgg[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-      TH1F *hist = new TH1F("hist", "hist", 400, minSigFitMgg, maxSigFitMgg);
+      TH1F *hist = new TH1F(TString::Format("histMgg_%d_cat%d",d,c), "hist", 400, minSigFitMgg, maxSigFitMgg);
       plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmgg[c]->SetMinimum(0.0);
       plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
       plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
-      TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,500,500);
+      TCanvas* ctmp = new TCanvas(TString::Format("ctmpHigMgg_%d_cat%d",d,c),"Background Categories",0,0,500,500);
       plotmgg[c]->Draw();
       plotmgg[c]->Draw("SAME");
       TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
@@ -1256,7 +1247,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minSigFitMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 0 GeV");
+			       " Resonance - 260 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minSigFitMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1274,7 +1265,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       //ctmp->SaveAs(TString::Format("sigmodelMgg_cat%d.C",c));
     } // close categories
 
-    c1 = new TCanvas("c1","mjj",0,0,500,500);
+    c1 = new TCanvas(TString::Format("cMjj_%d",d),"mjj",0,0,500,500);
     c1->cd(1);
     //********************************************//
     // Plot Signal Categories
@@ -1301,12 +1292,12 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       mjjSig[c] ->paramOn(plotmjj[c]);
       sigToFit[c] ->plotOn(plotmjj[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-      TH1F *hist = new TH1F("hist", "hist", 400, minSigFitMjj, maxSigFitMjj);
+      TH1F *hist = new TH1F(TString::Format("histMjj_%d_cat%d",d,c), "hist", 400, minSigFitMjj, maxSigFitMjj);
       plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmjj[c]->SetMinimum(0.0);
       plotmjj[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
       plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
-      TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,500,500);
+      TCanvas* ctmp = new TCanvas(TString::Format("ctmpHigMjj_%d_cat_%d",d,c),"Background Categories",0,0,500,500);
       plotmjj[c]->Draw();
       plotmjj[c]->Draw("SAME");
       TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
@@ -1322,7 +1313,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minSigFitMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-			       " Resonance - 0 GeV");
+			       " Resonance - 260 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minSigFitMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
@@ -1378,19 +1369,21 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
   //
   // we take only mtot to fit to the workspace, we include the cuts
   higToFit[0] = (RooDataSet*) higScaled.reduce(
-					       *w->var("mgg"),*w->var("mjj"),
+					       RooArgList(*w->var("mgg"),*w->var("mjj")),
 					       mainCut+TString::Format(" && cut_based_ct==%d ",0)+cut0);
   w->import(*higToFit[0],Rename(TString::Format("Hig_%d_cat%d",higgschannel,0)));
   //
   higToFit[1] = (RooDataSet*) higScaled.reduce(
-					       *w->var("mgg"),*w->var("mjj"),
+					       RooArgList(*w->var("mgg"),*w->var("mjj")),
 					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1);
   w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1))); // Create full signal data set without categorization
-  RooDataSet* higToFitAll = (RooDataSet*) higScaled->reduce(*w->var("mgg"),*w->var("mjj"),mainCut);
+  RooDataSet* higToFitAll = (RooDataSet*) higScaled.reduce(
+							    RooArgList(*w->var("mgg"),*w->var("mjj")),
+							    mainCut);
   w->import(*higToFitAll,Rename("Hig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
-  cout << "---- one channel: " << higScaled->sumEntries() << endl;
+  cout << "---- one channel: " << higScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
     Float_t nExpEvt = higToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
