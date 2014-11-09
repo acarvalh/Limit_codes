@@ -27,7 +27,7 @@ for (( j = 1 ; j < 12 ; j++ )); do # for each mass
 
     outputdir="radlim_Mggjj/radlim${radion[$j]}"
     mkdir $outputdir
-    root -l -q runfits.C >> ${outputdir}/log_radlim${radion[$j]}.txt
+    root -l -b -q runfits.C >> ${outputdir}/log_radlim${radion[$j]}.txt
     mv workspaces/hgghbb.* ${outputdir}
     mv datacards/* ${outputdir}
     #also colect the plots

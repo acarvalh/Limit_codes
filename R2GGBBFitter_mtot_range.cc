@@ -114,20 +114,20 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
     w->import(*sigToFit[c],Rename(TString::Format("Sig_cat%d",c)));
   } // close ncat
   // Create full signal data set without categorization
-  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled->reduce(*w->var("mtot"),mainCut);
+  RooDataSet* sigToFitAll = (RooDataSet*) sigScaled.reduce(*w->var("mtot"),mainCut);
   w->import(*sigToFitAll,Rename("Sig"));
   // here we print the number of entries on the different categories
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFit[c].sumEntries();
+    Float_t nExpEvt = sigToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
          << TString::Format(" eff x Acc cat%d : ",c)
          << "%"
          << endl;
   }
   cout << "======================================================================" << endl;
-  sigScaled->Print("v");
+  sigScaled.Print("v");
   return;
 } // end add signal function
 ///////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   RooDataSet* dataToPlot[ncat];
 
   TString cut0;
-  if(doblinding){ cut0 = "&& 0"; }//do not show any data
+  if(doblinding){ cut0 = "&& 1"; }//do not show any data
   else{ cut0 = "&& 1>0 "; }
 
   for (int c = 0; c < ncat; ++c) {
@@ -270,14 +270,14 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    //************************************************//
    // Plot mtot background fit results per categories
    //************************************************//
-   TCanvas* ctmp = new TCanvas("ctmp","mtot Background Categories",0,0,501,501);
+   TCanvas* ctmp = new TCanvas(TString::Format("ctmpBkg_cat%d",c),"mtot Background Categories",0,0,501,501);
     ctmp->cd();
    int binning; if(c==0) binning=22; else binning = 22;
    Int_t nBinsMass(binning);
-   plotmtotBkg[c] = mtot->frame(nBinsMass);
+   plotmtotBkg[c] = mtot->frame(minfit,maxfit,nBinsMass);
    //plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
-   data[c]->plotOn(plotmtotBkg[c], Invisible(doBlinding));//This is a second level of blinding.
+   dataplot[c]->plotOn(plotmtotBkg[c], Invisible());
  
    mtotBkgTmp.plotOn(
         plotmtotBkg[c],
@@ -344,13 +344,12 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
 
    //plotlinemtotBkg[c]->Draw("SAME");
    // //plotmtotBkg[c]->getObject(1)->Draw("SAME");
-   dataplot[c]->plotOn(plotmtotBkg[c]); // blind
-   data[c]->plotOn(plotmtotBkg[c]);//  blind
+    dataplot[c]->plotOn(plotmtotBkg[c],Invisible());//This is a second level of blinding.
    plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
     if (c==1) plotmtotBkg[c]->SetMaximum(8.0);
-    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj} (GeV)");
+    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
   TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
@@ -367,15 +366,18 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    cout << "!!!!!!!!!!!!!!!!!" << endl;
 
     TLegend *legmc = new TLegend(0.6,0.7,0.9,0.9);
-    legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ",""); //"LPE" blind
-    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Bkg Fit","L");
-    if(dobands)legmc->AddEntry(onesigma,"#pm1 #sigma","F");
-    if(dobands)legmc->AddEntry(twosigma,"#pm2 #sigma","F");
+    if(doblinding) legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ","");
+    else legmc->AddEntry(plotmtotBkg[c]->getObject(3),"Data ","LPE");
+    legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Fit","L");
+    if(dobands)legmc->AddEntry(onesigma,"Fit #pm1 #sigma","F");
+    if(dobands)legmc->AddEntry(twosigma,"Fit #pm2 #sigma","F");
     //legmc->SetHeader("M_{X} = 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    TLatex *lat2 = new TLatex(363.0,0.91*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat1 = new TLatex(minfit+43.0,0.91*plotmtotBkg[c]->GetMaximum(),"X#rightarrowHH#rightarrow#gamma#gammab#bar{b}");
+    lat1->Draw();
+    TLatex *lat2 = new TLatex(minfit+43.0,0.81*plotmtotBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
 
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
@@ -557,18 +559,18 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
         plotmtot[c],
         Components(TString::Format("mtotCBSig_cat%d",c)),
         LineStyle(kDashed),LineColor(kRed));
-    mtotSig[c] ->paramOn(plotmtot[c]);
+    //mtotSig[c] ->paramOn(plotmtot[c]);
     sigToFit[c] ->plotOn(plotmtot[c]);
 //    TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 450, 450);
     //TH1F *hist = new TH1F("hist", "hist", 450, minMassFit, maxMassFit);
-    TCanvas* ctmp = new TCanvas("ctmp","Background Categories",0,0,501,501);
+    TCanvas* ctmp = new TCanvas(TString::Format("ctmpSig_cat%d",c),"Background Categories",0,0,501,501);
     ctmp->cd();
    plotmtot[c]->Draw("AC");
     plotmtot[c]->SetTitle("");
     //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
-    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj} (GeV)");
+    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
 
 
     plotmtot[c]->Draw("SAME");
@@ -583,11 +585,15 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-        minMassFit+10.5,0.85*plotmtot[c]->GetMaximum(),
-        " M_{X} = 1100 GeV");
+        minMassFit+10.5,0.91*plotmtot[c]->GetMaximum(),
+        "X#rightarrowHH#rightarrow#gamma#gammab#bar{b}");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-        minMassFit+10.5,0.75*plotmtot[c]->GetMaximum(),catdesc.at(c));
+        minMassFit+10.5,0.81*plotmtot[c]->GetMaximum(),
+        "m_{X} = 1100 GeV");
+    lat2->Draw();
+    TLatex *lat2 = new TLatex(
+        minMassFit+10.5,0.71*plotmtot[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
 
  
