@@ -69,7 +69,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   TString fileHiggsNamevh(TString::Format("hgg.hig.mH%.1f_8TeV.vh", mass));
   TString fileHiggsNamebbh(TString::Format("hgg.hig.mH%.1f_8TeV.bbh", mass));
   TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
-  TString card_name("models_test.rs"); // put the model parameters here!
+  TString card_name("models_mgg.rs"); // put the model parameters here!
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs();
   RooFitResult* fitresults;
