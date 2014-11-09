@@ -1,20 +1,8 @@
-/** \macro H2GGFitter.cc
-*
-* $Id$
-*
-* Software developed for the CMS Detector at LHC
-*
-*
-* Template Serguei Ganjour - CEA/IRFU/SPP, Saclay
-*
-*
-* Macro is implementing the unbinned maximum-likelihood model for
-* the Higgs to gamma gamma analysis. PDF model and RooDataSets
-* are stored in the workspace which is feeded to HiggsAnalysis/CombinedLimit tools:
-*
-*/
-  // this one is for 4 body fit
+//Important options first
+Bool_t doblinding = true; //True if you want to blind
+const int minfit =320, maxfit=1200;
 
+// this one is for 4 body fit
 using namespace RooFit;
 using namespace RooStats ;
 
@@ -34,10 +22,6 @@ void SetConstantParams(const RooArgSet* params);
 
 RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
-
-const int minfit =320,minfit =320, maxfit=1200;
-
-Bool_t doblinding = true; //True if you want to blind
 
 RooArgSet* defineVariables()
 {
@@ -63,8 +47,8 @@ RooArgSet* defineVariables()
 void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
 {
   style();
-  TString fileBaseName(TString::Format("hgg.mH%.1f_8TeV", mass));
-  TString fileBkgName(TString::Format("hgg.inputbkg_8TeV", mass));
+  TString fileBaseName(TString::Format("hgghbb.mH%.1f_8TeV", mass));
+  TString fileBkgName(TString::Format("hgghbb.inputbkg_8TeV", mass));
   TString card_name("models_mtot_range_m1100.rs"); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
@@ -164,16 +148,13 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   RooDataSet* dataToPlot[ncat];
 
   TString cut0;
-  if(doblinding){ cut0 = "&& mgg > 120 && mgg < 130 && mjj > 90 && mjj < 165 "; }
+  if(doblinding){ cut0 = "&& 0"; }//do not show any data
   else{ cut0 = "&& 1>0 "; }
 
   for (int c = 0; c < ncat; ++c) {
-    if(c==0) dataToFit[c] = (RooDataSet*) Data.reduce(
+    dataToFit[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
-        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit)+cut0);
-    if(c==1) dataToFit[c] = (RooDataSet*) Data.reduce(
-        *w->var("mtot"),
-        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit)+cut0);
+        TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit));
     dataToPlot[c] = (RooDataSet*) Data.reduce(
         *w->var("mtot"),
         TString::Format(" cut_based_ct==%d && mtot > %d",c,minfit)+ cut0);
@@ -652,8 +633,7 @@ void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* file
      }
   }
   cout << ".........Expected Signal for L = " << lumi->getVal() << " pb-1 ............................" << endl;
-  if(!doblinding){ cout << "#Events Signal: " << sigToFit[0]->sumEntries()+sigToFit[1]->sumEntries()  << endl; }
-  else cout << "#Events Signal: -1 "  << endl;
+  cout << "#Events Signal: " << sigToFit[0]->sumEntries()+sigToFit[1]->sumEntries()  << endl;
   Float_t siglikeErr[ncat];
   for (int c = 0; c < ncat; ++c) {
     cout << TString::Format("#Events Signal cat%d: ",c) << sigToFit[c]->sumEntries() << endl;
@@ -663,7 +643,7 @@ void MakeDataCardREP(RooWorkspace* w, const char* fileBaseName, const char* file
   TString filename(cardDir+TString(fileBaseName)+"rep.txt");
   ofstream outFile(filename);
   outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgghbb.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "imax "<<ncat << endl;
   outFile << "jmax 1" << endl;
@@ -782,7 +762,7 @@ void MakeDataCardonecat(RooWorkspace* w, const char* fileBaseName, const char* f
   TString filename(cardDir+TString(fileBaseName)+"onecat.txt");
   ofstream outFile(filename);
   outFile << "#CMS-HGG DataCard for Unbinned Limit Setting, " << lumi->getVal() << " pb-1 " << endl;
-  outFile << "#Run with: combine -d hgg.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
+  outFile << "#Run with: combine -d hgghbb.mH130.0.shapes-Unbinned.txt -U -m 130 -H ProfileLikelihood -M MarkovChainMC --rMin=0 --rMax=20.0 -b 3000 -i 50000 --optimizeSim=1 --tries 30" << endl;
   outFile << "# Lumi = " << lumi->getVal() << " pb-1" << endl;
   outFile << "imax 1" << endl;
   outFile << "jmax 1" << endl;
