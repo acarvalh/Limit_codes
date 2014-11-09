@@ -39,7 +39,7 @@ for i in `echo ${runLimits[@]}`; do
 	sed -i "/TString ddata/c\  TString ddata = \"$dir/Data_m${imass}.root\";" $fitterScript
 
 	if [ ${imass} == "0" ]; then
-	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/ggHH_8TeV_m0.root\";" $fitterScript
+	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root\";" $fitterScript
 	elif [ ${imass} == "260" ]; then
 	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/MSSM_m260_8TeV_m260.root\";" $fitterScript
 	else
