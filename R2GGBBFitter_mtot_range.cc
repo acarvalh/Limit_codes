@@ -49,7 +49,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   style();
   TString fileBaseName(TString::Format("hgghbb.mH%.1f_8TeV", mass));
   TString fileBkgName(TString::Format("hgghbb.inputbkg_8TeV", mass));
-  TString card_name("models_mtot_range_m1100.rs"); // fit model parameters to kinfit
+  TString card_name("models_mtot_range_m400.rs"); // fit model parameters to kinfit
 //  TString card_name("models_mtot_range.rs"); // fit model parameters no kinfit
   // declare a first WS
   HLFactory hlf("HLFactory", card_name, false);
@@ -57,7 +57,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   RooFitResult* fitresults;
 
   //PAS limit trees
-  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
+  //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m400_8TeV_m400.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
   TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToMggjj_withKinFit/Data_m400.root";
@@ -107,7 +107,7 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
         "evWeight");
 
   RooDataSet* sigToFit[ncat];
-  TString cut0 = "&& mgg > 120 && mgg < 130 && mjj > 90 && mjj < 165";
+  TString cut0 = "&& 1";
   for (int c = 0; c < ncat; ++c) {
     sigToFit[c] = (RooDataSet*) sigScaled.reduce(
         *w->var("mtot"),
@@ -278,7 +278,8 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    plotmtotBkg[c] = mtot->frame(minfit,maxfit,nBinsMass);
    //plotlinemtotBkg[c] = mtot->frame(nBinsMass);
    dataplot[c] = (RooDataSet*) w->data(TString::Format("Dataplot_cat%d",c));
-   dataplot[c]->plotOn(plotmtotBkg[c], Invisible());
+   if(doblinding) dataplot[c]->plotOn(plotmtotBkg[c], Invisible());
+   else dataplot[c]->plotOn(plotmtotBkg[c]);
  
    mtotBkgTmp.plotOn(
         plotmtotBkg[c],
@@ -345,7 +346,8 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
 
    //plotlinemtotBkg[c]->Draw("SAME");
    // //plotmtotBkg[c]->getObject(1)->Draw("SAME");
-    dataplot[c]->plotOn(plotmtotBkg[c],Invisible());//This is a second level of blinding.
+    if(doblinding) dataplot[c]->plotOn(plotmtotBkg[c],Invisible());
+    else dataplot[c]->plotOn(plotmtotBkg[c]);
    plotmtotBkg[c]->Draw("SAME");
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
@@ -372,7 +374,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Fit","L");
     if(dobands)legmc->AddEntry(onesigma,"Fit #pm1 #sigma","F");
     if(dobands)legmc->AddEntry(twosigma,"Fit #pm2 #sigma","F");
-    //legmc->SetHeader("M_{X} = 1100 GeV");
+    //legmc->SetHeader("M_{X} = 400 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -548,7 +550,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
   for (int c = 0; c < ncat; ++c) {
     if(c==0)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
     if(c==1)plotmtot[c] = mtot->frame(Range(minMassFit,maxMassFit),Bins(nBinsMass));
-    sigToFit[c]->plotOn(plotmtot[c],LineColor(kWhite),MarkerColor(kWhite));
+    sigToFit[c]->plotOn(plotmtot[c]);
     mtotSig[c] ->plotOn(plotmtot[c]);
     double chi2n = plotmtot[c]->chiSquare(0) ;
     cout << "------------------------- Experimentakl chi2 = " << chi2n << endl;
@@ -591,7 +593,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     lat->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+10.5,0.81*plotmtot[c]->GetMaximum(),
-        "m_{X} = 1100 GeV");
+        "m_{X} = 400 GeV");
     lat2->Draw();
     TLatex *lat2 = new TLatex(
         minMassFit+10.5,0.71*plotmtot[c]->GetMaximum(),catdesc.at(c));
