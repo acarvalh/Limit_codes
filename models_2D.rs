@@ -1,6 +1,7 @@
 mgg[100,180];
 
 
+mgg_bkg_8TeV_slope1[9,-10.0, 20.0];
 mgg_bkg_8TeV_slope1_cat0[9,-10.0, 20.0];
 mgg_bkg_8TeV_slope1_cat1[9,-10.0, 20.0];
 
@@ -162,6 +163,7 @@ mjjGaussSig_cat1 = Gaussian(mjj, mjj_sig_m0_cat1, mjj_sig_gsigma_cat1);
 mjjCBSig_cat1    = CBShape(mjj, mjj_sig_m0_cat1, mjj_sig_sigma_cat1, mjj_sig_alpha_cat1, mjj_sig_n_cat1);
 mjjSig_cat1      = AddPdf(mjjGaussSig_cat1, mjjCBSig_cat1, mjj_sig_frac_cat1);
 
+mjj_bkg_8TeV_slope1[0.1,-10.0, 10.0];
 mjj_bkg_8TeV_slope1_cat0[0.1,-10.0, 10.0];
 mjj_bkg_8TeV_slope1_cat1[0.1,-10.0, 10.0];
 

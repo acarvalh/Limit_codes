@@ -2,15 +2,14 @@
 
 doBlinding=1
 
-version="v37"
+version="v38"
 basedir="/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/$version"
 limitdirs=("${version}_fitToMgg_nonresSearch_withKinFit" "${version}_fitToMgg_resSearch_withKinFit" "${version}_fitToMgg_resSearch_withRegKinFit" "${version}_fitTo2D_nonresSearch_withKinFit" "${version}_fitTo2D_resSearch_withRegKinFit" "${version}_fitTo2D_resSearch_withKinFit" "${version}_fitToFTR14001_nonresSearch_withKinFit")
 doResLimits=("0" "1" "1" "0" "1" "1" "0")
 do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
-#runLimits=("0" "1" "2" "3" "4" "5" "6")
-runLimits=("0" "1" "2")
+runLimits=("0" "1" "2" "3" "4" "5" "6")
 
 for i in `echo ${runLimits[@]}`; do
 
@@ -19,7 +18,7 @@ for i in `echo ${runLimits[@]}`; do
     if [ ${doResLimits[$i]} == "0" ]; then
 	masses=("0")
     else
-	masses=("260" "270" "300" "350" "400" "450" "500")
+	masses=("260" "270" "300" "350" "400") #the limit trees exist to do 450 and 500 too
     fi
 
     if [ ${do2DLimits[$i]} == "0" ]; then
@@ -53,7 +52,13 @@ for i in `echo ${runLimits[@]}`; do
 
 	outputdir="radlim_${limitdirs[$i]}/radlim${imass}"
 	mkdir -p $outputdir
-	root -l -b -q runmgg.C >> ${outputdir}/log_radlim${imass}.txt
+
+	if [ ${do2DLimits[$i]} == "0" ]; then
+	    root -l -b -q runmgg.C >> ${outputdir}/log_radlim${imass}.txt
+	else
+	    root -l -b -q run2D.C >> ${outputdir}/log_radlim${imass}.txt
+	fi
+
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
 
