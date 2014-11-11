@@ -23,8 +23,8 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* filename, const char
 void SetParamNames(RooWorkspace*);
 void SetConstantParams(const RooArgSet* params);
 
+RooFitResult* BkgModelFit(RooWorkspace*, Bool_t);
 RooFitResult* fitresult[NCAT]; // container for the fit results
-RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
 RooArgSet* defineVariables()
 {
@@ -62,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/Data_m0.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_nonresSearch_withKinFit/Data_m0.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -117,7 +117,7 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   w->Print("v");
   cout<<"BKG ADDED"<<endl;
   bool dobands=true;
-  fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
+  fitresults = BkgModelFit(w, dobands); // this is berestein 3
   MakeBkgWS(w, fileBkgName);
   // construct the models to fit
   //
@@ -255,20 +255,28 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
   RooDataSet* sigToFit[ncat];
   RooAbsPdf* mggSig[ncat];
   RooAbsPdf* mjjSig[ncat];
+  RooProdPdf* SigPdf[ncat];
   // fit range
   Float_t minSigMggFit(115),maxSigMggFit(135);
   Float_t minSigMjjFit(60),maxSigMjjFit(180);
+  RooRealVar* mgg = w->var("mgg");
+  RooRealVar* mjj = w->var("mjj");
+  mgg->setRange("SigFitRange",minSigMggFit,maxSigMggFit);
+  mjj->setRange("SigFitRange",minSigMjjFit,maxSigMjjFit);
+
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     sigToFit[c] = (RooDataSet*) w->data(TString::Format("Sig_cat%d",c));
     mggSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggSig_cat%d",c));
+    mjjSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjSig_cat%d",c));
+    SigPdf[c] = new RooProdPdf(TString::Format("SigPdf_cat%d",c),"",RooArgSet(*mggSig[c], *mjjSig[c]));
+
     ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->setVal(MASS);
     //RooRealVar* peak = w->var(TString::Format("mgg_sig_m0_cat%d",c));
     //peak->setVal(MASS);
     cout << "OK up to now..." <<MASS<< endl;
-    // Fit model as M(x|y) to D(x,y)
 
-    mggSig[c]->fitTo(*sigToFit[c],Range(minSigMggFit,maxSigMggFit),SumW2Error(kTRUE));
+    SigPdf[c]->fitTo(*sigToFit[c],Range("SigFitRange"),SumW2Error(kTRUE));
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal() << endl;
 
     double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal()+(MASS-125.0); // shift the peak
@@ -276,11 +284,6 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
 
     cout << "mPeak = " << mPeak << endl;
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_sig_m0_cat%d",c)))->getVal() << endl;
-
-    mjjSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjSig_cat%d",c));
-    cout << "OK up to now..." <<MASS<< endl;
-    // Fit model as M(x|y) to D(x,y)
-    mjjSig[c]->fitTo(*sigToFit[c],Range(minSigMjjFit,maxSigMjjFit),SumW2Error(kTRUE));
 
     // IMPORTANT: fix all pdf parameters to constant, why?
     RooArgSet sigParams( *w->var(TString::Format("mgg_sig_m0_cat%d",c)),
@@ -300,8 +303,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
     w->defineSet(TString::Format("SigPdfParam_cat%d",c), sigParams);
     SetConstantParams(w->set(TString::Format("SigPdfParam_cat%d",c)));
 
-    RooProdPdf SigPdf(TString::Format("SigPdf_cat%d",c),"",RooArgSet(*mggSig[c], *mjjSig[c]));    
-    w->import(SigPdf);
+    w->import(*SigPdf[c]);
 
   } // close for ncat
 } // close signal model fit
@@ -314,32 +316,33 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
   RooDataSet* higToFit[ncat];
   RooAbsPdf* mggHig[ncat];
   RooAbsPdf* mjjHig[ncat];
+  RooProdPdf* HigPdf[ncat];
   // fit range
   Float_t minHigMggFit(115),maxHigMggFit(135);
   Float_t minHigMjjFit(60),maxHigMjjFit(180);
+  RooRealVar* mgg = w->var("mgg");
+  RooRealVar* mjj = w->var("mjj");
+  mgg->setRange("HigFitRange",minHigMggFit,maxHigMggFit);
+  mjj->setRange("HigFitRange",minHigMjjFit,maxHigMjjFit);
+
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
     higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",higgschannel,c));
     mggHig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggHig_%d_cat%d",higgschannel,c));
-    //RooRealVar* peak = w->var(TString::Format("mgg_hig_m0_cat%d",c));
-    //peak->setVal(MASS);
+    mjjHig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
+    HigPdf[c] = new RooProdPdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c),"",RooArgSet(*mggHig[c], *mjjHig[c]));
+
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(MASS);
     cout << "OK up to now..." <<MASS<< endl;
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
+
+    HigPdf->fitTo(*higToFit[c],Range("HigFitRange"),SumW2Error(kTRUE));
 
     double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+(MASS-125.0); // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(mPeak); // shift the peak
 
     cout << "mPeak = " << mPeak << endl;
     cout << "new mPeak position = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
-
-    // Fit model as M(x|y) to D(x,y)
-    mggHig[c]->fitTo(*higToFit[c],Range(minHigMggFit,maxHigMggFit),SumW2Error(kTRUE));
-
-    mjjHig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
-    cout << "OK up to now..." <<MASS<< endl;
-    // Fit model as M(x|y) to D(x,y)
-    mjjHig[c]->fitTo(*higToFit[c],Range(minHigMjjFit,maxHigMjjFit),SumW2Error(kTRUE));
 
     // IMPORTANT: fix all pdf parameters to constant
     RooArgSet sigParams( *w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)),
@@ -360,13 +363,11 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
 
     SetConstantParams(w->set(TString::Format("HigPdfParam_%d_cat%d",higgschannel,c)));
 
-    RooProdPdf HigPdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c),"",RooArgSet(*mggHig[c], *mjjHig[c]));
-    w->import(HigPdf);
+    w->import(*HigPdf[c]);
   } // close for ncat
 } // close higgs model fit
 ////////////////////////////////////////////////////////////
-// BKG model berestein 3
-RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
+RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
   catdesc.push_back("2 btag");
@@ -396,8 +397,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooRealVar* mjj = w->var("mjj");
   mgg->setUnit("GeV");
   mjj->setUnit("GeV");
-  mgg->setRange("MassRange",minMggMassFit,maxMggMassFit);
-  mjj->setRange("MassRange",minMjjMassFit,maxMjjMassFit);
+  mgg->setRange("BkgFitRange",minMggMassFit,maxMggMassFit);
+  mjj->setRange("BkgFitRange",minMjjMassFit,maxMjjMassFit);
   //
   TLatex *text = new TLatex();
   text->SetNDC();
@@ -432,7 +433,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     RooProdPdf BkgPdfTmp(TString::Format("BkgPdfTmp%d",c), "Background Pdf", RooArgList(*mggBkgTmp0, *mjjBkgTmp0));
     w->factory(TString::Format("bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c));
     RooExtendPdf BkgPdf(TString::Format("BkgPdf_cat%d",c),"", BkgPdfTmp,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
-    fitresult[c] = BkgPdf.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("MassRange"),SumW2Error(kTRUE), Save(kTRUE));
+    fitresult[c] = BkgPdf.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
     w->import(BkgPdf);
 
     //************************************************//
@@ -449,7 +450,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     mggBkgTmp0->plotOn(
 		     plotmggBkg[c],
 		     LineColor(kBlue),
-		     Range("fitrange"),NormRange("fitrange"));
+		     Range("BkgFitRange"),NormRange("BkgFitRange"));
     if(doblinding) dataplot[c]->plotOn(plotmggBkg[c], Invisible());
     else dataplot[c]->plotOn(plotmggBkg[c]);
     cout << "!!!!!!!!!!!!!!!!!" << endl;
@@ -639,7 +640,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     mjjBkgTmp0->plotOn(
 		     plotmjjBkg[c],
 		     LineColor(kBlue),
-		     Range("fitrange"),NormRange("fitrange"));
+		     Range("BkgFitRange"),NormRange("BkgFitRange"));
     if(doblinding) dataplot[c]->plotOn(plotmjjBkg[c],Invisible());
     else dataplot[c]->plotOn(plotmjjBkg[c]);
 
@@ -823,7 +824,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooProdPdf BkgPdfAll("BkgPdfAll", "Background Pdf", *mggBkgAll, *mjjBkgAll);
   RooFitResult* fitresults = BkgPdfAll.fitTo( // save results to workspace
 					     *w->data("Data"),
-					     Range("MassRange"),
+					     Range("BkgFitRange"),
 					     SumW2Error(kTRUE), Save(kTRUE));
   fitresults->Print();
   w->import(BkgPdfAll);
