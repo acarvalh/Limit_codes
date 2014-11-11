@@ -257,7 +257,7 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
   RooAbsPdf* mjjSig[ncat];
   RooProdPdf* SigPdf[ncat];
   // fit range
-  Float_t minSigMggFit(115),maxSigMggFit(135);
+  Float_t minSigMggFit(120),maxSigMggFit(130);
   Float_t minSigMjjFit(60),maxSigMjjFit(180);
   RooRealVar* mgg = w->var("mgg");
   RooRealVar* mjj = w->var("mjj");
@@ -336,7 +336,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     cout << "OK up to now..." <<MASS<< endl;
     cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
 
-    HigPdf->fitTo(*higToFit[c],Range("HigFitRange"),SumW2Error(kTRUE));
+    HigPdf[c]->fitTo(*higToFit[c],Range("HigFitRange"),SumW2Error(kTRUE));
 
     double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+(MASS-125.0); // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(mPeak); // shift the peak
@@ -1001,7 +1001,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   Float_t minSigFitMjj(60),maxSigFitMjj(180);
   Float_t MASS(Mass);
   Int_t nBinsMass(20); // just need to plot
-  RooPlot* plotmggAll = mgg->frame(Range(minSigFitMgg,maxSigFitMgg),Bins(nBinsMass));
+  RooPlot* plotmggAll = mgg->frame(Range("SigFitRange"),Bins(nBinsMass));
   signalAll->plotOn(plotmggAll);
   gStyle->SetOptTitle(0);
   TCanvas* c1 = new TCanvas("cMgg","mgg",0,0,500,500);
@@ -1014,7 +1014,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   text->SetTextSize(0.04);
   RooPlot* plotmgg[ncat];
   for (int c = 0; c < ncat; ++c) {
-    plotmgg[c] = mgg->frame(Range(minSigFitMgg,maxSigFitMgg),Bins(nBinsMass));
+    plotmgg[c] = mgg->frame(Range("SigFitRange"),Bins(nBinsMass));
     sigToFit[c]->plotOn(plotmgg[c]);
     mggSig[c] ->plotOn(plotmgg[c]);
     double chi2n = plotmgg[c]->chiSquare(0) ;
@@ -1078,7 +1078,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   text->SetTextSize(0.04);
   RooPlot* plotmjj[ncat];
   for (int c = 0; c < ncat; ++c) {
-    plotmjj[c] = mjj->frame(Range(minSigFitMjj,maxSigFitMjj),Bins(nBinsMass));
+    plotmjj[c] = mjj->frame(Range("SigFitRange"),Bins(nBinsMass));
     sigToFit[c]->plotOn(plotmjj[c]);
     mjjSig[c] ->plotOn(plotmjj[c]);
     double chi2n = plotmjj[c]->chiSquare(0) ;
@@ -1154,7 +1154,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 
   for (int d = 0; d < 5; ++d){
 
-    RooDataSet* sigToFit[ncat];
+    RooDataSet* higToFit[ncat];
     RooAbsPdf* mggGaussSig[ncat];
     RooAbsPdf* mggCBSig[ncat];
     RooAbsPdf* mggSig[ncat];
@@ -1166,7 +1166,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
     RooAbsPdf* mjjBkg[ncat];
     for (int c = 0; c < ncat; ++c) {
       // data[c] = (RooDataSet*) w->data(TString::Format("Data_cat%d",c));
-      sigToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",d,c));
+      higToFit[c] = (RooDataSet*) w->data(TString::Format("Hig_%d_cat%d",d,c));
       mggGaussSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggGaussHig_%d_cat%d",d,c));
       mggCBSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggCBHig_%d_cat%d",d,c));
       mggSig[c] = (RooAbsPdf*) w->pdf(TString::Format("mggHig_%d_cat%d",d,c));
@@ -1190,7 +1190,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
     // Set P.D.F. parameter names
     // WARNING: Do not use it if Workspaces are created
     // SetParamNames(w);
-    Float_t minSigFitMgg(120),maxSigFitMgg(130);
+    Float_t minSigFitMgg(115),maxSigFitMgg(135);
     Float_t minSigFitMjj(60),maxSigFitMjj(180);
     Float_t MASS(Mass);
     Int_t nBinsMass(20); // just need to plot
@@ -1208,8 +1208,8 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
     RooPlot* plotmgg[ncat];
 
     for (int c = 0; c < ncat; ++c) {
-      plotmgg[c] = mgg->frame(Range(minSigFitMgg,maxSigFitMgg),Bins(nBinsMass));
-      sigToFit[c]->plotOn(plotmgg[c]);
+      plotmgg[c] = mgg->frame(Range("HigFitRange"),Bins(nBinsMass));
+      higToFit[c]->plotOn(plotmgg[c]);
       mggSig[c] ->plotOn(plotmgg[c]);
       double chi2n = plotmgg[c]->chiSquare(0) ;
       cout << "------------------------- Experimental chi2 = " << chi2n << endl;
@@ -1222,7 +1222,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 			 Components(TString::Format("mggCBHig_%d_cat%d",d,c)),
 			 LineStyle(kDashed),LineColor(kRed));
       mggSig[c] ->paramOn(plotmgg[c]);
-      sigToFit[c] ->plotOn(plotmgg[c]);
+      higToFit[c] ->plotOn(plotmgg[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
       TH1F *hist = new TH1F(TString::Format("histMgg_%d_cat%d",d,c), "hist", 400, minSigFitMgg, maxSigFitMgg);
       plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
@@ -1274,8 +1274,8 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
     RooPlot* plotmjj[ncat];
 
     for (int c = 0; c < ncat; ++c) {
-      plotmjj[c] = mgg->frame(Range(minSigFitMjj,maxSigFitMjj),Bins(nBinsMass));
-      sigToFit[c]->plotOn(plotmjj[c]);
+      plotmjj[c] = mjj->frame(Range("HigFitRange"),Bins(nBinsMass));
+      higToFit[c]->plotOn(plotmjj[c]);
       mjjSig[c] ->plotOn(plotmjj[c]);
       double chi2n = plotmjj[c]->chiSquare(0) ;
       cout << "------------------------- Experimental chi2 = " << chi2n << endl;
@@ -1288,12 +1288,12 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 			 Components(TString::Format("mjjCBHig_%d_cat%d",d,c)),
 			 LineStyle(kDashed),LineColor(kRed));
       mjjSig[c] ->paramOn(plotmjj[c]);
-      sigToFit[c] ->plotOn(plotmjj[c]);
+      higToFit[c] ->plotOn(plotmjj[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
       TH1F *hist = new TH1F(TString::Format("histMjj_%d_cat%d",d,c), "hist", 400, minSigFitMjj, maxSigFitMjj);
       plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmjj[c]->SetMinimum(0.0);
-      plotmjj[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
+      plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
       plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
       TCanvas* ctmp = new TCanvas(TString::Format("ctmpHigMjj_%d_cat_%d",d,c),"Background Categories",0,0,500,500);
       plotmjj[c]->Draw();
@@ -1374,7 +1374,8 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
   higToFit[1] = (RooDataSet*) higScaled.reduce(
 					       RooArgList(*w->var("mgg"),*w->var("mjj")),
 					       mainCut+TString::Format(" && cut_based_ct==%d ",1)+cut1);
-  w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1))); // Create full signal data set without categorization
+  w->import(*higToFit[1],Rename(TString::Format("Hig_%d_cat%d",higgschannel,1)));
+  // Create full signal data set without categorization
   RooDataSet* higToFitAll = (RooDataSet*) higScaled.reduce(
 							    RooArgList(*w->var("mgg"),*w->var("mjj")),
 							    mainCut);
