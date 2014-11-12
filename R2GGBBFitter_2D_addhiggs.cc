@@ -257,12 +257,12 @@ void SigModelFit(RooWorkspace* w, Float_t mass) {
   RooAbsPdf* mjjSig[ncat];
   RooProdPdf* SigPdf[ncat];
   // fit range
-  Float_t minSigMggFit(120),maxSigMggFit(130);
-  Float_t minSigMjjFit(60),maxSigMjjFit(180);
+  Float_t minSigFitMgg(115),maxSigFitMgg(135);
+  Float_t minSigFitMjj(60),maxSigFitMjj(180);
   RooRealVar* mgg = w->var("mgg");
   RooRealVar* mjj = w->var("mjj");
-  mgg->setRange("SigFitRange",minSigMggFit,maxSigMggFit);
-  mjj->setRange("SigFitRange",minSigMjjFit,maxSigMjjFit);
+  mgg->setRange("SigFitRange",minSigFitMgg,maxSigFitMgg);
+  mjj->setRange("SigFitRange",minSigFitMjj,maxSigFitMjj);
 
   for (int c = 0; c < ncat; ++c) {
     // import sig and data from workspace
@@ -989,11 +989,13 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   // Set P.D.F. parameter names
   // WARNING: Do not use it if Workspaces are created
   // SetParamNames(w);
-  Float_t minSigFitMgg(120),maxSigFitMgg(130);
-  Float_t minSigFitMjj(60),maxSigFitMjj(180);
+  Float_t minSigPlotMgg(120),maxSigPlotMgg(130);
+  Float_t minSigPlotMjj(60),maxSigPlotMjj(180);
+  mgg->setRange("SigPlotRange",minSigPlotMgg,maxSigPlotMgg);
+  mjj->setRange("SigPlotRange",minSigPlotMjj,maxSigPlotMjj);
   Float_t MASS(Mass);
   Int_t nBinsMass(20); // just need to plot
-  RooPlot* plotmggAll = mgg->frame(Range("SigFitRange"),Bins(nBinsMass));
+  RooPlot* plotmggAll = mgg->frame(Range("SigPlotRange"),Bins(nBinsMass));
   signalAll->plotOn(plotmggAll);
   gStyle->SetOptTitle(0);
   TCanvas* c1 = new TCanvas("cMgg","mgg",0,0,500,500);
@@ -1006,7 +1008,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   text->SetTextSize(0.04);
   RooPlot* plotmgg[ncat];
   for (int c = 0; c < ncat; ++c) {
-    plotmgg[c] = mgg->frame(Range("SigFitRange"),Bins(nBinsMass));
+    plotmgg[c] = mgg->frame(Range("SigPlotRange"),Bins(nBinsMass));
     sigToFit[c]->plotOn(plotmgg[c]);
     mggSig[c] ->plotOn(plotmgg[c]);
     double chi2n = plotmgg[c]->chiSquare(0) ;
@@ -1022,7 +1024,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     mggSig[c] ->paramOn(plotmgg[c]);
     sigToFit[c] ->plotOn(plotmgg[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F(TString::Format("histMgg_cat%d",c), "hist", 400, minSigFitMgg, maxSigFitMgg);
+    TH1F *hist = new TH1F(TString::Format("histMgg_cat%d",c), "hist", 400, minSigPlotMgg, maxSigPlotMgg);
     plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
@@ -1041,11 +1043,11 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-			     minSigFitMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
+			     minSigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
 			     " Resonance - 0 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-			      minSigFitMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+			      minSigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1070,7 +1072,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   text->SetTextSize(0.04);
   RooPlot* plotmjj[ncat];
   for (int c = 0; c < ncat; ++c) {
-    plotmjj[c] = mjj->frame(Range("SigFitRange"),Bins(nBinsMass));
+    plotmjj[c] = mjj->frame(Range("SigPlotRange"),Bins(nBinsMass));
     sigToFit[c]->plotOn(plotmjj[c]);
     mjjSig[c] ->plotOn(plotmjj[c]);
     double chi2n = plotmjj[c]->chiSquare(0) ;
@@ -1086,7 +1088,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     mjjSig[c] ->paramOn(plotmjj[c]);
     sigToFit[c] ->plotOn(plotmjj[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-    TH1F *hist = new TH1F(TString::Format("histMjj_cat%d",c), "hist", 400, minSigFitMjj, maxSigFitMjj);
+    TH1F *hist = new TH1F(TString::Format("histMjj_cat%d",c), "hist", 400, minSigPlotMjj, maxSigPlotMjj);
     plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmjj[c]->SetMinimum(0.0);
     plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
@@ -1105,11 +1107,11 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->Draw();
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
-			     minSigFitMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
+			     minSigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
 			     " Resonance - 0 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
-			      minSigFitMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
+			      minSigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1182,8 +1184,8 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
     // Set P.D.F. parameter names
     // WARNING: Do not use it if Workspaces are created
     // SetParamNames(w);
-    Float_t minSigFitMgg(115),maxSigFitMgg(135);
-    Float_t minSigFitMjj(60),maxSigFitMjj(180);
+    Float_t minHigPlotMgg(115),maxHigPlotMgg(135);
+    Float_t minHigPlotMjj(60),maxHigPlotMgg(180);
     Float_t MASS(Mass);
     Int_t nBinsMass(20); // just need to plot
     //RooPlot* plotmggAll = mgg->frame(Range(minSigFit,maxSigFit),Bins(nBinsMass));
@@ -1216,7 +1218,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       mggSig[c] ->paramOn(plotmgg[c]);
       higToFit[c] ->plotOn(plotmgg[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-      TH1F *hist = new TH1F(TString::Format("histMgg_%d_cat%d",d,c), "hist", 400, minSigFitMgg, maxSigFitMgg);
+      TH1F *hist = new TH1F(TString::Format("histMgg_%d_cat%d",d,c), "hist", 400, minHigPlotMgg, maxHigPlotMgg);
       plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmgg[c]->SetMinimum(0.0);
       plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
@@ -1236,11 +1238,11 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       legmc->Draw();
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
-			       minSigFitMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
+			       minHigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
 			       " Resonance - 0 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
-				minSigFitMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+				minHigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
       lat2->Draw();
       ///////
       char myChi2buffer[50];
@@ -1282,7 +1284,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       mjjSig[c] ->paramOn(plotmjj[c]);
       higToFit[c] ->plotOn(plotmjj[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
-      TH1F *hist = new TH1F(TString::Format("histMjj_%d_cat%d",d,c), "hist", 400, minSigFitMjj, maxSigFitMjj);
+      TH1F *hist = new TH1F(TString::Format("histMjj_%d_cat%d",d,c), "hist", 400, minHigPlotMjj, maxHigPlotMgg);
       plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmjj[c]->SetMinimum(0.0);
       plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
@@ -1302,11 +1304,11 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       legmc->Draw();
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
-			       minSigFitMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
+			       minHigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
 			       " Resonance - 0 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
-				minSigFitMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
+				minHigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
       lat2->Draw();
       ///////
       char myChi2buffer[50];
