@@ -332,12 +332,14 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
     mjjHig[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
     HigPdf[c] = new RooProdPdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c),"",RooArgSet(*mggHig[c], *mjjHig[c]));
 
-    ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(MASS);
+    //((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(MASS);
     cout << "OK up to now..." <<MASS<< endl;
-    cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
-
     HigPdf[c]->fitTo(*higToFit[c],Range("HigFitRange"),SumW2Error(kTRUE));
 
+    cout << "old = " << ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal() << endl;
+
+    //There are very few events in some fits, so adjust the max by a good amount so the MASS-125.0 shift doesn't touch it.
+    ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setMax( ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getMax()+(MASS-125.0) );
     double mPeak = ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->getVal()+(MASS-125.0); // shift the peak
     ((RooRealVar*) w->var(TString::Format("mgg_hig_m0_%d_cat%d",higgschannel,c)))->setVal(mPeak); // shift the peak
 
@@ -411,6 +413,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     // these are the parameters for the bkg polinomial
     // one slope by category - float from -10 > 10
     // the parameters are squared
+
     RooFormulaVar *mgg_p1mod = new RooFormulaVar(
 					     TString::Format("mgg_p1mod_cat%d",c),
 					     "","@0*@0",
@@ -841,7 +844,7 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   RooAbsPdf* SigPdf[ncat];
   RooWorkspace *wAll = new RooWorkspace("w_all","w_all");
   for (int c = 0; c < ncat; ++c) {
-    SigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("Sig_cat%d",c));
+    SigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("SigPdf_cat%d",c));
     wAll->import(*w->pdf(TString::Format("SigPdf_cat%d",c)));
   }
   // (2) Systematics on energy scale and resolution
@@ -849,30 +852,19 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_m0_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
   wAll->factory("prod::CMS_hgg_sig_m0_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
-  wAll->factory("CMS_hbb_sig_m0_absShift[1,1,1]");
-  wAll->factory("prod::CMS_hbb_sig_m0_cat0(mjj_sig_m0_cat0, CMS_hbb_sig_m0_absShift)");
-  wAll->factory("prod::CMS_hbb_sig_m0_cat1(mjj_sig_m0_cat1, CMS_hbb_sig_m0_absShift)");
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
-  wAll->factory("CMS_hbb_sig_sigmaScale[1,1,1]");
-  wAll->factory("prod::CMS_hbb_sig_sigma_cat0(mjj_sig_sigma_cat0, CMS_hbb_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hbb_sig_sigma_cat1(mjj_sig_sigma_cat1, CMS_hbb_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hbb_sig_gsigma_cat0(mjj_sig_gsigma_cat0, CMS_hbb_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hbb_sig_gsigma_cat1(mjj_sig_gsigma_cat1, CMS_hbb_sig_sigmaScale)");
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
 					       TString::Format("EDIT::CMS_sig_cat%d(SigPdf_cat%d,",c,c) +
 					       TString::Format(" mgg_sig_m0_cat%d=CMS_hgg_sig_m0_cat%d,", c,c) +
 					       TString::Format(" mgg_sig_sigma_cat%d=CMS_hgg_sig_sigma_cat%d,", c,c) +
-					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d,", c,c) +
-					       TString::Format(" mjj_sig_m0_cat%d=CMS_hbb_sig_m0_cat%d,", c,c) +
-					       TString::Format(" mjj_sig_sigma_cat%d=CMS_hbb_sig_sigma_cat%d,", c,c) + 
-					       TString::Format(" mjj_sig_gsigma_cat%d=CMS_hbb_sig_gsigma_cat%d)", c,c)  );
-
+					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c)
+					       );
   TString filename(wsDir+TString(fileBaseName)+".inputsig.root");
   wAll->writeToFile(filename);
   cout << "Write signal workspace in: " << filename << " file" << endl;
@@ -1402,34 +1394,23 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   // Write pdfs and datasets into the workspace before to save to a file
   // for statistical tests.
   //**********************************************************************//
-  RooAbsPdf* mggHigPdf[ncat];
-  RooAbsPdf* mjjHigPdf[ncat];
+  RooAbsPdf* HigPdf[ncat];
   RooWorkspace *wAll = new RooWorkspace("w_all","w_all");
   for (int c = 0; c < ncat; ++c) {
-    mggHigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mggHig_%d_cat%d",higgschannel,c));
-    wAll->import(*w->pdf(TString::Format("mggHig_%d_cat%d",higgschannel,c)));
-    mjjHigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c));
-    wAll->import(*w->pdf(TString::Format("mjjHig_%d_cat%d",higgschannel,c)));
+    HigPdf[c] = (RooAbsPdf*) w->pdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c));
+    wAll->import(*w->pdf(TString::Format("HigPdf_%d_cat%d",higgschannel,c)));
   }
   // (2) Systematics on energy scale and resolution
   // 1,1,1 statistical to be treated on the datacard
   wAll->factory(TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("CMS_hbb_hig_%d_m0_absShift[1,1,1]",higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat0(mjj_hig_m0_%d_cat0, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat1(mjj_hig_m0_%d_cat1, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   // (3) Systematics on resolution
   wAll->factory(TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("CMS_hbb_hig_%d_sigmaScale[1,1,1]",higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat0(mjj_hig_sigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat1(mjj_hig_sigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat0(mjj_hig_gsigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat1(mjj_hig_gsigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   // save the other parameters
   /* for (int c = 0; c < ncat; ++c) {
      wAll->factory(
@@ -1445,13 +1426,10 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   */
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
-					       TString::Format("EDIT::CMS_hig_%d_cat%d(mggHig_%d_cat%d,",higgschannel,c,higgschannel,c) +
+					       TString::Format("EDIT::CMS_hig_%d_cat%d(HigPdf_%d_cat%d,",higgschannel,c,higgschannel,c) +
 					       TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d,",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mjj_hig_m0_%d_cat%d=CMS_hbb_hig_m0_%d_cat%d,",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mjj_hig_sigma_%d_cat%d=CMS_hbb_hig_sigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mjj_hig_gsigma_%d_cat%d=CMS_hbb_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
+					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
 					       );
   TString filename(wsDir+TString(fileHiggsName)+".inputhig.root");
   wAll->writeToFile(filename);
