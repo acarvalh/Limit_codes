@@ -1,8 +1,13 @@
 #!/bin/bash
 
-dir=/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/
+version=v38
+basedir=/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees
+#dir=$basedir/$version/${version}_fitToFTR14001_nonresSearch_withKinFit
+#dir=$basedir/$version/${version}_fitTo2D_nonresSearch_withKinFit
+dir=$basedir/$version/${version}_fitToMgg_nonresSearch_withKinFit
 
-hadd sumMC_m0.root \
+
+hadd -f sumMC_m0.root \
 $dir/DYJetsToLL_m0.root \
 $dir/LNuGG_FSR_8TeV_m0.root \
 $dir/LNuGG_ISR_8TeV_m0.root \
