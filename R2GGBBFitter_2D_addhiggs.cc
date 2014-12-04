@@ -852,18 +852,29 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_m0_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
   wAll->factory("prod::CMS_hgg_sig_m0_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
+  wAll->factory("CMS_hbb_sig_m0_absShift[1,1,1]");
+  wAll->factory("prod::CMS_hbb_sig_m0_cat0(mjj_sig_m0_cat0, CMS_hbb_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hbb_sig_m0_cat1(mjj_sig_m0_cat1, CMS_hbb_sig_m0_absShift)");
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("CMS_hbb_sig_sigmaScale[1,1,1]");
+  wAll->factory("prod::CMS_hbb_sig_sigma_cat0(mjj_sig_sigma_cat0, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_sigma_cat1(mjj_sig_sigma_cat1, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_gsigma_cat0(mjj_sig_gsigma_cat0, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_gsigma_cat1(mjj_sig_gsigma_cat1, CMS_hbb_sig_sigmaScale)");
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
 					       TString::Format("EDIT::CMS_sig_cat%d(SigPdf_cat%d,",c,c) +
 					       TString::Format(" mgg_sig_m0_cat%d=CMS_hgg_sig_m0_cat%d,", c,c) +
 					       TString::Format(" mgg_sig_sigma_cat%d=CMS_hgg_sig_sigma_cat%d,", c,c) +
-					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c)
+					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c) +
+					       TString::Format(" mjj_sig_m0_cat%d=CMS_hbb_sig_m0_cat%d,", c,c) +
+					       TString::Format(" mjj_sig_sigma_cat%d=CMS_hbb_sig_sigma_cat%d,", c,c) +
+					       TString::Format(" mjj_sig_gsigma_cat%d=CMS_hbb_sig_gsigma_cat%d)", c,c)
 					       );
   TString filename(wsDir+TString(fileBaseName)+".inputsig.root");
   wAll->writeToFile(filename);
@@ -1407,12 +1418,20 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   wAll->factory(TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("CMS_hbb_hig_%d_m0_absShift[1,1,1]",higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat0(mjj_hig_m0_%d_cat0, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat1(mjj_hig_m0_%d_cat1, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   // (3) Systematics on resolution
   wAll->factory(TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("CMS_hbb_hig_%d_sigmaScale[1,1,1]",higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat0(mjj_hig_sigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat1(mjj_hig_sigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat0(mjj_hig_gsigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat1(mjj_hig_gsigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   // save the other parameters
   /* for (int c = 0; c < ncat; ++c) {
      wAll->factory(
@@ -1431,7 +1450,10 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
 					       TString::Format("EDIT::CMS_hig_%d_cat%d(HigPdf_%d_cat%d,",higgschannel,c,higgschannel,c) +
 					       TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d,",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
+					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mjj_hig_m0_%d_cat%d=CMS_hbb_hig_m0_%d_cat%d,",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mjj_hig_sigma_%d_cat%d=CMS_hbb_hig_sigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mjj_hig_gsigma_%d_cat%d=CMS_hbb_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
 					       );
   TString filename(wsDir+TString(fileHiggsName)+".inputhig.root");
   wAll->writeToFile(filename);
@@ -1611,9 +1633,9 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 	    << "# photon selection accep." << endl;
     outFile << " " << endl;
     outFile << "############## Jet selection and phase space cuts normalisation uncertainties " << endl;
-    outFile << "Mjj_PTj_cut_acceptance lnN "
-	    << "1.015 - 1.015 1.015 1.015 1.015 1.015 "
-	    << "1.015 - 1.015 1.015 1.015 1.015 1.015 "
+    outFile << "pTj_cut_acceptance lnN "
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
 	    <<"# JER and JES " << endl;
     outFile << "btag_eff lnN "
 	    << "1.046 - 1.046 1.046 1.046 1.046 1.046 "
@@ -1639,23 +1661,41 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     outFile << " " << endl;
     outFile << "############## Signal parametric shape uncertainties " << endl;
     outFile << "CMS_hgg_sig_m0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2) " << endl;
-    outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
+    //
+    outFile << "CMS_hbb_sig_m0_absShift param 1 0.02 # displacement of the dijet mean error " << endl;
+    outFile << "CMS_hbb_sig_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
     //
     outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs" << endl;
     outFile << "CMS_hgg_hig_m0_0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
-    outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_hig_0_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
     //
     outFile << "CMS_hgg_hig_m0_1_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
-    outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_hig_1_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
     //
     outFile << "CMS_hgg_hig_m0_2_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
-    outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_hig_2_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
     //
     outFile << "CMS_hgg_hig_m0_3_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
-    outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_hig_3_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
      //
     outFile << "CMS_hgg_hig_m0_4_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2)" << endl;
-    outFile << "CMS_hgg_hig_4_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_hig_4_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
+    //
+    outFile << "CMS_hbb_hig_m0_0_absShift param 1 0.02 # displacement of the dijet mean error " << endl;
+    outFile << "CMS_hbb_hig_0_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
+    //
+    outFile << "CMS_hbb_hig_m0_1_absShift param 1 0.02 # displacement of the dijet mean error " << endl;
+    outFile << "CMS_hbb_hig_1_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
+    //
+    outFile << "CMS_hbb_hig_m0_2_absShift param 1 0.02 # displacement of the dijet mean error " << endl;
+    outFile << "CMS_hbb_hig_2_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
+    //
+    outFile << "CMS_hbb_hig_m0_3_absShift param 1 0.02 # displacement of the dijet mean error " << endl;
+    outFile << "CMS_hbb_hig_3_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
+     //
+    outFile << "CMS_hbb_hig_m0_4_absShift param 1 0.02 # displacement of the dijet mean error " << endl;
+    outFile << "CMS_hbb_hig_4_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
     //
     outFile << "############## for mggxmjj fit - slopes" << endl;
     outFile << "CMS_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
@@ -1750,8 +1790,8 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
     outFile << "lumi_8TeV lnN "
 	    << "1.022 - " << endl;
     outFile << "############## jet" << endl;
-    outFile << "Mjj_acceptance lnN "
-	    << "1.015 - "
+    outFile << "pTj_acceptance lnN "
+	    << "1.010 - "
 	    <<"# JER and JES " << endl;
     outFile << "btag_eff lnN "
 	    << "1.046 - "
@@ -1768,11 +1808,15 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, const char* fileBaseName, const 
 	    << "1.10 - "
 	    << "# photon energy resolution" << endl;
     outFile << "# Parametric shape uncertainties, entered by hand. they act on signal " << endl;
-    outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean" << endl;
-    outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_sig_m0_absShift param 1 0.0051 # displacement of the dipho mean" << endl;
+    outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
+    outFile << "CMS_hbb_sig_m0_absShift param 1 0.02 # displacement of the dijet mean" << endl;
+    outFile << "CMS_hbb_sig_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
     outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs " << endl;
-    outFile << "CMS_hgg_hig_m0_absShift param 1 0.045 # displacement of the dipho mean" << endl;
-    outFile << "CMS_hgg_hig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
+    outFile << "CMS_hgg_hig_m0_absShift param 1 0.0051 # displacement of the dipho mean" << endl;
+    outFile << "CMS_hgg_hig_sigmaScale param 1 0.22 # optimistic estimate of resolution uncertainty " << endl;
+    outFile << "CMS_hbb_hig_m0_absShift param 1 0.02 # displacement of the dijet mean" << endl;
+    outFile << "CMS_hbb_hig_sigmaScale param 1 0.10 # optimistic estimate of resolution uncertainty " << endl;
     outFile << "############## for mggxmjj fit - slopes" << endl;
     outFile << "CMS_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
 
