@@ -62,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/ggh_m125_powheg_8TeV_m270.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/tth_m125_8TeV_m270.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/vbf_m125_8TeV_m270.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/wzh_m125_8TeV_zh_m270.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/bbh_m125_8TeV_m270.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitToFTR14001_nonresSearch_withKinFit/Data_m0.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/Radion_m270_8TeV_m270.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/Data_m270.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -608,7 +608,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 0 GeV");
+    legmc->SetHeader(" 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -798,7 +798,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmjjBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 0 GeV");
+    legmc->SetHeader(" 260 GeV");
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -871,7 +871,7 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
 					       TString::Format("EDIT::CMS_sig_cat%d(SigPdf_cat%d,",c,c) +
 					       TString::Format(" mgg_sig_m0_cat%d=CMS_hgg_sig_m0_cat%d,", c,c) +
 					       TString::Format(" mgg_sig_sigma_cat%d=CMS_hgg_sig_sigma_cat%d,", c,c) +
-					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d)", c,c) +
+					       TString::Format(" mgg_sig_gsigma_cat%d=CMS_hgg_sig_gsigma_cat%d,", c,c) +
 					       TString::Format(" mjj_sig_m0_cat%d=CMS_hbb_sig_m0_cat%d,", c,c) +
 					       TString::Format(" mjj_sig_sigma_cat%d=CMS_hbb_sig_sigma_cat%d,", c,c) +
 					       TString::Format(" mjj_sig_gsigma_cat%d=CMS_hbb_sig_gsigma_cat%d)", c,c)
@@ -1055,7 +1055,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 0 GeV");
+			     " Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1119,7 +1119,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-			     " Resonance - 0 GeV");
+			     " Resonance - 260 GeV");
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
@@ -1250,7 +1250,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minHigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 0 GeV");
+			       " Resonance - 260 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minHigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1316,7 +1316,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minHigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-			       " Resonance - 0 GeV");
+			       " Resonance - 260 GeV");
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minHigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
@@ -1450,7 +1450,7 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
 					       TString::Format("EDIT::CMS_hig_%d_cat%d(HigPdf_%d_cat%d,",higgschannel,c,higgschannel,c) +
 					       TString::Format(" mgg_hig_m0_%d_cat%d=CMS_hgg_hig_m0_%d_cat%d,",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mgg_hig_sigma_%d_cat%d=CMS_hgg_hig_sigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
-					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c) +
+					       TString::Format(" mgg_hig_gsigma_%d_cat%d=CMS_hgg_hig_gsigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mjj_hig_m0_%d_cat%d=CMS_hbb_hig_m0_%d_cat%d,",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mjj_hig_sigma_%d_cat%d=CMS_hbb_hig_sigma_%d_cat%d,",higgschannel, c,higgschannel,c) +
 					       TString::Format(" mjj_hig_gsigma_%d_cat%d=CMS_hbb_hig_gsigma_%d_cat%d)",higgschannel, c,higgschannel,c)
