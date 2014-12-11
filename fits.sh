@@ -9,7 +9,7 @@ doResLimits=("0" "1" "1" "0" "1" "1" "0")
 do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
-runLimits=("0" "1" "2" "3" "4" "5" "6")
+runLimits=("4")
 
 for i in `echo ${runLimits[@]}`; do
 
@@ -43,6 +43,12 @@ for i in `echo ${runLimits[@]}`; do
 	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/MSSM_m260_8TeV_m260.root\";" $fitterScript
 	else
 	    sed -i "/TString ssignal/c\  TString ssignal = \"$dir/Radion_m${imass}_8TeV_m${imass}.root\";" $fitterScript
+	fi
+
+	if [ ${imass} == "0" ]; then
+	    sed -i "/const Int_t NCAT/c\const Int_t NCAT = 4;" $fitterScript
+	else
+	    sed -i "/const Int_t NCAT/c\const Int_t NCAT = 2;" $fitterScript
 	fi
 
         # the legend
