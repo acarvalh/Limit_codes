@@ -62,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/ggh_m125_powheg_8TeV_m270.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/tth_m125_8TeV_m270.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/vbf_m125_8TeV_m270.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/wzh_m125_8TeV_zh_m270.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/bbh_m125_8TeV_m270.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/ggh_m125_powheg_8TeV_m400.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/tth_m125_8TeV_m400.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/vbf_m125_8TeV_m400.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/wzh_m125_8TeV_zh_m400.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/bbh_m125_8TeV_m400.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/Radion_m270_8TeV_m270.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/Data_m270.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/Radion_m400_8TeV_m400.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v38/v38_fitTo2D_resSearch_withRegKinFit/Data_m400.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -852,20 +852,32 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_m0_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
   wAll->factory("prod::CMS_hgg_sig_m0_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hgg_sig_m0_cat2(mgg_sig_m0_cat2, CMS_hgg_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hgg_sig_m0_cat3(mgg_sig_m0_cat3, CMS_hgg_sig_m0_absShift)");
   wAll->factory("CMS_hbb_sig_m0_absShift[1,1,1]");
   wAll->factory("prod::CMS_hbb_sig_m0_cat0(mjj_sig_m0_cat0, CMS_hbb_sig_m0_absShift)");
   wAll->factory("prod::CMS_hbb_sig_m0_cat1(mjj_sig_m0_cat1, CMS_hbb_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hbb_sig_m0_cat2(mjj_sig_m0_cat2, CMS_hbb_sig_m0_absShift)");
+  wAll->factory("prod::CMS_hbb_sig_m0_cat3(mjj_sig_m0_cat3, CMS_hbb_sig_m0_absShift)");
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_sigma_cat2(mgg_sig_sigma_cat2, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_sigma_cat3(mgg_sig_sigma_cat3, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_gsigma_cat2(mgg_sig_gsigma_cat2, CMS_hgg_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hgg_sig_gsigma_cat3(mgg_sig_gsigma_cat3, CMS_hgg_sig_sigmaScale)");
   wAll->factory("CMS_hbb_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hbb_sig_sigma_cat0(mjj_sig_sigma_cat0, CMS_hbb_sig_sigmaScale)");
   wAll->factory("prod::CMS_hbb_sig_sigma_cat1(mjj_sig_sigma_cat1, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_sigma_cat2(mjj_sig_sigma_cat2, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_sigma_cat3(mjj_sig_sigma_cat3, CMS_hbb_sig_sigmaScale)");
   wAll->factory("prod::CMS_hbb_sig_gsigma_cat0(mjj_sig_gsigma_cat0, CMS_hbb_sig_sigmaScale)");
   wAll->factory("prod::CMS_hbb_sig_gsigma_cat1(mjj_sig_gsigma_cat1, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_gsigma_cat2(mjj_sig_gsigma_cat2, CMS_hbb_sig_sigmaScale)");
+  wAll->factory("prod::CMS_hbb_sig_gsigma_cat3(mjj_sig_gsigma_cat3, CMS_hbb_sig_sigmaScale)");
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
 					       TString::Format("EDIT::CMS_sig_cat%d(SigPdf_cat%d,",c,c) +
@@ -1418,20 +1430,32 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   wAll->factory(TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat2(mgg_hig_m0_%d_cat2, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat3(mgg_hig_m0_%d_cat3, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("CMS_hbb_hig_%d_m0_absShift[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat0(mjj_hig_m0_%d_cat0, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat1(mjj_hig_m0_%d_cat1, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat2(mjj_hig_m0_%d_cat2, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_m0_%d_cat3(mjj_hig_m0_%d_cat3, CMS_hbb_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   // (3) Systematics on resolution
   wAll->factory(TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat2(mgg_hig_sigma_%d_cat2, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat3(mgg_hig_sigma_%d_cat3, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat2(mgg_hig_gsigma_%d_cat2, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat3(mgg_hig_gsigma_%d_cat3, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("CMS_hbb_hig_%d_sigmaScale[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat0(mjj_hig_sigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat1(mjj_hig_sigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat2(mjj_hig_sigma_%d_cat2, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_sigma_%d_cat3(mjj_hig_sigma_%d_cat3, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat0(mjj_hig_gsigma_%d_cat0, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat1(mjj_hig_gsigma_%d_cat1, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat2(mjj_hig_gsigma_%d_cat2, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  wAll->factory(TString::Format("prod::CMS_hbb_hig_gsigma_%d_cat3(mjj_hig_gsigma_%d_cat3, CMS_hbb_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   // save the other parameters
   /* for (int c = 0; c < ncat; ++c) {
      wAll->factory(
@@ -1577,87 +1601,181 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
   outFile << "---------------" << endl;
   outFile << "shapes data_obs cat0 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat0" << endl;
   outFile << "shapes data_obs cat1 "<< TString(fileBkgName)+".root" << " w_all:data_obs_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes data_obs cat2 " << TString(fileBkgName)+".root" << " w_all:data_obs_cat2" << endl;
+  outFile << "shapes data_obs cat3 "<< TString(fileBkgName)+".root" << " w_all:data_obs_cat3" << endl;
+  }
   outFile << "############## shape with reparametrization" << endl;
   outFile << "shapes Bkg cat0 " << TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat0" << endl;
   outFile << "shapes Bkg cat1 "<< TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes Bkg cat2 " << TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat2" << endl;
+  outFile << "shapes Bkg cat3 "<< TString(fileBkgName)+".root" << " w_all:CMS_bkg_8TeV_cat3" << endl;
+  }
   outFile << "# signal" << endl;
   outFile << "shapes Sig cat0 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat0" << endl;
   outFile << "shapes Sig cat1 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes Sig cat2 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat2" << endl;
+  outFile << "shapes Sig cat3 " << TString(fileBaseName)+".inputsig.root" << " w_all:CMS_sig_cat3" << endl;
+  }
   outFile << "# ggh" << endl;
   outFile << "shapes Higggh cat0 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hig_0_cat0" << endl;
   outFile << "shapes Higggh cat1 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hig_0_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes Higggh cat2 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hig_0_cat2" << endl;
+  outFile << "shapes Higggh cat3 " << TString(fileHiggsNameggh)+".inputhig.root" << " w_all:CMS_hig_0_cat3" << endl;
+  }
   outFile << "# tth" << endl;
   outFile << "shapes Higtth cat0 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hig_1_cat0" << endl;
   outFile << "shapes Higtth cat1 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hig_1_cat1" << endl;
+  if (NCAT > 2 ){
+  outFile << "shapes Higtth cat2 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hig_1_cat2" << endl;
+  outFile << "shapes Higtth cat3 " << TString(fileHiggsNametth)+".inputhig.root" << " w_all:CMS_hig_1_cat3" << endl;
+  }
   outFile << "# vbf" << endl;
   outFile << "shapes Higvbf cat0 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hig_2_cat0" << endl;
   outFile << "shapes Higvbf cat1 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hig_2_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes Higvbf cat2 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hig_2_cat2" << endl;
+  outFile << "shapes Higvbf cat3 " << TString(fileHiggsNamevbf)+".inputhig.root" << " w_all:CMS_hig_2_cat3" << endl;
+  }
   outFile << "# vh" << endl;
   outFile << "shapes Higvh cat0 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hig_3_cat0" << endl;
   outFile << "shapes Higvh cat1 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hig_3_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes Higvh cat2 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hig_3_cat2" << endl;
+  outFile << "shapes Higvh cat3 " << TString(fileHiggsNamevh)+".inputhig.root" << " w_all:CMS_hig_3_cat3" << endl;
+  }
   outFile << "# bbh" << endl;
   outFile << "shapes Higbbh cat0 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hig_4_cat0" << endl;
   outFile << "shapes Higbbh cat1 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hig_4_cat1" << endl;
+  if ( NCAT > 2 ){
+  outFile << "shapes Higbbh cat2 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hig_4_cat2" << endl;
+  outFile << "shapes Higbbh cat3 " << TString(fileHiggsNamebbh)+".inputhig.root" << " w_all:CMS_hig_4_cat3" << endl;
+  }
   outFile << "---------------" << endl;
   /////////////////////////////////////
   if(addHiggs) { //
-    outFile << "bin cat0 cat1 " << endl;
+    outFile << "bin cat0 cat1 ";
+    if ( NCAT > 2 ) outFile << "cat2 cat3 ";
     cout<<"here"<<endl;
-    if(!doblinding){ outFile << "observation "<< data[0]->sumEntries() <<" " << data[1]->sumEntries() <<" "<< endl; }
-    else outFile << "observation -1 -1 " << endl;
-    outFile << "------------------------------" << endl;
+    if(!doblinding){ 
+      outFile << "\nobservation "<< data[0]->sumEntries() <<" " << data[1]->sumEntries() <<" "; 
+      if ( NCAT > 2 ) outFile << data[2]->sumEntries() <<" " << data[3]->sumEntries() <<" "; 
+    }
+    else{
+      outFile << "\nobservation -1 -1 " << endl;
+      if ( NCAT > 2 ) outFile << "-1 -1 ";
+    }
+    outFile << "\n------------------------------" << endl;
     outFile << "bin cat0 cat0 cat0 cat0 cat0 cat0 cat0"
-	    <<" cat1 cat1 cat1 cat1 cat1 cat1 cat1" << endl;
-    outFile << "process Sig Bkg Higggh Higtth Higvbf Higvh Higbbh"
-	    <<" Sig Bkg Higggh Higtth Higvbf Higvh Higbbh" << endl;
-    outFile << "process 0 1 2 3 4 5 6"
-	    <<" 0 1 2 3 4 5 6 " << endl;
-    outFile << "rate "
+	    <<" cat1 cat1 cat1 cat1 cat1 cat1 cat1";
+    if ( NCAT > 2 ){
+    outFile << " cat2 cat2 cat2 cat2 cat2 cat2 cat2"
+	    <<" cat3 cat3 cat3 cat3 cat3 cat3 cat3";
+    }
+    outFile << "\nprocess Sig Bkg Higggh Higtth Higvbf Higvh Higbbh"
+	    <<" Sig Bkg Higggh Higtth Higvbf Higvh Higbbh";
+    if ( NCAT > 2 ){
+    outFile << " Sig Bkg Higggh Higtth Higvbf Higvh Higbbh"
+	    << " Sig Bkg Higggh Higtth Higvbf Higvh Higbbh";
+    }
+    outFile << "\nprocess 0 1 2 3 4 5 6"
+	    <<" 0 1 2 3 4 5 6 ";
+    if ( NCAT > 2 ){
+    outFile << "0 1 2 3 4 5 6 0 1 2 3 4 5 6";
+    }
+    outFile << "\nrate "
 	    <<" "<<sigToFit[0]->sumEntries()<<" "<<1<<" "<<higToFitggh[0]->sumEntries()<<" "<<higToFittth[0]->sumEntries()<<" "<<higToFitvbf[0]->sumEntries()<<" "<<higToFitvh[0]->sumEntries()<< " "<<higToFitbbh[0]->sumEntries()
 	    <<" "<<sigToFit[1]->sumEntries()<<" "<<1<<" "<<higToFitggh[1]->sumEntries()<<" "<<higToFittth[1]->sumEntries()<<" "<<higToFitvbf[1]->sumEntries()<<" "<<higToFitvh[1]->sumEntries()<<" "<<higToFitbbh[1]->sumEntries()
-	    <<" "<<endl;
+	    <<" ";
+    if ( NCAT > 2 ){
+    outFile <<" "<<sigToFit[2]->sumEntries()<<" "<<1<<" "<<higToFitggh[2]->sumEntries()<<" "<<higToFittth[2]->sumEntries()<<" "<<higToFitvbf[2]->sumEntries()<<" "<<higToFitvh[2]->sumEntries()<< " "<<higToFitbbh[2]->sumEntries()
+	    <<" "<<sigToFit[3]->sumEntries()<<" "<<1<<" "<<higToFitggh[3]->sumEntries()<<" "<<higToFittth[3]->sumEntries()<<" "<<higToFitvbf[3]->sumEntries()<<" "<<higToFitvh[3]->sumEntries()<< " "<<higToFitbbh[3]->sumEntries();
+    }
     outFile << " " << endl;
     outFile << "############## Total normalisation" << endl;
     outFile << "lumi_8TeV lnN "
 	    << "1.026 - 1.026 1.026 1.026 1.026 1.026 "
-	    << "1.026 - 1.026 1.026 1.026 1.026 1.026 " << endl;
-    outFile << " " << endl;
+	    << "1.026 - 1.026 1.026 1.026 1.026 1.026 ";
+    if ( NCAT > 2 ){
+    outFile << "1.026 - 1.026 1.026 1.026 1.026 1.026 "
+	    << "1.026 - 1.026 1.026 1.026 1.026 1.026 ";
+    }
+    outFile << " " << endl << endl;
     outFile << "############## Photon selection normalisation uncertainties " << endl;
     outFile << "DiphoTrigger lnN "
 	    << "1.01 - 1.010 1.010 1.010 1.010 1.010 "
-	    << "1.01 - 1.010 1.010 1.010 1.010 1.010 "
-	    << "# Trigger efficiency" << endl;
+	    << "1.01 - 1.010 1.010 1.010 1.010 1.010 ";
+    if ( NCAT > 2 ){
+    outFile << "1.01 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "1.01 - 1.010 1.010 1.010 1.010 1.010 ";
+    }
+    outFile << "# Trigger efficiency" << endl;
     outFile << "CMS_hgg_eff_g lnN "
 	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
-	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
-	    << "# photon selection accep." << endl;
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 ";
+    if ( NCAT > 2 ){
+    outFile << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 ";
+    outFile << "# photon selection accep." << endl;
     outFile << " " << endl;
     outFile << "############## Jet selection and phase space cuts normalisation uncertainties " << endl;
     outFile << "pTj_cut_acceptance lnN "
 	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
-	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
-	    <<"# JER and JES " << endl;
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 ";
+    if ( NCAT > 2 ){
+    outFile << "1.010 - 1.010 1.010 1.010 1.010 1.010 "
+	    << "1.010 - 1.010 1.010 1.010 1.010 1.010 ";
+    }
+    outFile <<"# JER and JES " << endl;
     outFile << "btag_eff lnN "
 	    << "1.046 - 1.046 1.046 1.046 1.046 1.046 "
-	    << "0.988 - 0.988 0.988 0.988 0.988 0.988 "
-	    <<"# b tag efficiency uncertainty" << endl;
+	    << "0.988 - 0.988 0.988 0.988 0.988 0.988 ";
+    if ( NCAT > 2 ){
+    outFile << "1.046 - 1.046 1.046 1.046 1.046 1.046 "
+	    << "0.988 - 0.988 0.988 0.988 0.988 0.988 ";
+    }
+    outFile <<"# b tag efficiency uncertainty" << endl;
     outFile << "maajj_cut_acceptance lnN "
 	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 "
+	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 ";
+    if (NCAT > 2 ){
+    outFile << "1.02 - 1.02 1.02 1.02 1.02 1.02 "
 	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 " << endl;
-    outFile << " " << endl;
+    }
+    outFile << " " << endl << endl;
     outFile << "############## Theory uncertainties on SM Higgs production " << endl;
     outFile << "PDF lnN "
 	    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 "
-	    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 " << endl;
-    outFile << "QCD_scale lnN "
+	    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 ";
+    if ( NCAT > 2 ){
+    outFile << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 "
+	    << " - - 0.931/1.075 0.919/1.081 0.972/1.026 0.976/1.024 0.976/1.024 ";
+    }
+    outFile << "\nQCD_scale lnN "
 	    << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 "
-	    << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 " << endl;
-    outFile << "gg_migration lnN "
+	    << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 ";
+    if ( NCAT > 2 ){
+    outFile << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 "
+	    << " - - 0.922/1.072 0.907/1.038 0.998/1.002 0.980/1.020 0.980/1.020 ";
+    }
+    outFile << "\ngg_migration lnN "
 	    << " - - 1.25 1.25 1.08 1.08 1.08 "
-	    << " - - 1.25 1.25 1.08 1.08 1.08 # UEPS" << endl;
+	    << " - - 1.25 1.25 1.08 1.08 1.08 ";
+    if ( NCAT > 2 ){
+    outFile << " - - 1.25 1.25 1.08 1.08 1.08 "
+	    << " - - 1.25 1.25 1.08 1.08 1.08 ";
+    }
+    outFile << "# UEPS" << endl;
     outFile << "gluonSplitting lnN "
 	    << " - - 1.40 1.40 1.40 1.40 1.40 "
-	    << " - - 1.40 1.40 1.40 1.40 1.40 " << endl;
+	    << " - - 1.40 1.40 1.40 1.40 1.40 ";
+    if ( NCAT > 2 ){
+    outFile << " - - 1.40 1.40 1.40 1.40 1.40 "
+	    << " - - 1.40 1.40 1.40 1.40 1.40 ";
+    }
     outFile << " " << endl;
     outFile << "############## Signal parametric shape uncertainties " << endl;
     outFile << "CMS_hgg_sig_m0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2) " << endl;
@@ -1700,14 +1818,26 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     outFile << "############## for mggxmjj fit - slopes" << endl;
     outFile << "CMS_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
     outFile << "CMS_bkg_8TeV_cat1_norm flatParam # Normalization uncertainty on background slope" << endl;
+    if ( NCAT > 2 ){
+    outFile << "CMS_bkg_8TeV_cat2_norm flatParam # Normalization uncertainty on background slope" << endl;
+    outFile << "CMS_bkg_8TeV_cat3_norm flatParam # Normalization uncertainty on background slope" << endl;
+    }
 
     outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
     outFile << "CMS_hgg_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    if ( NCAT > 2 ){
+    outFile << "CMS_hgg_bkg_8TeV_slope1_cat2 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    outFile << "CMS_hgg_bkg_8TeV_slope1_cat3 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    }
 
     outFile << "CMS_hbb_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
     outFile << "CMS_hbb_bkg_8TeV_slope1_cat1 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    if ( NCAT > 2 ){
+    outFile << "CMS_hbb_bkg_8TeV_slope1_cat2 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    outFile << "CMS_hbb_bkg_8TeV_slope1_cat3 flatParam # Mean and absolute uncertainty on background slope" << endl;
+    }
 
-  } // if ncat ==2
+  } // if ncat == 2 or 4
   /////////////////////////////////////
   outFile.close();
   cout << "Write data card in: " << filename << " file" << endl;
