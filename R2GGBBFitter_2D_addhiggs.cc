@@ -372,10 +372,16 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
 RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
-  catdesc.push_back("2 btag");
-  catdesc.push_back("1 btag");
-  catdesc.push_back("cat 2");
-  catdesc.push_back("cat 3");
+  if ( NCAT == 2 ){
+    catdesc.push_back("2 btag");
+    catdesc.push_back("1 btag");
+  }
+  else{
+    catdesc.push_back("2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
+    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} > 360 GeV");
+    catdesc.push_back("2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
+    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} < 360 GeV");
+  }
   //******************************************//
   // Fit background with model pdfs
   //******************************************//
@@ -962,10 +968,16 @@ void SetConstantParams(const RooArgSet* params) {
 void MakePlots(RooWorkspace* w, Float_t Mass) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
-  catdesc.push_back(" 2 btag");
-  catdesc.push_back(" 1 btag");
-  catdesc.push_back("cat 2");
-  catdesc.push_back("cat 3");
+  if ( NCAT == 2 ){
+    catdesc.push_back(" 2 btag");
+    catdesc.push_back(" 1 btag");
+  }
+  else{
+    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 360 GeV");
+    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 360 GeV");
+  }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
   RooDataSet* signalAll = (RooDataSet*) w->data("Sig");
@@ -1155,10 +1167,16 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
 void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
-  catdesc.push_back(" 2 btag");
-  catdesc.push_back(" 1 btag");
-  catdesc.push_back("cat 2");
-  catdesc.push_back("cat 3");
+  if ( NCAT == 2 ){
+    catdesc.push_back(" 2 btag");
+    catdesc.push_back(" 1 btag");
+  }
+  else{
+    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 360 GeV");
+    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 360 GeV");
+  }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
   //RooDataSet* signalAll = (RooDataSet*) w->data("Sig");
