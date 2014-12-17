@@ -47,12 +47,14 @@ for i in `echo ${runLimits[@]}`; do
 
 	if [ ${imass} == "0" ]; then
 	    sed -i "/const Int_t NCAT/c\const Int_t NCAT = 4;" $fitterScript
+	    sed -i -r -e "s/.*grep on bkg label/    legmc->SetHeader(\" Nonresonace\");\/\/grep on bkg label/g" $fitterScript
+	    sed -i -r -e "s/.*grep on sig label/                             \" Nonresonance - SM\");\/\/grep on sig label/g" $fitterScript
 	else
 	    sed -i "/const Int_t NCAT/c\const Int_t NCAT = 2;" $fitterScript
+	    sed -i -r -e "s/.*grep on bkg label/    legmc->SetHeader(\" ${imass} GeV\");\/\/grep on bkg label/g" $fitterScript
+	    sed -i -r -e "s/.*grep on sig label/                             \" Resonance - ${imass} GeV\");\/\/grep on sig label/g" $fitterScript
 	fi
 
-        # the legend
-	sed -i -r -e "s/[0-9]+ GeV\"\);/${masses[$j]} GeV\"\);/g" $fitterScript
 
 	echo "Running limits for mass $imass on ${limitdirs[$i]}"
 
