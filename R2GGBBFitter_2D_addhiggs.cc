@@ -608,7 +608,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 260 GeV");
+    legmc->SetHeader(" 260 GeV");//grep on bkg label
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -798,7 +798,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmjjBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" 260 GeV");
+    legmc->SetHeader(" 260 GeV");//grep on bkg label
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -1067,7 +1067,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-			     " Resonance - 260 GeV");
+			     " Resonance - 260 GeV");//grep on sig label
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1131,7 +1131,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     // float effS = effSigma(hist);
     TLatex *lat = new TLatex(
 			     minSigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-			     " Resonance - 260 GeV");
+			     " Resonance - 260 GeV");//grep on sig label
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
@@ -1262,7 +1262,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minHigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-			       " Resonance - 260 GeV");
+			       " Resonance - 260 GeV");//grep on sig label
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minHigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
@@ -1328,7 +1328,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // float effS = effSigma(hist);
       TLatex *lat = new TLatex(
 			       minHigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-			       " Resonance - 260 GeV");
+			       " Resonance - 260 GeV");//grep on sig label
       lat->Draw();
       TLatex *lat2 = new TLatex(
 				minHigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
