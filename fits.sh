@@ -2,7 +2,7 @@
 
 doBlinding=1
 
-version="v38"
+version="v40"
 basedir="/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/$version"
 limitdirs=("${version}_fitToMgg_nonresSearch_withKinFit" "${version}_fitToMgg_resSearch_withKinFit" "${version}_fitToMgg_resSearch_withRegKinFit" "${version}_fitTo2D_nonresSearch_withKinFit" "${version}_fitTo2D_resSearch_withRegKinFit" "${version}_fitTo2D_resSearch_withKinFit" "${version}_fitToFTR14001_nonresSearch_withKinFit")
 doResLimits=("0" "1" "1" "0" "1" "1" "0")
