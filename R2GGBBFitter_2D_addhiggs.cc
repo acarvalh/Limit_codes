@@ -383,7 +383,17 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
   RooDataSet* sigToFit2[ncat];
   RooDataSet* sigToFit3[ncat];
   RooAbsPdf* mggSig[ncat];
+  RooAbsPdf* mggSig0[ncat];
+  RooAbsPdf* mggSig1[ncat];
+  RooAbsPdf* mggSig2[ncat];
+  RooAbsPdf* mggSig3[ncat];
+  RooAbsPdf* mggSig4[ncat];
   RooAbsPdf* mjjSig[ncat];
+  RooAbsPdf* mjjSig0[ncat];
+  RooAbsPdf* mjjSig1[ncat];
+  RooAbsPdf* mjjSig2[ncat];
+  RooAbsPdf* mjjSig3[ncat];
+  RooAbsPdf* mjjSig4[ncat];
   Float_t minMggMassFit(100),maxMggMassFit(180);
   Float_t minMjjMassFit(60),maxMjjMassFit(180);
   // Fit data with background pdf for data limit
@@ -2077,9 +2087,6 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
   RooRealVar* mgg_bkg_8TeV_slope1 = w->var("mgg_bkg_8TeV_slope1");
   mgg_bkg_8TeV_slope1 ->SetName("a_{B}");
   mgg_bkg_8TeV_slope1 ->setUnit("1/GeV");
-  RooRealVar* mgg_bkg_8TeV_slope2 = w->var("mgg_bkg_8TeV_slope2");
-  mgg_bkg_8TeV_slope2 ->SetName("a_{B}");
-  mgg_bkg_8TeV_slope2 ->setUnit("1/GeV");
   //****************************//
   // mgg per category
   //****************************//
@@ -2102,9 +2109,6 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
     mgg_bkg_8TeV_slope1 = w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c));
     mgg_bkg_8TeV_slope1 ->SetName("p_{B}^{1}");
     mgg_bkg_8TeV_slope1 ->setUnit("1/GeV");
-    mgg_bkg_8TeV_slope2 = w->var(TString::Format("mgg_bkg_8TeV_slope2_cat%d",c));
-    mgg_bkg_8TeV_slope2 ->SetName("p_{B}^{2}");
-    mgg_bkg_8TeV_slope2 ->setUnit("1/GeV^{2}");
     // RooRealVar* mgg_bkg_8TeV_frac = w->var(TString::Format("mgg_bkg_8TeV_frac_cat%d",c));
     // mgg_bkg_8TeV_frac ->SetName("f");
   }
@@ -2133,9 +2137,6 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
   RooRealVar* mjj_bkg_8TeV_slope1 = w->var("mjj_bkg_8TeV_slope1");
   mjj_bkg_8TeV_slope1 ->SetName("a_{B}");
   mjj_bkg_8TeV_slope1 ->setUnit("1/GeV");
-  RooRealVar* mjj_bkg_8TeV_slope2 = w->var("mjj_bkg_8TeV_slope2");
-  mjj_bkg_8TeV_slope2 ->SetName("a_{B}");
-  mjj_bkg_8TeV_slope2 ->setUnit("1/GeV");
   //****************************//
   // mjj per category
   //****************************//
@@ -2158,9 +2159,6 @@ void SetParamNames(RooWorkspace* w) { // not used it if Workspaces are created =
     mjj_bkg_8TeV_slope1 = w->var(TString::Format("mjj_bkg_8TeV_slope1_cat%d",c));
     mjj_bkg_8TeV_slope1 ->SetName("p_{B}^{1}");
     mjj_bkg_8TeV_slope1 ->setUnit("1/GeV");
-    mjj_bkg_8TeV_slope2 = w->var(TString::Format("mjj_bkg_8TeV_slope2_cat%d",c));
-    mjj_bkg_8TeV_slope2 ->SetName("p_{B}^{2}");
-    mjj_bkg_8TeV_slope2 ->setUnit("1/GeV^{2}");
     // RooRealVar* mjj_bkg_8TeV_frac = w->var(TString::Format("mjj_bkg_8TeV_frac_cat%d",c));
     // mjj_bkg_8TeV_frac ->SetName("f");
   }

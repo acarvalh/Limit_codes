@@ -339,6 +339,11 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   RooDataSet* sigToFit2[ncat];
   RooDataSet* sigToFit3[ncat];
   RooAbsPdf* mggSig[ncat];
+  RooAbsPdf* mggSig0[ncat];
+  RooAbsPdf* mggSig1[ncat];
+  RooAbsPdf* mggSig2[ncat];
+  RooAbsPdf* mggSig3[ncat];
+  RooAbsPdf* mggSig4[ncat];
   Float_t minMassFit(100),maxMassFit(180);
   // Fit data with background pdf for data limit
   RooRealVar* mgg = w->var("mgg");
@@ -568,9 +573,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
   } // close to each category
   RooBernstein mggBkgAll("mggBkgAll", "", *mgg,
 			 RooArgList(RooConst(1.0),
-				    *w->var("mgg_bkg_8TeV_slope1"),
-				    //*w->var("mgg_bkg_8TeV_slope2"),
-				    *w->var("mgg_bkg_8TeV_slope3")));
+				    *w->var("mgg_bkg_8TeV_slope1")));
   w->import(mggBkgAll);
   RooFitResult* fitresults;
   fitresults = w->pdf("mggBkgAll")->fitTo( // save results to workspace
