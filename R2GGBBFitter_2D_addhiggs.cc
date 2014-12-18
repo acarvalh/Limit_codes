@@ -62,14 +62,14 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   bool cutbased=true;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
+  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
+  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
+  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
+  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitTo2D_nonresSearch_withKinFit/Data_m0.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v40/v40_fitToFTR14001_nonresSearch_withKinFit/Data_m0.root";
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -417,11 +417,11 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
 
     RooAbsPdf* mggBkgTmp0 = new RooGenericPdf(
 					      TString::Format("MggNonresBkg_%d",c),
-					      "1./exp(@0*@1)",//"1./pow(@0,@1)",
+					      "1./pow(@0,@1)",//"1./exp(@0*@1)",//
 					      RooArgList(*mgg, *mgg_p1mod));
     RooAbsPdf* mjjBkgTmp0 = new RooGenericPdf(
 					      TString::Format("MjjNonresBkg_%d",c),
-					      "1./exp(@0*@1)",//"1./pow(@0,@1)",
+					      "1./pow(@0,@1)",//"1./exp(@0*@1)",//
 					      RooArgList(*mjj, *mjj_p1mod));
 
     // we first wrap the normalization of mggBkgTmp0, mjjBkgTmp0
@@ -451,8 +451,8 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmggBkg[c]->Draw();
     plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
@@ -581,10 +581,10 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
 
     //////////////////////////////////////////////////////////
     plotmggBkg[c]->Draw("SAME");
-    if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0)plotmggBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMaximum(20); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMaximum(20); // no error bar in bins with zero events
     // plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     //plotmggBkg[c]->SetLogy(0);
     cout << "!!!!!!!!!!!!!!!!!" << endl;
@@ -614,8 +614,8 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.png",c));
 
-    if(c==0)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
     ctmp->SetLogy(1);
     ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d_log.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d_log.png",c));
@@ -642,8 +642,8 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
     //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
-    if(c==1)plotmjjBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
+    if(c==0||c==2)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1||c==3)plotmjjBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmjjBkg[c]->Draw();
     plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
@@ -771,10 +771,10 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
 
     //////////////////////////////////////////////////////////
     plotmjjBkg[c]->Draw("SAME");
-    if(c==0)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
-    if(c==1)plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0)plotmjjBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
-    if(c==1)plotmjjBkg[c]->SetMaximum(20); // no error bar in bins with zero events
+    if(c==0||c==2)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1||c==3)plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
+    if(c==0||c==2)plotmjjBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
+    if(c==1||c==3)plotmjjBkg[c]->SetMaximum(20); // no error bar in bins with zero events
     // plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     //plotmjjBkg[c]->SetLogy(0);
     cout << "!!!!!!!!!!!!!!!!!" << endl;
@@ -804,8 +804,8 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.png",c));
 
-    if(c==0)plotmjjBkg[c]->SetMaximum(100); // no error bar in bins with zero events
-    if(c==1)plotmjjBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
+    if(c==0||c==2)plotmjjBkg[c]->SetMaximum(100); // no error bar in bins with zero events
+    if(c==1||c==3)plotmjjBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
     ctmp->SetLogy(1);
     ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d_log.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d_log.png",c));

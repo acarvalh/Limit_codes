@@ -4,7 +4,7 @@ Bool_t doblinding = true; //True if you want to blind
 // this one is for mgg fit
 using namespace RooFit;
 using namespace RooStats ;
-const Int_t NCAT = 2;
+const Int_t NCAT = 4;
 bool addHiggs=true;
 void AddSigData(RooWorkspace*, Float_t);
 void AddHigData(RooWorkspace*, Float_t,int);
@@ -170,7 +170,7 @@ void AddSigData(RooWorkspace* w, Float_t mass, TString signalfile) {
   cout << "========= the number of entries on the different categories ==========" << endl;
   cout << "---- one channel: " << sigScaled.sumEntries() << endl;
   for (int c = 0; c < ncat; ++c) {
-    Float_t nExpEvt = sigToFit[c].sumEntries();
+    Float_t nExpEvt = sigToFit[c]->sumEntries();
     cout << TString::Format("nEvt exp. cat%d : ",c) << nExpEvt
 	 << TString::Format(" eff x Acc cat%d : ",c)
 	 << "%"
@@ -397,8 +397,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmggBkg[c]->Draw();
     plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
@@ -527,10 +527,10 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 
     //////////////////////////////////////////////////////////
     plotmggBkg[c]->Draw("SAME");
-    if(c==0)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0)plotmggBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMaximum(20); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMaximum(5.3); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMaximum(20); // no error bar in bins with zero events
     // plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     //plotmggBkg[c]->SetLogy(0);
     cout << "!!!!!!!!!!!!!!!!!" << endl;
@@ -559,8 +559,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d.png",c));
 
-    if(c==0)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
-    if(c==1)plotmggBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMaximum(100); // no error bar in bins with zero events
+    if(c==1||c==3)plotmggBkg[c]->SetMaximum(1000); // no error bar in bins with zero events
     ctmp->SetLogy(1);
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.pdf",c));
     ctmp->SaveAs(TString::Format("databkgoversig_cat%d_log.png",c));
@@ -599,18 +599,24 @@ void MakeSigWS(RooWorkspace* w, const char* fileBaseName) {
   wAll->factory("CMS_hgg_sig_m0_absShift[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_m0_cat0(mgg_sig_m0_cat0, CMS_hgg_sig_m0_absShift)");
   wAll->factory("prod::CMS_hgg_sig_m0_cat1(mgg_sig_m0_cat1, CMS_hgg_sig_m0_absShift)");
-  wAll->factory("prod::CMS_hgg_sig_m0_cat2(mgg_sig_m0_cat2, CMS_hgg_sig_m0_absShift)");
-  wAll->factory("prod::CMS_hgg_sig_m0_cat3(mgg_sig_m0_cat3, CMS_hgg_sig_m0_absShift)");
+  if ( NCAT > 2 ){
+    wAll->factory("prod::CMS_hgg_sig_m0_cat2(mgg_sig_m0_cat2, CMS_hgg_sig_m0_absShift)");
+    wAll->factory("prod::CMS_hgg_sig_m0_cat3(mgg_sig_m0_cat3, CMS_hgg_sig_m0_absShift)");
+  }
   // (3) Systematics on resolution
   wAll->factory("CMS_hgg_sig_sigmaScale[1,1,1]");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat0(mgg_sig_sigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat1(mgg_sig_sigma_cat1, CMS_hgg_sig_sigmaScale)");
+  if ( NCAT > 2 ){
   wAll->factory("prod::CMS_hgg_sig_sigma_cat2(mgg_sig_sigma_cat2, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_sigma_cat3(mgg_sig_sigma_cat3, CMS_hgg_sig_sigmaScale)");
+  }
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat0(mgg_sig_gsigma_cat0, CMS_hgg_sig_sigmaScale)");
   wAll->factory("prod::CMS_hgg_sig_gsigma_cat1(mgg_sig_gsigma_cat1, CMS_hgg_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hgg_sig_gsigma_cat2(mgg_sig_gsigma_cat2, CMS_hgg_sig_sigmaScale)");
-  wAll->factory("prod::CMS_hgg_sig_gsigma_cat3(mgg_sig_gsigma_cat3, CMS_hgg_sig_sigmaScale)");
+  if ( NCAT > 2 ){
+    wAll->factory("prod::CMS_hgg_sig_gsigma_cat2(mgg_sig_gsigma_cat2, CMS_hgg_sig_sigmaScale)");
+    wAll->factory("prod::CMS_hgg_sig_gsigma_cat3(mgg_sig_gsigma_cat3, CMS_hgg_sig_sigmaScale)");
+  }
   // (4) do reparametrization of signal
   for (int c = 0; c < ncat; ++c) wAll->factory(
 					       TString::Format("EDIT::CMS_hgg_sig_cat%d(mggSig_cat%d,",c,c) +
@@ -664,22 +670,13 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
   } // close ncat
   // (2) do reparametrization of background
   for (int c = 0; c < ncat; ++c){
-    if(c==0) wAll->factory(
-			   TString::Format("EDIT::CMS_hgg_bkg_8TeV_cat%d(mggBkg_cat%d,",c,c) +
-			   TString::Format(" mgg_bkg_8TeV_norm_cat%d=CMS_hgg_bkg_8TeV_cat%d_norm,", c,c)+
-			   TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c)
-			   //TString::Format(" mgg_bkg_8TeV_slope2_cat%d=CMS_hgg_bkg_8TeV_slope2_cat%d,", c,c)+
-			   //TString::Format(" mgg_bkg_8TeV_slope3_cat%d=CMS_hgg_bkg_8TeV_slope3_cat%d)", c,c)
-			   );
-    if(c==1) wAll->factory(
-			   TString::Format("EDIT::CMS_hgg_bkg_8TeV_cat%d(mggBkg_cat%d,",c,c) +
-			   TString::Format(" mgg_bkg_8TeV_norm_cat%d=CMS_hgg_bkg_8TeV_cat%d_norm,", c,c)+
-			   TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c)//+
-			   //TString::Format(" mgg_bkg_8TeV_slope2_cat%d=CMS_hgg_bkg_8TeV_slope2_cat%d,", c,c)+
-			   //TString::Format(" mgg_bkg_8TeV_slope3_cat%d=CMS_hgg_bkg_8TeV_slope3_cat%d)", c,c)
-			   // TString::Format(" mgg_bkg_8TeV_slope4_cat%d=CMS_hgg_bkg_8TeV_slope4_cat%d,", c,c)+
-			   // TString::Format(" mgg_bkg_8TeV_slope5_cat%d=CMS_hgg_bkg_8TeV_slope5_cat%d)", c,c)
-			   );
+    wAll->factory(
+		  TString::Format("EDIT::CMS_hgg_bkg_8TeV_cat%d(mggBkg_cat%d,",c,c) +
+		  TString::Format(" mgg_bkg_8TeV_norm_cat%d=CMS_hgg_bkg_8TeV_cat%d_norm,", c,c)+
+		  TString::Format(" mgg_bkg_8TeV_slope1_cat%d=CMS_hgg_bkg_8TeV_slope1_cat%d)", c,c)
+		  //TString::Format(" mgg_bkg_8TeV_slope2_cat%d=CMS_hgg_bkg_8TeV_slope2_cat%d,", c,c)+
+		  //TString::Format(" mgg_bkg_8TeV_slope3_cat%d=CMS_hgg_bkg_8TeV_slope3_cat%d)", c,c)
+		  );
   } // close for cat
 
   TString filename(wsDir+TString(fileBaseName)+".root");
@@ -978,7 +975,7 @@ void AddHigData(RooWorkspace* w, Float_t mass, TString signalfile, int higgschan
   TString cut0 = "&& 1>0";
   //
   // we take only mtot to fit to the workspace, we include the cuts
-  if ( int i=0; i<ncat; ++i){
+  for ( int i=0; i<ncat; ++i){
     higToFit[i] = (RooDataSet*) higScaled.reduce(
 						 *w->var("mgg"),
 						 mainCut+TString::Format(" && cut_based_ct==%d ",i)+cut0);
@@ -1019,18 +1016,24 @@ void MakeHigWS(RooWorkspace* w, const char* fileHiggsName,int higgschannel) {
   wAll->factory(TString::Format("CMS_hgg_hig_%d_m0_absShift[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat0(mgg_hig_m0_%d_cat0, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat1(mgg_hig_m0_%d_cat1, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat2(mgg_hig_m0_%d_cat2, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat3(mgg_hig_m0_%d_cat3, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  if ( NCAT > 2 ){
+    wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat2(mgg_hig_m0_%d_cat2, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+    wAll->factory(TString::Format("prod::CMS_hgg_hig_m0_%d_cat3(mgg_hig_m0_%d_cat3, CMS_hgg_hig_%d_m0_absShift)",higgschannel,higgschannel,higgschannel));
+  }
   // (3) Systematics on resolution
   wAll->factory(TString::Format("CMS_hgg_hig_%d_sigmaScale[1,1,1]",higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat0(mgg_hig_sigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat1(mgg_hig_sigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat2(mgg_hig_sigma_%d_cat2, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat3(mgg_hig_sigma_%d_cat3, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  if ( NCAT > 2 ){
+    wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat2(mgg_hig_sigma_%d_cat2, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+    wAll->factory(TString::Format("prod::CMS_hgg_hig_sigma_%d_cat3(mgg_hig_sigma_%d_cat3, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  }
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat0(mgg_hig_gsigma_%d_cat0, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
   wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat1(mgg_hig_gsigma_%d_cat1, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat2(mgg_hig_gsigma_%d_cat2, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
-  wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat3(mgg_hig_gsigma_%d_cat3, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  if ( NCAT > 2 ){
+    wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat2(mgg_hig_gsigma_%d_cat2, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+    wAll->factory(TString::Format("prod::CMS_hgg_hig_gsigma_%d_cat3(mgg_hig_gsigma_%d_cat3, CMS_hgg_hig_%d_sigmaScale)",higgschannel,higgschannel,higgschannel));
+  }
   // save the other parameters
   /* for (int c = 0; c < ncat; ++c) {
      wAll->factory(
