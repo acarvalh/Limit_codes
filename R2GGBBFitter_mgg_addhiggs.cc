@@ -590,7 +590,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t doBands) {
 		       Normalization(norm2,RooAbsPdf::NumEvent),LineColor(kMagenta),LineStyle(1));
     //
     sigToFit3[c] = (RooDataSet*) w->data(TString::Format("Hig_3_cat%d",c));
-    double norm3 = 1.0*sigToFit1[c]->sumEntries(); //
+    double norm3 = 1.0*sigToFit3[c]->sumEntries(); //
     mggSig3[c] = (RooAbsPdf*) w->pdf(TString::Format("mggHig_3_cat%d",c));
     // we are not constructing signal pdf, this is constructed on sig to fit function...
     mggSig3[c] ->plotOn(
@@ -603,7 +603,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t doBands) {
 		       Normalization(norm3,RooAbsPdf::NumEvent),LineColor(kCyan),LineStyle(1));
 
     sigToFit4[c] = (RooDataSet*) w->data(TString::Format("Hig_4_cat%d",c));
-    double norm4 = 1.0*sigToFit1[c]->sumEntries(); //
+    double norm4 = 1.0*sigToFit4[c]->sumEntries(); //
     mggSig4[c] = (RooAbsPdf*) w->pdf(TString::Format("mggHig_4_cat%d",c));
     // we are not constructing signal pdf, this is constructed on sig to fit function...
     mggSig4[c] ->plotOn(
