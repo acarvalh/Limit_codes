@@ -44,6 +44,7 @@ Bool_t doblinding = true; //True if you want to blind
 Int_t NCAT =0;
 Int_t sigMass;
 bool addHiggs=true;
+
 void AddSigData(RooWorkspace*, Float_t, TString);
 void AddHigData(RooWorkspace*, Float_t,TString,int);
 void AddBkgData(RooWorkspace*, TString);
@@ -61,7 +62,6 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, TString filename1, TString filen
 void SetParamNames(RooWorkspace*);
 void SetConstantParams(const RooArgSet* params);
 void style();
-
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
 RooArgSet* defineVariables()
@@ -102,7 +102,7 @@ int main(int argc, const char* argv[])
 	("version,v", po::value<int>(&version)->default_value(41), "Version for limit trees.")
 	("ncat,n", po::value<int>(&NCAT)->default_value(2), "Number of categories to fit")
 	("sigMass", po::value<int>(&sigMass)->default_value(0), "Mass of signal. 0 is for nonresonant.")
-	("analysisType", po::value<string>(&analysisType)->default_value("fitToMgg_nonresSearch_withKinFit"), "Can choose among fitTo{Mgg,FTR14001}_{nonres,res}Search_with{RegKin,Kin}Fit")
+	("analysisType", po::value<string>(&analysisType)->default_value("fitToMgg_nonresSearch_withKinFit"), "Can choose among fitToMgg_{nonres,res}Search_with{RegKin,Kin}Fit")
         ;
       po::variables_map vm;
       po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -131,7 +131,8 @@ int main(int argc, const char* argv[])
   HLFactory hlf("HLFactory", card_name, false);
   RooWorkspace* w = hlf.GetWs();
   RooFitResult* fitresults;
-  // the minitree to be addeed
+
+  // the limit trees to be addeed
   //
   TString dir = TString::Format("/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v%d/v%d_%s",version,version,analysisType.c_str());
 
