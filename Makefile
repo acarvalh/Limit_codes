@@ -14,10 +14,10 @@ TMVA = -L${ROOTSYS}lib -lTMVA
 
 all: R2GGBBFitter_mgg_addhiggs.exe R2GGBBFitter_2D_addhiggs.exe
 
-R2GGBBFitter_mgg_addhiggs.exe: 
+R2GGBBFitter_mgg_addhiggs.exe: R2GGBBFitter_mgg_addhiggs.cc
 	$(CC) $(CCFLAGS) $(ROOTFLAGS) $(ROOTLIBS) $(ROOSTATSLIBS) $(ROOFITLIBS) $(BOOSTFLAGS) $(BOOSTLIBS) R2GGBBFitter_mgg_addhiggs.cc -o R2GGBBFitter_mgg_addhiggs.exe
 
-R2GGBBFitter_2D_addhiggs.exe: 
+R2GGBBFitter_2D_addhiggs.exe: R2GGBBFitter_2D_addhiggs.cc
 	$(CC) $(CCFLAGS) $(ROOTFLAGS) $(ROOTLIBS) $(ROOSTATSLIBS) $(ROOFITLIBS) $(BOOSTFLAGS) $(BOOSTLIBS) R2GGBBFitter_2D_addhiggs.cc -o R2GGBBFitter_2D_addhiggs.exe
 
 clean:
