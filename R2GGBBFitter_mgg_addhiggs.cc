@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <cmath>
+#include <boost/program_options.hpp>
 // ROOT headers
 #include "TROOT.h"
 #include "TSystem.h"
@@ -34,12 +35,14 @@
 using namespace std;
 using namespace RooFit;
 using namespace RooStats;
+namespace po = boost::program_options;
 
 //Important options first
 Bool_t doblinding = true; //True if you want to blind
 
 // this one is for mgg fit
-const Int_t NCAT = 4;
+Int_t NCAT =0;
+Float_t sigMass;
 bool addHiggs=true;
 void AddSigData(RooWorkspace*, Float_t, TString);
 void AddHigData(RooWorkspace*, Float_t,TString,int);
@@ -85,12 +88,37 @@ RooArgSet* defineVariables()
 
 int main(int argc, const char* argv[])
 {
-  Float_t mass=120;
-  Int_t mode=1;
-  Bool_t dobands = false;
-  if ( argc>1) mass = atof(argv[1]);
-  if ( argc>2) mode = atoi(argv[2]);
-  if ( argc>3) dobands = atoi(argv[3]);
+  Float_t mass;
+  Bool_t dobands;
+  int version;
+  TString analysisType;
+
+  try
+    {
+      po::options_description desc("Allowed options");
+      desc.add_options()
+	("help,h", "produce help message")
+	("Hmass", po::value<float>(&mass)->default_value(125.03), "Mass of SM Higgs. Default is 125.03.")
+	("doBands", po::value<int>(&doBands)->default_value(0), "Option to calculate and show 1,2 sigma bands on bkg fit.")
+	("version,v", po::value<int>(&version)->default_value(41), "Version for limit trees.")
+	("ncat,n", po::value<int>(&NCAT)->default_value(2), "Number of categories to fit")
+	("sigMass", po::value<float>(&sigMass)->default_value(0), "Mass of signal. 0 is for nonresonant.")
+	("analysisType", po::value<string>(&analysisType)->default_value("fitToMgg_nonresSearch_withKinFit"), "Can choose among fitTo{Mgg,FTR14001}_{nonres,res}Search_with{RegKin,Kin}Fit")
+        ;
+      po::variables_map vm;
+      po::store(po::parse_command_line(argc, argv, desc), vm);
+      po::notify(vm);
+      if (vm.count("help")) {
+	cout << desc << "\n";
+	return 1;
+      }
+    } catch(exception& e) {
+    cerr << "error: " << e.what() << "\n";
+    return 1;
+  } catch(...) {
+    cerr << "Exception of unknown type!\n";
+  }
+  // end of argument parsing
 
   style();
   TString fileBaseName = TString::Format("hgg.mH%.1f_8TeV", mass);
@@ -106,14 +134,19 @@ int main(int argc, const char* argv[])
   RooFitResult* fitresults;
   // the minitree to be addeed
   //
-  TString hhiggsggh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/ggh_m125_powheg_8TeV_m0.root";
-  TString hhiggstth = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/tth_m125_8TeV_m0.root";
-  TString hhiggsvbf = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/vbf_m125_8TeV_m0.root";
-  TString hhiggsvh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/wzh_m125_8TeV_zh_m0.root";
-  TString hhiggsbbh = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/bbh_m125_8TeV_m0.root";
+  TString dir = TString::Format("/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v%d/v%d_%s",dir.Data(),analysisType.Data());
+
+  TString hhiggsggh = TString::Format("%s/ggh_m125_powheg_8TeV_m%d.root",dir.Data(),sigMass);
+  TString hhiggstth = TString::Format("%s/tth_m125_8TeV_m%d.root",dir.Data(),sigMass);;
+  TString hhiggsvbf = TString::Format("%s/vbf_m125_8TeV_m%d.root",dir.Data(),sigMass);;
+  TString hhiggsvh =  TString::Format("%s/wzh_m125_8TeV_zh_m%d.root",dir.Data(),sigMass);;
+  TString hhiggsbbh = TString::Format("%s/bbh_m125_8TeV_m%d.root",dir.Data(),sigMass);;
   //
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m0.root";
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v41/v41_fitToMgg_nonresSearch_withKinFit/Data_m0.root";
+  TString ddata = TString::Format("%s/Data_m%d.root",dir.Data(),sigMass);
+  TString ssignal;
+  if (sigMass == 260) ssignal = TString::Format("%s/MSSM_m260_8TeV_m260.root",dir.Data());
+  else if (sigMass >= 270) ssignal = TString::Format("%s/Radion_m%d_8TeV_m%d.root",dir.Data(),sigMass,sigMass);
+  else ssignal = TString::Format("%s/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m%d.root",dir.Data(),sigMass);
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
@@ -161,7 +194,6 @@ int main(int argc, const char* argv[])
   w->Print("v");
   cout<<"BKG ADDED"<<endl;
   cout<<"here 1.0\n\n";
-  dobands=true;
   fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
   cout<<"here 1.1\n\n";
   MakeBkgWS(w, fileBkgName);
@@ -604,7 +636,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" Nonresonace");//grep on bkg label
+    if ( sigMass ==0 ) legmc->SetHeader(" Nonresonace");
+    else legmc->SetHeader(TString::Format(" %d GeV",sigMass));
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -857,9 +890,10 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->SetFillStyle(0);
     legmc->Draw();
     // float effS = effSigma(hist);
+    TString latLabel = " Nonresonance - SM";
+    if ( sigMass != 0) latLabel = TString::Format(" Resonance - %d GeV",sigMass);
     TLatex *lat = new TLatex(
-			     minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),
-                             " Nonresonance - SM");//grep on sig label
+			     minSigFit+0.5,0.85*plotmgg[c]->GetMaximum(),latLabel.Data());
     lat->Draw();
     TLatex *lat2 = new TLatex(
 			      minSigFit+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
