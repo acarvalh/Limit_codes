@@ -42,7 +42,7 @@ Bool_t doblinding = true; //True if you want to blind
 
 // this one is for mgg fit
 Int_t NCAT =0;
-Float_t sigMass;
+Int_t sigMass;
 bool addHiggs=true;
 void AddSigData(RooWorkspace*, Float_t, TString);
 void AddHigData(RooWorkspace*, Float_t,TString,int);
@@ -62,7 +62,6 @@ void SetParamNames(RooWorkspace*);
 void SetConstantParams(const RooArgSet* params);
 void style();
 
-RooFitResult* fitresult[NCAT]; // container for the fit results
 RooFitResult* BkgModelFitBernstein(RooWorkspace*, Bool_t);
 
 RooArgSet* defineVariables()
@@ -89,9 +88,9 @@ RooArgSet* defineVariables()
 int main(int argc, const char* argv[])
 {
   Float_t mass;
-  Bool_t dobands;
+  Bool_t doBands;
   int version;
-  TString analysisType;
+  string analysisType;
 
   try
     {
@@ -99,10 +98,10 @@ int main(int argc, const char* argv[])
       desc.add_options()
 	("help,h", "produce help message")
 	("Hmass", po::value<float>(&mass)->default_value(125.03), "Mass of SM Higgs. Default is 125.03.")
-	("doBands", po::value<int>(&doBands)->default_value(0), "Option to calculate and show 1,2 sigma bands on bkg fit.")
+	("doBands", po::value<bool>(&doBands)->default_value(true), "Option to calculate and show 1,2 sigma bands on bkg fit.")
 	("version,v", po::value<int>(&version)->default_value(41), "Version for limit trees.")
 	("ncat,n", po::value<int>(&NCAT)->default_value(2), "Number of categories to fit")
-	("sigMass", po::value<float>(&sigMass)->default_value(0), "Mass of signal. 0 is for nonresonant.")
+	("sigMass", po::value<int>(&sigMass)->default_value(0), "Mass of signal. 0 is for nonresonant.")
 	("analysisType", po::value<string>(&analysisType)->default_value("fitToMgg_nonresSearch_withKinFit"), "Can choose among fitTo{Mgg,FTR14001}_{nonres,res}Search_with{RegKin,Kin}Fit")
         ;
       po::variables_map vm;
@@ -134,7 +133,7 @@ int main(int argc, const char* argv[])
   RooFitResult* fitresults;
   // the minitree to be addeed
   //
-  TString dir = TString::Format("/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v%d/v%d_%s",dir.Data(),analysisType.Data());
+  TString dir = TString::Format("/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v%d/v%d_%s",version,version,analysisType.c_str());
 
   TString hhiggsggh = TString::Format("%s/ggh_m125_powheg_8TeV_m%d.root",dir.Data(),sigMass);
   TString hhiggstth = TString::Format("%s/tth_m125_8TeV_m%d.root",dir.Data(),sigMass);;
@@ -194,7 +193,7 @@ int main(int argc, const char* argv[])
   w->Print("v");
   cout<<"BKG ADDED"<<endl;
   cout<<"here 1.0\n\n";
-  fitresults = BkgModelFitBernstein(w, dobands); // this is berestein 3
+  fitresults = BkgModelFitBernstein(w, doBands); // this is berestein 3
   cout<<"here 1.1\n\n";
   MakeBkgWS(w, fileBkgName);
   cout<<"here 1.2\n\n";
@@ -392,7 +391,7 @@ void HigModelFit(RooWorkspace* w, Float_t mass, int higgschannel) {
 } // close higgs model fit
 ////////////////////////////////////////////////////////////
 // BKG model berestein 3
-RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
+RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t doBands) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
@@ -455,7 +454,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
 			   "",*mggBkgTmp0,
 			   *w->var(TString::Format("mgg_bkg_8TeV_norm_cat%d",c)) // normalization only on full bkg
 			   );
-    fitresult[c] = mggBkgTmp.fitTo( // fit with normalized pdf,and return values
+    mggBkgTmp.fitTo( // fit with normalized pdf,and return values
 				   *data[c], // bkg
 				   Strategy(1), // MINUIT strategy
 				   Minos(kFALSE), // interpretation on the errors, nonlinearities
@@ -492,7 +491,7 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
     TGraphAsymmErrors *onesigma, *twosigma;
-    if (dobands) {
+    if (doBands) {
       RooAbsPdf *cpdf; cpdf = mggBkgTmp0;
       onesigma = new TGraphAsymmErrors();
       twosigma = new TGraphAsymmErrors();
@@ -629,8 +628,8 @@ RooFitResult* BkgModelFitBernstein(RooWorkspace* w, Bool_t dobands) {
     TLegend *legmcH = new TLegend(0.66,0.72,0.94,0.9);
     legmc->AddEntry(plotmggBkg[c]->getObject(2),"Data","LPE"); // not...
     legmc->AddEntry(plotmggBkg[c]->getObject(1),"Bkg Fit","L");
-    if(dobands)legmc->AddEntry(onesigma,"#pm1 #sigma","F");
-    if(dobands)legmc->AddEntry(twosigma,"#pm2 #sigma","F"); // not...
+    if(doBands)legmc->AddEntry(onesigma,"#pm1 #sigma","F");
+    if(doBands)legmc->AddEntry(twosigma,"#pm2 #sigma","F"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(3),"ggH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(5),"ttH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
