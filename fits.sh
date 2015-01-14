@@ -8,7 +8,7 @@ doResLimits=("0" "1" "1" "0" "1" "1" "0")
 do2DLimits=("0" "0" "0" "1" "1" "1" "1")
 
 #If you only want to run on a subset of directories, edit this array with the appropriate indices.
-runLimits=("0")
+runLimits=("0" "3")
 
 for i in `echo ${runLimits[@]}`; do
 
@@ -30,13 +30,14 @@ for i in `echo ${runLimits[@]}`; do
 
 	outputdir="radlim_${limitdirs[$i]}/radlim${imass}"
 	mkdir -p $outputdir
+
 	ncat=2
+	if [ "$imass" == "0" ]; then
+	    ncat=4
+	fi
 
 	if [ ${do2DLimits[$i]} == "0" ]; then
 	    fitter="R2GGBBFitter_mgg_addhiggs.exe"
-	    if [ "$imass" == "0" ]; then
-		ncat=4
-	    fi
 	else
 	    fitter="R2GGBBFitter_2D_addhiggs.exe"
 	fi
