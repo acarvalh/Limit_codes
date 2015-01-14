@@ -148,6 +148,7 @@ int main(int argc, const char* argv[])
   TString ssignal;
   if (sigMass == 260) ssignal = TString::Format("%s/MSSM_m260_8TeV_m260.root",dir.Data());
   else if (sigMass >= 270) ssignal = TString::Format("%s/Radion_m%d_8TeV_m%d.root",dir.Data(),sigMass,sigMass);
+  else ssignal = TString::Format("%s/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m%d.root",dir.Data(),sigMass);
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
