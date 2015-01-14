@@ -31,6 +31,7 @@
 #include <RooExtendPdf.h>
 #include <RooMinimizer.h>
 #include <RooStatsUtils.h>
+#include <RooProdPdf.h>
 // namespaces
 using namespace std;
 using namespace RooFit;
