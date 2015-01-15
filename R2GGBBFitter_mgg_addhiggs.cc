@@ -1408,9 +1408,9 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     outFile << endl;
     outFile << "gg_migration lnN "
 	    << " - - 1.25 1.25 1.08 1.08 1.08 "
-	    << " - - 1.25 1.25 1.08 1.08 1.08 # UEPS";
+	    << " - - 1.25 1.25 1.08 1.08 1.08 ";
     if ( NCAT > 2 ) outFile << " - - 1.25 1.25 1.08 1.08 1.08 " << " - - 1.25 1.25 1.08 1.08 1.08 ";
-    outFile << endl;
+    outFile << "# UEPS" << endl;
     outFile << "gluonSplitting lnN "
 	    << " - - 1.40 1.40 1.40 1.40 1.40 "
 	    << " - - 1.40 1.40 1.40 1.40 1.40 ";
