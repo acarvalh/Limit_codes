@@ -1782,7 +1782,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
       if ( NCAT > 2 ) outFile << data[2]->sumEntries() <<" " << data[3]->sumEntries() <<" "; 
     }
     else{
-      outFile << "\nobservation -1 -1 " << endl;
+      outFile << "\nobservation -1 -1 ";
       if ( NCAT > 2 ) outFile << "-1 -1 ";
     }
     outFile << "\n------------------------------" << endl;
