@@ -91,6 +91,7 @@ int main(int argc, const char* argv[])
   Bool_t doBands;
   int version;
   string analysisType;
+  string nonresFile;
 
   try
     {
@@ -103,6 +104,7 @@ int main(int argc, const char* argv[])
 	("ncat,n", po::value<int>(&NCAT)->default_value(2), "Number of categories to fit")
 	("sigMass", po::value<int>(&sigMass)->default_value(0), "Mass of signal. 0 is for nonresonant.")
 	("analysisType", po::value<string>(&analysisType)->default_value("fitToMgg_nonresSearch_withKinFit"), "Can choose among fitToMgg_{nonres,res}Search_with{RegKin,Kin}Fit")
+	("nonresFile", po::value<string>(&nonresFile)->default_value("Lam_1d0_Yt_1d0_c2_0d0"), "nonres signal to run in the case sigMass is 0. default is the SM value.")
         ;
       po::variables_map vm;
       po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -146,7 +148,7 @@ int main(int argc, const char* argv[])
   TString ssignal;
   if (sigMass == 260) ssignal = TString::Format("%s/MSSM_m260_8TeV_m260.root",dir.Data());
   else if (sigMass >= 270) ssignal = TString::Format("%s/Radion_m%d_8TeV_m%d.root",dir.Data(),sigMass,sigMass);
-  else ssignal = TString::Format("%s/ggHH_Lam_1d0_Yt_1d0_c2_0d0_8TeV_m%d.root",dir.Data(),sigMass);
+  else ssignal = TString::Format("%s/ggHH_%s_8TeV_m0.root",dir.Data(),nonresFile.c_str());
 
   cout<<"Signal: "<<ssignal<<endl;
   cout<<"Data: "<<ddata<<endl;
