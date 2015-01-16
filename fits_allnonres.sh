@@ -12,13 +12,16 @@ runLimits=("0")
 
 for i in `echo ${runLimits[@]}`; do
 
+    limitOutputFile="limits_${i}.txt"
+    if [ -f $limitOutputFile ]; then
+	mv $limitOutputFile ${limitOutputFile}_old
+    fi
+
     if [ ${do2DLimits[$i]} == "0" ]; then
 	fitterScript=R2GGBBFitter_mgg_addhiggs.exe
     else
 	fitterScript=R2GGBBFitter_2D_addhiggs.exe
     fi
-
-    imass=0
 
     sampleList=(`cat nonres_samplelist.txt`)
 
@@ -35,7 +38,7 @@ for i in `echo ${runLimits[@]}`; do
 	    fitter="R2GGBBFitter_2D_addhiggs.exe"
 	fi
 
-	./$fitter -v $version -n 4 --sigMass 0 --analysisType ${limitdirs[$i]} --nonresFile $isample >& ${outputdir}/log_radlim${imass}.txt
+	./$fitter -v $version -n 4 --sigMass 0 --analysisType ${limitdirs[$i]} --nonresFile $isample >& ${outputdir}/log_radlim0.txt
 
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
@@ -48,22 +51,28 @@ for i in `echo ${runLimits[@]}`; do
         ## create limits root files for each mass
 	cd $outputdir
 	
+	outputFile="higgsCombineTest.Asymptotic.mH125.0.mR0_higgs.txt"
+
 	if [ ${doBlinding} == 1 ]    
 	then
-	    combine -M Asymptotic --run blind hgg.mH125.0_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_higgs.txt
-	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_higgs.root
+	    combine -M Asymptotic --run blind hgg.mH125.0_8TeV.txt >> $outputFile
+	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR0_higgs.root
 	    echo did with Higgs
 	        
 	    rm roostats*
 	    cd ../..
 
+	    ./outputNonresLimits.py $outputdir/$outputfile $limitOutputFile
+
 	else
-	    combine -M Asymptotic hgg.mH125.0_8TeV.txt >> higgsCombineTest.Asymptotic.mH125.0.mR${imass}_higgs.txt
-	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR${imass}_higgs.root
+	    combine -M Asymptotic hgg.mH125.0_8TeV.txt >> $outputFile
+	    mv higgsCombineTest.Asymptotic.mH120.root higgsCombineTest.Asymptotic.mH125.mR0_higgs.root
 	    echo did with Higgs
 	        
 	    rm roostats*
 	    cd ../..
+
+	    ./outputNonresLimits.py $outputdir/$outputfile $limitOutputFile
 
 	fi
     done # sample
