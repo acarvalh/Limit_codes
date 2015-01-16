@@ -61,6 +61,7 @@ for i in `echo ${runLimits[@]}`; do
 	    echo did with Higgs
 	        
 	    rm roostats*
+	    rm log_radlim0.txt #this is a big file
 	    cd ../..
 
 	    ./outputNonresLimits.py $outputdir/$outputFile $isample $limitOutputFile
@@ -71,6 +72,7 @@ for i in `echo ${runLimits[@]}`; do
 	    echo did with Higgs
 	        
 	    rm roostats*
+	    rm log_radlim0.txt
 	    cd ../..
 
 	    ./outputNonresLimits.py $outputdir/$outputFile $isample $limitOutputFile
