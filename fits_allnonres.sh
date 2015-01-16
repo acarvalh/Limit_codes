@@ -16,6 +16,7 @@ for i in `echo ${runLimits[@]}`; do
     if [ -f $limitOutputFile ]; then
 	mv $limitOutputFile ${limitOutputFile}_old
     fi
+    echo "c2 yt lambda_hhh -2_sigma -1_sigma median +1_sigma +2_sigma observed" > $limtOutputFile
 
     if [ ${do2DLimits[$i]} == "0" ]; then
 	fitterScript=R2GGBBFitter_mgg_addhiggs.exe
@@ -62,7 +63,7 @@ for i in `echo ${runLimits[@]}`; do
 	    rm roostats*
 	    cd ../..
 
-	    ./outputNonresLimits.py $outputdir/$outputfile $limitOutputFile
+	    ./outputNonresLimits.py $outputdir/$outputfile $isample $limitOutputFile
 
 	else
 	    combine -M Asymptotic hgg.mH125.0_8TeV.txt >> $outputFile
@@ -72,7 +73,7 @@ for i in `echo ${runLimits[@]}`; do
 	    rm roostats*
 	    cd ../..
 
-	    ./outputNonresLimits.py $outputdir/$outputfile $limitOutputFile
+	    ./outputNonresLimits.py $outputdir/$outputfile $isample $limitOutputFile
 
 	fi
     done # sample
