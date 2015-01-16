@@ -52,7 +52,7 @@ if obsLim < 0:
 
 
 #parse the scenario name
-scenarioList=scenarioName.replace('d','.').split('_')
+scenarioList=scenarioName.replace('d','.').replace('m','-').split('_')
 
 if len(scenarioList) <6:
     print "Invalid scenario name"
@@ -66,6 +66,6 @@ c2=atof(scenarioList[5])
 #append everything to outputFileName
 
 outputfile = open(outputFileName,'a')
-outputfile.write("%d %.2f %d %.4f %.4f %.4f %.4f %.4f %.4f\n" % (lambda_hhh,yt,c2,expLim[0],expLim[1],expLim[2],expLim[3],expLim[4],obsLim) )
+outputfile.write("%2d %4.2f %3d %.4f %.4f %.4f %.4f %.4f %.4f\n" % (c2,yt,lambda_hhh,expLim[0],expLim[1],expLim[2],expLim[3],expLim[4],obsLim) )
 outputfile.close()
 
