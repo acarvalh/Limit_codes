@@ -16,7 +16,7 @@ for i in `echo ${runLimits[@]}`; do
     if [ -f $limitOutputFile ]; then
 	mv $limitOutputFile ${limitOutputFile}_old
     fi
-    echo "c2 yt lambda_hhh -2_sigma -1_sigma median +1_sigma +2_sigma observed" > $limtOutputFile
+    echo "c2 yt lambda_hhh -2_sigma -1_sigma median +1_sigma +2_sigma observed" > $limitOutputFile
 
     if [ ${do2DLimits[$i]} == "0" ]; then
 	fitterScript=R2GGBBFitter_mgg_addhiggs.exe
