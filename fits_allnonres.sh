@@ -12,7 +12,7 @@ runLimits=("0")
 
 for i in `echo ${runLimits[@]}`; do
 
-    limitOutputFile="limits_${i}.txt"
+    limitOutputFile="limits_${limitdirs[$i]}.txt"
     if [ -f $limitOutputFile ]; then
 	mv $limitOutputFile ${limitOutputFile}_old
     fi
@@ -63,7 +63,7 @@ for i in `echo ${runLimits[@]}`; do
 	    rm roostats*
 	    cd ../..
 
-	    ./outputNonresLimits.py $outputdir/$outputfile $isample $limitOutputFile
+	    ./outputNonresLimits.py $outputdir/$outputFile $isample $limitOutputFile
 
 	else
 	    combine -M Asymptotic hgg.mH125.0_8TeV.txt >> $outputFile
@@ -73,7 +73,7 @@ for i in `echo ${runLimits[@]}`; do
 	    rm roostats*
 	    cd ../..
 
-	    ./outputNonresLimits.py $outputdir/$outputfile $isample $limitOutputFile
+	    ./outputNonresLimits.py $outputdir/$outputFile $isample $limitOutputFile
 
 	fi
     done # sample
