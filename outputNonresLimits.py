@@ -66,6 +66,6 @@ c2=atof(scenarioList[5])
 #append everything to outputFileName
 
 outputfile = open(outputFileName,'a')
-print "%d %.2f %d %.4f %.4f %.4f %.4f %.4f %.4f\n" % (lambda_hhh,yt,c2,expLim[0],expLim[1],expLim[2],expLim[3],expLim[4],obsLim), outputfile
+outputfile.write("%d %.2f %d %.4f %.4f %.4f %.4f %.4f %.4f\n" % (lambda_hhh,yt,c2,expLim[0],expLim[1],expLim[2],expLim[3],expLim[4],obsLim) )
 outputfile.close()
 
