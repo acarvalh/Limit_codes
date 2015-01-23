@@ -57,8 +57,8 @@ void MakeHigWS(RooWorkspace* w, const char* filename,int);
 void MakeBkgWS(RooWorkspace* w, const char* filename);//,
 // const char* filenameh0, const char* filenameh1, const char* filenameh2, const char* filenameh4);
 void MakeDataCard(RooWorkspace* w, const char* filename, const char* filename1,
-                  const char*, const char*, const char*, const char*, const char*);
-void MakeDataCardonecatnohiggs(RooWorkspace* w, TString filename1, TString filename2);
+                  const char*, const char*, const char*, const char*, const char*, Bool_t);
+void MakeDataCardonecatnohiggs(RooWorkspace* w, TString filename1, TString filename2, Boot_t);
 void SetParamNames(RooWorkspace*);
 void SetConstantParams(const RooArgSet* params);
 void style();
@@ -92,6 +92,7 @@ int main(int argc, const char* argv[])
   int version;
   string analysisType;
   string nonresFile;
+  Bool_t useSigTheoryUnc;
 
   try
     {
@@ -105,6 +106,7 @@ int main(int argc, const char* argv[])
 	("sigMass", po::value<int>(&sigMass)->default_value(0), "Mass of signal. 0 is for nonresonant.")
 	("analysisType", po::value<string>(&analysisType)->default_value("fitToMgg_nonresSearch_withKinFit"), "Can choose among fitToMgg_{nonres,res}Search_with{RegKin,Kin}Fit")
 	("nonresFile", po::value<string>(&nonresFile)->default_value("Lam_1d0_Yt_1d0_c2_0d0"), "nonres signal to run in the case sigMass is 0. default is the SM value.")
+	("useSigTheoryUnc", po::value<bool>(&useSigTheoryUnc)->default_value(false), "option to add an uncertainty to the datacard for the SM diHiggs theory uncertainty. Default is off.")
         ;
       po::variables_map vm;
       po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -203,10 +205,9 @@ int main(int argc, const char* argv[])
 
   // construct the models to fit
   //
-  // MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh);
-  MakeDataCardonecatnohiggs(w, fileBaseName, fileBkgName);
-  MakeDataCard(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh, fileHiggsNamebbh);
-  // MakeDataCardonecat(w, fileBaseName, fileBkgName, fileHiggsName);//MakeDataCardnohiggs
+  MakeDataCardonecatnohiggs(w, fileBaseName, fileBkgName, useSigTheoryUnc);
+  MakeDataCard(w, fileBaseName, fileBkgName, fileHiggsNameggh, fileHiggsNametth, fileHiggsNamevbf, fileHiggsNamevh, fileHiggsNamebbh, useSigTheoryUnc);
+
   cout<< "here"<<endl;
 
   return 0;
@@ -1217,7 +1218,7 @@ Double_t effSigma(TH1 *hist) {
 
 //////////////////////////////////////////////////
 // with higgs
-void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName , const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHiggsNamevbf, const char* fileHiggsNamevh, const char* fileHiggsNamebbh) {
+void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkgName , const char* fileHiggsNameggh, const char* fileHiggsNametth, const char* fileHiggsNamevbf, const char* fileHiggsNamevh, const char* fileHiggsNamebbh, Bool_t useSigTheoryUnc) {
   TString cardDir = "datacards/";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
@@ -1417,6 +1418,17 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     if ( NCAT > 2 ) outFile << " - - 1.40 1.40 1.40 1.40 1.40 " << " - - 1.40 1.40 1.40 1.40 1.40 ";
     outFile << endl;
     outFile << " " << endl;
+    if(useSigTheoryUnc){
+      outFile << "############## Theory uncertainty on SM diHiggs production " << endl;
+      outFile << "SM_diHiggs_Theory lnN "
+	      << " 0.857/1.136 - - - - - - "
+	      << " 0.857/1.136 - - - - - - ";
+      if ( NCAT > 2 ){
+	outFile << " 0.857/1.136 - - - - - - "
+		<< " 0.857/1.136 - - - - - - ";
+      }
+      outFile << " # from 9.96 + 1.35 - 1.42 fb " << endl << endl;
+    }
     outFile << "############## Signal parametric shape uncertainties " << endl;
     outFile << "CMS_hgg_sig_m0_absShift param 1 0.0051 # displacement of the dipho mean error = sqrt(0.45^ 2 + 0.25^ 2) " << endl;
     outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
@@ -1462,7 +1474,7 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
 
 
 
-void MakeDataCardonecatnohiggs(RooWorkspace* w, TString fileBaseName, TString fileBkgName) {
+void MakeDataCardonecatnohiggs(RooWorkspace* w, TString fileBaseName, TString fileBkgName, Bool_t useSigTheoryUnc) {
   TString cardDir = "datacards/";
   const Int_t ncat = NCAT;
   RooDataSet* data[ncat];
@@ -1532,7 +1544,7 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, TString fileBaseName, TString fi
 	    << " " << endl;
     outFile << "--------------------------------" << endl;
     outFile << "lumi_8TeV lnN "
-	    << "1.022 - " << endl;
+	    << "1.026 - " << endl;
     outFile << "############## jet" << endl;
     outFile << "Mjj_acceptance lnN "
 	    << "1.015 - "
@@ -1540,6 +1552,8 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, TString fileBaseName, TString fi
     outFile << "btag_eff lnN "
 	    << "1.046 - "
 	    <<"# b tag efficiency uncertainty" << endl;
+    outFile << "maajj_acceptance lnN "
+	    << "1.02 - " << endl;
     outFile << "############## photon " << endl;
     outFile << "CMS_hgg_eff_g lnN "
 	    << "1.010 - "
@@ -1547,21 +1561,15 @@ void MakeDataCardonecatnohiggs(RooWorkspace* w, TString fileBaseName, TString fi
     outFile << "DiphoTrigger lnN "
 	    << "1.01 - "
 	    << "# Trigger efficiency" << endl;
-    outFile << "############## for mtot fit" << endl;
-    outFile << "maa_acceptance lnN "
-	    << "1.10 - "
-	    << "# photon energy resolution" << endl;
+    if(useSigTheoryUnc){
+      outFile << "SM_diHiggs_Theory lnN 0.857/1.136 - " << endl;
+    }
     outFile << "# Parametric shape uncertainties, entered by hand. they act on signal " << endl;
     outFile << "CMS_hgg_sig_m0_absShift param 1 0.0045 # displacement of the dipho mean" << endl;
     outFile << "CMS_hgg_sig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
-    outFile << "# Parametric shape uncertainties, entered by hand. they act on higgs " << endl;
-    outFile << "CMS_hgg_hig_m0_absShift param 1 0.0045 # displacement of the dipho mean" << endl;
-    outFile << "CMS_hgg_hig_sigmaScale param 1 0.22 # optimistic estimative of resolution uncertainty " << endl;
     outFile << "############## for mgg fit - slopes" << endl;
     outFile << "CMS_hgg_bkg_8TeV_cat0_norm flatParam # Normalization uncertainty on background slope" << endl;
-
     outFile << "CMS_hgg_bkg_8TeV_slope1_cat0 flatParam # Mean and absolute uncertainty on background slope" << endl;
-
 
   } // if ncat ==2
   /////////////////////////////////////
