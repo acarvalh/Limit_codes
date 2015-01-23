@@ -58,7 +58,7 @@ void MakeBkgWS(RooWorkspace* w, const char* filename);//,
 // const char* filenameh0, const char* filenameh1, const char* filenameh2, const char* filenameh4);
 void MakeDataCard(RooWorkspace* w, const char* filename, const char* filename1,
                   const char*, const char*, const char*, const char*, const char*, Bool_t);
-void MakeDataCardonecatnohiggs(RooWorkspace* w, TString filename1, TString filename2, Boot_t);
+void MakeDataCardonecatnohiggs(RooWorkspace* w, TString filename1, TString filename2, Bool_t);
 void SetParamNames(RooWorkspace*);
 void SetConstantParams(const RooArgSet* params);
 void style();
