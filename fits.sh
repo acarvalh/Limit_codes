@@ -32,11 +32,13 @@ for i in `echo ${runLimits[@]}`; do
 	mkdir -p $outputdir
 
 	ncat=2
+	useSigTheoryUnc=0
 	if [ "$imass" == "0" ]; then
 	    ncat=4
+	    useSigTheoryUnc=1
 	fi
 
-	./$fitter -v $version -n $ncat --sigMass $imass --analysisType ${limitdirs[$i]} >& ${outputdir}/log_radlim${imass}.txt
+	./$fitter -v $version -n $ncat --sigMass $imass --analysisType ${limitdirs[$i]} --useSigTheoryUnc ${useSigTheoryUnc} >& ${outputdir}/log_radlim${imass}.txt
 
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
