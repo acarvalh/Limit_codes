@@ -39,7 +39,7 @@ for i in `echo ${runLimits[@]}`; do
 	    fitter="R2GGBBFitter_2D_addhiggs.exe"
 	fi
 
-	./$fitter -v $version -n 4 --sigMass 0 --analysisType ${limitdirs[$i]} --nonresFile $isample >& ${outputdir}/log_radlim0.txt
+	./$fitter -v $version -n 4 --sigMass 0 --analysisType ${limitdirs[$i]} --nonresFile $isample --useSigTheoryUnc 0 >& ${outputdir}/log_radlim0.txt
 
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
