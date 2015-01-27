@@ -7,24 +7,21 @@ https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideHiggsAnalysisCombinedLimit
 
 ......................................................................
 
-cd CMSSW_6_1_1/myfolder/Limit_codes
-
+cd CMSSW_6_1_1/src/Limit_codes
 cmsenv
+source setup.sh
+make
 
 mkdir datacards/
-
 mkdir workspaces/
 
-mkdir Minitrees/ (put limit trees inside -- edit the path for limit trees on R2GBB... )
+# for 4 body fit, this runs a root script interactively
+./fits_4body.sh
 
-. ./fits_4body.sh (to 4 body fit*)
+# for mgg and 2D fit, this runs a compiled program
+./fits.sh
 
-. ./fits.sh (to mgg fit*)
-
-follow the limit trees convetion mXX.root where XX is the mass in GeV -- eg:400
-
+# for fitting all nonresonant samples either with Mgg or 2D, run
+./fits_allnonres.sh
+# the output is in limit_{dir_text}.txt
 ......................................................................
-
-
-
-
