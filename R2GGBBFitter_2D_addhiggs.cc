@@ -101,7 +101,7 @@ int main(int argc, const char* argv[])
       po::options_description desc("Allowed options");
       desc.add_options()
 	("help,h", "produce help message")
-	("Hmass", po::value<float>(&mass)->default_value(125.03), "Mass of SM Higgs. Default is 125.03.")
+	("Hmass", po::value<float>(&mass)->default_value(125.02), "Mass of SM Higgs. Default is 125.02.")
 	("doBands", po::value<bool>(&doBands)->default_value(true), "Option to calculate and show 1,2 sigma bands on bkg fit.")
 	("version,v", po::value<int>(&version)->default_value(41), "Version for limit trees.")
 	("ncat,n", po::value<int>(&NCAT)->default_value(2), "Number of categories to fit")
