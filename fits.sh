@@ -2,7 +2,7 @@
 
 doBlinding=1
 
-version=41
+version=42
 limitdirs=("fitToMgg_nonresSearch_withKinFit" "fitToMgg_resSearch_withKinFit" "fitToMgg_resSearch_withRegKinFit" "fitTo2D_nonresSearch_withKinFit" "fitTo2D_resSearch_withRegKinFit" "fitTo2D_resSearch_withKinFit" "fitToFTR14001_nonresSearch_withKinFit")
 doResLimits=("0" "1" "1" "0" "1" "1" "0")
 do2DLimits=("0" "0" "0" "1" "1" "1" "1")
@@ -32,11 +32,13 @@ for i in `echo ${runLimits[@]}`; do
 	mkdir -p $outputdir
 
 	ncat=2
+	useSigTheoryUnc=0
 	if [ "$imass" == "0" ]; then
 	    ncat=4
+	    useSigTheoryUnc=1
 	fi
 
-	./$fitter -v $version -n $ncat --sigMass $imass --analysisType ${limitdirs[$i]} >& ${outputdir}/log_radlim${imass}.txt
+	./$fitter -v $version -n $ncat --sigMass $imass --analysisType ${limitdirs[$i]} --useSigTheoryUnc ${useSigTheoryUnc} >& ${outputdir}/log_radlim${imass}.txt
 
 	mv workspaces/*.root $outputdir
 	mv datacards/*.txt $outputdir
