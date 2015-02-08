@@ -446,9 +446,9 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
   }
   else{
     catdesc.push_back("2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} > 360 GeV");
+    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
     catdesc.push_back("2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
-    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} < 360 GeV");
+    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
   }
   //******************************************//
   // Fit background with model pdfs
@@ -1066,9 +1066,9 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   }
   else{
     catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 360 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
     catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 360 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
   }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
@@ -1265,9 +1265,9 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
   }
   else{
     catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 360 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
     catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 360 GeV");
+    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
   }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
