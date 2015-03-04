@@ -276,7 +276,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   // no common preselection cut applied yet;
   TFile dataFile(datafile);
   TTree* dataTree = (TTree*) dataFile.Get("TCVARS");
-  RooDataSet Data("Data","dataset",dataTree,*ntplVars,"","weightVar");
+  RooDataSet Data("Data","dataset",dataTree,*ntplVars,"","evWeight");
   // evweight is 1 anyway...
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
