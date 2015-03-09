@@ -443,13 +443,13 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
     catdesc.push_back(" High Purity");
-    catdesc.push_back(" Medium Purity");
+    catdesc.push_back(" Med. Purity");
   }
   else{
-    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{Medium Purity}{High m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{Medium Purity}{Low m_{#gamma#gammajj}^{kin}");
+    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{Low m_{#gamma#gammajj}^{kin}}");
   }
   //******************************************//
   // Fit background with model pdfs
@@ -548,12 +548,19 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     if(c==1||c==3)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmggBkg[c]->Draw();
-    plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmggBkg[c]->SetMaximum(1.40*plotmggBkg[c]->GetMaximum());
     plotmggBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
+    TPaveText *pt = new TPaveText(0.1,0.94,0.9,0.99, "brNDC");
+    // pt->SetName("title");
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetTextSize(0.035);
+    pt->AddText("            CMS Preliminary                     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+    pt->Draw();
     TGraphAsymmErrors *onesigma, *twosigma;
     if (dobands) {
       RooAbsPdf *cpdf; cpdf = mggBkgTmp0;
@@ -706,7 +713,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
-    TLatex *lat2 = new TLatex(minMggMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(minMggMassFit+1.5,0.85*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
     ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.pdf",c));
@@ -743,12 +750,19 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     if(c==0||c==2)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     if(c==1||c==3)plotmjjBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmjjBkg[c]->Draw();
-    plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmjjBkg[c]->SetMaximum(1.40*plotmjjBkg[c]->GetMaximum());
     plotmjjBkg[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
+    pt = new TPaveText(0.1,0.94,0.9,0.99, "brNDC");
+    // pt->SetName("title");
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetTextSize(0.035);
+    pt->AddText("            CMS Preliminary                     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+    pt->Draw();
     if (dobands) {
       RooAbsPdf *cpdf; cpdf = mjjBkgTmp0;
       TGraphAsymmErrors *onesigma = new TGraphAsymmErrors();
@@ -899,7 +913,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
-    lat2 = new TLatex(minMjjMassFit+1.5,0.75*plotmjjBkg[c]->GetMaximum(),catdesc.at(c));
+    lat2 = new TLatex(minMjjMassFit+1.5,0.85*plotmjjBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
     ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.pdf",c));
@@ -1069,13 +1083,13 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
     catdesc.push_back(" High Purity");
-    catdesc.push_back(" Medium Purity");
+    catdesc.push_back(" Med. Purity");
   }
   else{
-    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{Medium Purity}{High m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{Medium Purity}{Low m_{#gamma#gammajj}^{kin}");
+    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{Low m_{#gamma#gammajj}^{kin}}");
   }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
@@ -1159,7 +1173,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     sigToFit[c] ->plotOn(plotmgg[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
     TH1F *hist = new TH1F(TString::Format("histMgg_cat%d",c), "hist", 400, minSigPlotMgg, maxSigPlotMgg);
-    plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
+    //plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
     plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
@@ -1175,18 +1189,12 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    TPaveText *pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
+    TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
     //pt->SetName("title");
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
-    pt->SetShadowColor(kWhite);
-    pt->SetLineColor(kWhite);
-    pt->AddText("CMS Preliminary Simulation ");
     pt->SetTextSize(0.035);
-    pt->SetBorderSize(0);
-    pt->SetFillColor(0);
-    pt->SetShadowColor(kWhite);
-    pt->SetLineColor(kWhite);
+    pt->AddText("CMS Preliminary Simulation ");
     pt->Draw();
     // float effS = effSigma(hist);
     TString str_desc;
@@ -1198,7 +1206,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
 			     minSigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),str_desc);
     lat->Draw();
     TLatex *lat2 = new TLatex(
-			      minSigPlotMgg+0.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+			      minSigPlotMgg+0.5,0.70*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1240,7 +1248,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     sigToFit[c] ->plotOn(plotmjj[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
     TH1F *hist = new TH1F(TString::Format("histMjj_cat%d",c), "hist", 400, minSigPlotMjj, maxSigPlotMjj);
-    plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
+    //plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmjj[c]->SetMinimum(0.0);
     plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
     plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
@@ -1256,18 +1264,12 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
-    TPaveText *pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
+    TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
     //pt->SetName("title");
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
-    pt->SetShadowColor(kWhite);
-    pt->SetLineColor(kWhite);
-    pt->AddText("CMS Preliminary Simulation ");
     pt->SetTextSize(0.035);
-    pt->SetBorderSize(0);
-    pt->SetFillColor(0);
-    pt->SetShadowColor(kWhite);
-    pt->SetLineColor(kWhite);
+    pt->AddText("CMS Preliminary Simulation ");
     pt->Draw();
     // float effS = effSigma(hist);
     TString str_desc;
@@ -1279,7 +1281,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
 			     minSigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),str_desc);
     lat->Draw();
     TLatex *lat2 = new TLatex(
-			      minSigPlotMjj+0.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
+			      minSigPlotMjj+0.5,0.70*plotmjj[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1302,13 +1304,13 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
     catdesc.push_back(" High Purity");
-    catdesc.push_back(" Medium Purity");
+    catdesc.push_back(" Med. Purity");
   }
   else{
-    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{Medium Purity}{High m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}");
-    catdesc.push_back(" #splitline{Medium Purity}{Low m_{#gamma#gammajj}^{kin}");
+    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{Low m_{#gamma#gammajj}^{kin}}");
   }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
@@ -1394,14 +1396,6 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
       TH1F *hist = new TH1F(TString::Format("histMgg_%d_cat%d",d,c), "hist", 400, minHigPlotMgg, maxHigPlotMgg);
       //plotmgg[c]->SetTitle("CMS Preliminary 19.7/fb ");
-      TPaveText *pt = new TPaveText(0.2,0.93,0.9,0.99, "brNDC");
-      // pt->SetName("title");
-      pt->SetBorderSize(0);
-      pt->SetFillColor(0);
-      // pt->SetShadowColor(kWhite);
-      pt->AddText("            CMS Preliminary                     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
-      pt->SetTextSize(0.035);
-      pt->Draw();
       plotmgg[c]->SetMinimum(0.0);
       plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
       plotmgg[c]->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
@@ -1409,7 +1403,6 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       plotmgg[c]->Draw();
       plotmgg[c]->Draw("SAME");
       TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
-
       legmc->AddEntry(plotmgg[c]->getObject(5),component[d],"LPE");
       legmc->AddEntry(plotmgg[c]->getObject(1),"Parametric Model","L");
       legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian Outliers","L");
@@ -1418,18 +1411,12 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       legmc->SetBorderSize(0);
       legmc->SetFillStyle(0);
       legmc->Draw();
-      pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
+      TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
       //pt->SetName("title");
       pt->SetBorderSize(0);
       pt->SetFillColor(0);
-      pt->SetShadowColor(kWhite);
-      pt->SetLineColor(kWhite);
-      pt->AddText("CMS Preliminary Simulation ");
       pt->SetTextSize(0.035);
-      pt->SetBorderSize(0);
-      pt->SetFillColor(0);
-      pt->SetShadowColor(kWhite);
-      pt->SetLineColor(kWhite);
+      pt->AddText("CMS Preliminary Simulation ");
       pt->Draw();
       // float effS = effSigma(hist);
       TString str_desc;
@@ -1441,7 +1428,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 			       minHigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),str_desc);
       lat->Draw();
       TLatex *lat2 = new TLatex(
-				minHigPlotMgg+0.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+				minHigPlotMgg+0.5,0.70*plotmgg[c]->GetMaximum(),catdesc.at(c));
       lat2->Draw();
       ///////
       char myChi2buffer[50];
@@ -1484,7 +1471,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       higToFit[c] ->plotOn(plotmjj[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
       TH1F *hist = new TH1F(TString::Format("histMjj_%d_cat%d",d,c), "hist", 400, minHigPlotMjj, maxHigPlotMjj);
-      plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
+      //plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmjj[c]->SetMinimum(0.0);
       plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
       plotmjj[c]->GetXaxis()->SetTitle("m_{jj} (GeV)");
@@ -1501,18 +1488,12 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       legmc->SetBorderSize(0);
       legmc->SetFillStyle(0);
       legmc->Draw();
-      TPaveText *pt = new TPaveText(0.1,0.93,0.7,0.99, "brNDC");
+      TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
       //pt->SetName("title");
       pt->SetBorderSize(0);
       pt->SetFillColor(0);
-      pt->SetShadowColor(kWhite);
-      pt->SetLineColor(kWhite);
-      pt->AddText("CMS Preliminary Simulation ");
       pt->SetTextSize(0.035);
-      pt->SetBorderSize(0);
-      pt->SetFillColor(0);
-      pt->SetShadowColor(kWhite);
-      pt->SetLineColor(kWhite);
+      pt->AddText("CMS Preliminary Simulation ");
       pt->Draw();
       // float effS = effSigma(hist);
       TString str_desc;
@@ -1524,7 +1505,7 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
 			       minHigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),str_desc);
       lat->Draw();
       TLatex *lat2 = new TLatex(
-				minHigPlotMjj+0.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
+				minHigPlotMjj+0.5,0.70*plotmjj[c]->GetMaximum(),catdesc.at(c));
       lat2->Draw();
       ///////
       char myChi2buffer[50];
