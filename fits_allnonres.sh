@@ -2,7 +2,7 @@
 
 doBlinding=1
 
-version=41
+version=44
 limitdirs=("fitToMgg_nonresSearch_withKinFit" "fitTo2D_nonresSearch_withKinFit")
 do2DLimits=("0" "1")
 
