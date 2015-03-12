@@ -60,8 +60,8 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v42/v42_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v42/v42_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v44/v44_fitToMggjj_withKinFit/Data_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v44/v44_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
