@@ -11,6 +11,7 @@
 #include <TTree.h>
 #include <TH2F.h>
 #include <TLatex.h>
+#include <TPaveText.h>
 #include <TGraphAsymmErrors.h>
 #include <TCanvas.h>
 #include <TStyle.h>
@@ -276,7 +277,7 @@ void AddBkgData(RooWorkspace* w, TString datafile) {
   // no common preselection cut applied yet;
   TFile dataFile(datafile);
   TTree* dataTree = (TTree*) dataFile.Get("TCVARS");
-  RooDataSet Data("Data","dataset",dataTree,*ntplVars,"","weightVar");
+  RooDataSet Data("Data","dataset",dataTree,*ntplVars,"","evWeight");
   // evweight is 1 anyway...
   RooDataSet* dataToFit[ncat];
   RooDataSet* dataToPlot[ncat];
@@ -441,14 +442,14 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
-    catdesc.push_back("2 btag");
-    catdesc.push_back("1 btag");
+    catdesc.push_back(" High Purity");
+    catdesc.push_back(" Med. Purity");
   }
   else{
-    catdesc.push_back("2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back("2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
-    catdesc.push_back("1 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
+    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{Low m_{#gamma#gammajj}^{kin}}");
   }
   //******************************************//
   // Fit background with model pdfs
@@ -544,15 +545,22 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     cout << "!!!!!!!!!!!!!!!!!" << endl;
     cout << "!!!!!!!!!!!!!!!!!" << endl; // now we fit the gaussian on signal
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
-    if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
+    if(c==0||c==2)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     if(c==1||c==3)plotmggBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmggBkg[c]->Draw();
-    plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmggBkg[c]->SetMaximum(1.40*plotmggBkg[c]->GetMaximum());
-    plotmggBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
+    plotmggBkg[c]->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
+    TPaveText *pt = new TPaveText(0.1,0.94,0.9,0.99, "brNDC");
+    // pt->SetName("title");
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetTextSize(0.035);
+    pt->AddText("            CMS Preliminary                     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+    pt->Draw();
     TGraphAsymmErrors *onesigma, *twosigma;
     if (dobands) {
       RooAbsPdf *cpdf; cpdf = mggBkgTmp0;
@@ -694,7 +702,10 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmggBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmggBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" Nonresonace");//grep on bkg label
+    if(sigMass==0)
+      legmc->SetHeader(" Nonresonant HH");
+    else
+      legmc->SetHeader(TString::Format(" m_{X} = %d GeV",sigMass));
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -702,7 +713,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
-    TLatex *lat2 = new TLatex(minMggMassFit+1.5,0.75*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
+    TLatex *lat2 = new TLatex(minMggMassFit+1.5,0.85*plotmggBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
     ctmp->SaveAs(TString::Format("databkgoversigMgg_cat%d.pdf",c));
@@ -739,12 +750,19 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     if(c==0||c==2)plotmjjBkg[c]->SetMinimum(0.005); // no error bar in bins with zero events
     if(c==1||c==3)plotmjjBkg[c]->SetMinimum(0.001); // no error bar in bins with zero events
     plotmjjBkg[c]->Draw();
-    plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
+    //plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmjjBkg[c]->SetMaximum(1.40*plotmjjBkg[c]->GetMaximum());
-    plotmjjBkg[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
+    plotmjjBkg[c]->GetXaxis()->SetTitle("m_{jj} (GeV)");
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
+    pt = new TPaveText(0.1,0.94,0.9,0.99, "brNDC");
+    // pt->SetName("title");
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetTextSize(0.035);
+    pt->AddText("            CMS Preliminary                     L = 19.7 fb^{-1}    #sqrt{s} = 8 TeV   ");
+    pt->Draw();
     if (dobands) {
       RooAbsPdf *cpdf; cpdf = mjjBkgTmp0;
       TGraphAsymmErrors *onesigma = new TGraphAsymmErrors();
@@ -884,7 +902,10 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->AddEntry(plotmjjBkg[c]->getObject(7),"VBF ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(9),"VH ","LPE"); // not...
     legmcH->AddEntry(plotmjjBkg[c]->getObject(11),"bbH ","LPE"); // not...
-    legmc->SetHeader(" Nonresonace");//grep on bkg label
+    if(sigMass==0)
+      legmc->SetHeader(" Nonresonant HH");
+    else
+      legmc->SetHeader(TString::Format(" m_{X} = %d GeV",sigMass));
     legmcH->SetHeader(" Higgs");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
@@ -892,7 +913,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     legmcH->SetFillStyle(0);
     legmc->Draw();
     legmcH->Draw();
-    lat2 = new TLatex(minMjjMassFit+1.5,0.75*plotmjjBkg[c]->GetMaximum(),catdesc.at(c));
+    lat2 = new TLatex(minMjjMassFit+1.5,0.85*plotmjjBkg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     //
     ctmp->SaveAs(TString::Format("databkgoversigMjj_cat%d.pdf",c));
@@ -1061,14 +1082,14 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
-    catdesc.push_back(" 2 btag");
-    catdesc.push_back(" 1 btag");
+    catdesc.push_back(" High Purity");
+    catdesc.push_back(" Med. Purity");
   }
   else{
-    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
+    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{Low m_{#gamma#gammajj}^{kin}}");
   }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
@@ -1116,7 +1137,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
   // Set P.D.F. parameter names
   // WARNING: Do not use it if Workspaces are created
   // SetParamNames(w);
-  Float_t minSigPlotMgg(120),maxSigPlotMgg(130);
+  Float_t minSigPlotMgg(115),maxSigPlotMgg(135);
   Float_t minSigPlotMjj(60),maxSigPlotMjj(180);
   mgg->setRange("SigPlotRange",minSigPlotMgg,maxSigPlotMgg);
   mjj->setRange("SigPlotRange",minSigPlotMjj,maxSigPlotMjj);
@@ -1152,10 +1173,10 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     sigToFit[c] ->plotOn(plotmgg[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
     TH1F *hist = new TH1F(TString::Format("histMgg_cat%d",c), "hist", 400, minSigPlotMgg, maxSigPlotMgg);
-    plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
+    //plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
-    plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
+    plotmgg[c]->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
     TCanvas* ctmp = new TCanvas(TString::Format("ctmpSigMgg_cat%d",c),"Background Categories",0,0,500,500);
     plotmgg[c]->Draw();
     plotmgg[c]->Draw("SAME");
@@ -1168,13 +1189,24 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
+    TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
+    //pt->SetName("title");
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetTextSize(0.035);
+    pt->AddText("CMS Preliminary Simulation ");
+    pt->Draw();
     // float effS = effSigma(hist);
+    TString str_desc;
+    if(sigMass==0)
+      str_desc=" Nonresonant HH";
+    else
+      str_desc=TString::Format(" m_{X} = %d GeV",sigMass);
     TLatex *lat = new TLatex(
-			     minSigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-                             " Nonresonance - SM");//grep on sig label
+			     minSigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),str_desc);
     lat->Draw();
     TLatex *lat2 = new TLatex(
-			      minSigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+			      minSigPlotMgg+0.5,0.70*plotmgg[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1216,10 +1248,10 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     sigToFit[c] ->plotOn(plotmjj[c]);
     // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
     TH1F *hist = new TH1F(TString::Format("histMjj_cat%d",c), "hist", 400, minSigPlotMjj, maxSigPlotMjj);
-    plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
+    //plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmjj[c]->SetMinimum(0.0);
     plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
-    plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
+    plotmjj[c]->GetXaxis()->SetTitle("m_{jj} (GeV)");
     TCanvas* ctmp = new TCanvas(TString::Format("ctmpSigMjj_cat%d",c),"Background Categories",0,0,500,500);
     plotmjj[c]->Draw();
     plotmjj[c]->Draw("SAME");
@@ -1232,13 +1264,24 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
+    TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
+    //pt->SetName("title");
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetTextSize(0.035);
+    pt->AddText("CMS Preliminary Simulation ");
+    pt->Draw();
     // float effS = effSigma(hist);
+    TString str_desc;
+    if(sigMass==0)
+      str_desc=" Nonresonant HH";
+    else
+      str_desc=TString::Format(" m_{X} = %d GeV",sigMass);
     TLatex *lat = new TLatex(
-			     minSigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-                             " Nonresonance - SM");//grep on sig label
+			     minSigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),str_desc);
     lat->Draw();
     TLatex *lat2 = new TLatex(
-			      minSigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
+			      minSigPlotMjj+0.5,0.70*plotmjj[c]->GetMaximum(),catdesc.at(c));
     lat2->Draw();
     ///////
     char myChi2buffer[50];
@@ -1260,14 +1303,14 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
   const Int_t ncat = NCAT;
   std::vector<TString> catdesc;
   if ( NCAT == 2 ){
-    catdesc.push_back(" 2 btag");
-    catdesc.push_back(" 1 btag");
+    catdesc.push_back(" High Purity");
+    catdesc.push_back(" Med. Purity");
   }
   else{
-    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} > 350 GeV");
-    catdesc.push_back(" 2 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
-    catdesc.push_back(" 1 btag, M_{#gamma#gammajj}^{kin} < 350 GeV");
+    catdesc.push_back(" #splitline{High Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{High m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{High Purity}{Low m_{#gamma#gammajj}^{kin}}");
+    catdesc.push_back(" #splitline{Med. Purity}{Low m_{#gamma#gammajj}^{kin}}");
   }
   // retrieve data sets from the workspace
   // RooDataSet* dataAll = (RooDataSet*) w->data("Data");
@@ -1352,15 +1395,14 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       higToFit[c] ->plotOn(plotmgg[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
       TH1F *hist = new TH1F(TString::Format("histMgg_%d_cat%d",d,c), "hist", 400, minHigPlotMgg, maxHigPlotMgg);
-      plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
+      //plotmgg[c]->SetTitle("CMS Preliminary 19.7/fb ");
       plotmgg[c]->SetMinimum(0.0);
       plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
-      plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
+      plotmgg[c]->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
       TCanvas* ctmp = new TCanvas(TString::Format("ctmpHigMgg_%d_cat%d",d,c),"Background Categories",0,0,500,500);
       plotmgg[c]->Draw();
       plotmgg[c]->Draw("SAME");
       TLegend *legmc = new TLegend(0.62,0.75,0.99,0.99);
-
       legmc->AddEntry(plotmgg[c]->getObject(5),component[d],"LPE");
       legmc->AddEntry(plotmgg[c]->getObject(1),"Parametric Model","L");
       legmc->AddEntry(plotmgg[c]->getObject(2),"Gaussian Outliers","L");
@@ -1369,13 +1411,24 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       legmc->SetBorderSize(0);
       legmc->SetFillStyle(0);
       legmc->Draw();
+      TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
+      //pt->SetName("title");
+      pt->SetBorderSize(0);
+      pt->SetFillColor(0);
+      pt->SetTextSize(0.035);
+      pt->AddText("CMS Preliminary Simulation ");
+      pt->Draw();
       // float effS = effSigma(hist);
+      TString str_desc;
+      if(sigMass==0)
+	str_desc=" Nonresonant HH";
+      else
+	str_desc=TString::Format(" m_{X} = %d GeV",sigMass);
       TLatex *lat = new TLatex(
-			       minHigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),
-                             " Nonresonance - SM");//grep on sig label
+			       minHigPlotMgg+0.5,0.85*plotmgg[c]->GetMaximum(),str_desc);
       lat->Draw();
       TLatex *lat2 = new TLatex(
-				minHigPlotMgg+1.5,0.75*plotmgg[c]->GetMaximum(),catdesc.at(c));
+				minHigPlotMgg+0.5,0.70*plotmgg[c]->GetMaximum(),catdesc.at(c));
       lat2->Draw();
       ///////
       char myChi2buffer[50];
@@ -1418,10 +1471,10 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       higToFit[c] ->plotOn(plotmjj[c]);
       // TCanvas* dummy = new TCanvas("dummy", "dummy",0, 0, 400, 400);
       TH1F *hist = new TH1F(TString::Format("histMjj_%d_cat%d",d,c), "hist", 400, minHigPlotMjj, maxHigPlotMjj);
-      plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
+      //plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
       plotmjj[c]->SetMinimum(0.0);
       plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
-      plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
+      plotmjj[c]->GetXaxis()->SetTitle("m_{jj} (GeV)");
       TCanvas* ctmp = new TCanvas(TString::Format("ctmpHigMjj_%d_cat_%d",d,c),"Background Categories",0,0,500,500);
       plotmjj[c]->Draw();
       plotmjj[c]->Draw("SAME");
@@ -1435,13 +1488,24 @@ void MakePlotsHiggs(RooWorkspace* w, Float_t Mass) {
       legmc->SetBorderSize(0);
       legmc->SetFillStyle(0);
       legmc->Draw();
+      TPaveText *pt = new TPaveText(0.1,0.94,0.7,0.99, "brNDC");
+      //pt->SetName("title");
+      pt->SetBorderSize(0);
+      pt->SetFillColor(0);
+      pt->SetTextSize(0.035);
+      pt->AddText("CMS Preliminary Simulation ");
+      pt->Draw();
       // float effS = effSigma(hist);
+      TString str_desc;
+      if(sigMass==0)
+	str_desc=" Nonresonant HH";
+      else
+	str_desc=TString::Format(" m_{X} = %d GeV",sigMass);
       TLatex *lat = new TLatex(
-			       minHigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),
-                             " Nonresonance - SM");//grep on sig label
+			       minHigPlotMjj+0.5,0.85*plotmjj[c]->GetMaximum(),str_desc);
       lat->Draw();
       TLatex *lat2 = new TLatex(
-				minHigPlotMjj+1.5,0.75*plotmjj[c]->GetMaximum(),catdesc.at(c));
+				minHigPlotMjj+0.5,0.70*plotmjj[c]->GetMaximum(),catdesc.at(c));
       lat2->Draw();
       ///////
       char myChi2buffer[50];
@@ -1863,6 +1927,14 @@ void MakeDataCard(RooWorkspace* w, const char* fileBaseName, const char* fileBkg
     if (NCAT > 2 ){
     outFile << "1.02 - 1.02 1.02 1.02 1.02 1.02 "
 	    << "1.02 - 1.02 1.02 1.02 1.02 1.02 " << endl;
+    }
+    if ( NCAT > 2 ){
+    outFile << "mggjj_eff lnN "
+	    << "1.01 - 1.01 1.01 1.01 1.01 1.01 "
+	    << "1.01 - 1.01 1.01 1.01 1.01 1.01 "
+	    << "1.01 - 1.01 1.01 1.01 1.01 1.01 "
+	    << "1.01 - 1.01 1.01 1.01 1.01 1.01 "
+	    << "# uncertainty on mggjj cut acceptance, 1% is a placeholder to be updated" << endl;
     }
     outFile << " " << endl << endl;
     outFile << "############## Theory uncertainties on SM Higgs production " << endl;

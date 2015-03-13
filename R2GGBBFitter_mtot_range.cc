@@ -60,8 +60,8 @@ void runfits(const Float_t mass=120, Int_t mode=1, Bool_t dobands = false)
   //  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
   //  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v28/v28_fitToMggjj_withKinFit/Data_m500.root";
 
-  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v42/v42_fitToMggjj_withKinFit/Data_m400.root";
-  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v42/v42_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
+  TString ddata = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v44/v44_fitToMggjj_withKinFit/Data_m400.root";
+  TString ssignal = "/afs/cern.ch/work/o/obondu/public/forRadion/limitTrees/v44/v44_fitToMggjj_withKinFit/Radion_m1100_8TeV_m1100.root";
 
   //
   cout<<"Signal: "<< ssignal<<endl;
@@ -352,7 +352,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
    plotmtotBkg[c]->GetYaxis()->SetRangeUser(0.0000001,10);
     if(c==0) plotmtotBkg[c]->SetMaximum(4.5);
     if (c==1) plotmtotBkg[c]->SetMaximum(20);
-    plotmtotBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
+    plotmtotBkg[c]->GetXaxis()->SetTitle("m_{#gamma#gammajj}^{kin} (GeV)");
   // plotmtotBkg[c]->Draw("AC");
     //////////////////////////////////////////////////////////////////
   TPaveText *pt = new TPaveText(0.2,0.93,0.8,0.99, "brNDC");
@@ -374,7 +374,7 @@ w->factory(TString::Format("mtot_bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c)); // is
     legmc->AddEntry(plotmtotBkg[c]->getObject(1),"Fit","L");
     if(dobands)legmc->AddEntry(onesigma,"Fit #pm1 #sigma","F");
     if(dobands)legmc->AddEntry(twosigma,"Fit #pm2 #sigma","F");
-    //legmc->SetHeader("M_{X} = 1100 GeV");
+    //legmc->SetHeader("m_{X} = 1100 GeV");
     legmc->SetBorderSize(0);
     legmc->SetFillStyle(0);
     legmc->Draw();
@@ -573,7 +573,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass, RooFitResult* fitresults) {
     //plotmtot[c]->Draw();
     plotmtot[c]->SetMinimum(0.0);
     plotmtot[c]->SetMaximum(1.40*plotmtot[c]->GetMaximum());
-    plotmtot[c]->GetXaxis()->SetTitle("M_{#gamma#gammajj}^{kin} (GeV)");
+    plotmtot[c]->GetXaxis()->SetTitle("m_{#gamma#gammajj}^{kin} (GeV)");
 
 
     plotmtot[c]->Draw("SAME");
