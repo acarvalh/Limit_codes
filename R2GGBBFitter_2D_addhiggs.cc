@@ -551,7 +551,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     //plotmggBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmggBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmggBkg[c]->SetMaximum(1.40*plotmggBkg[c]->GetMaximum());
-    plotmggBkg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
+    plotmggBkg[c]->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
     TPaveText *pt = new TPaveText(0.1,0.94,0.9,0.99, "brNDC");
@@ -753,7 +753,7 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     //plotmjjBkg[c]->SetTitle("CMS preliminary 19.7/fb");
     //plotmjjBkg[c]->SetMinimum(0.01); // no error bar in bins with zero events
     plotmjjBkg[c]->SetMaximum(1.40*plotmjjBkg[c]->GetMaximum());
-    plotmjjBkg[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
+    plotmjjBkg[c]->GetXaxis()->SetTitle("m_{jj} (GeV)");
     //double test = sigToFit[c]->sumEntries();
     //cout<<"number of events on dataset "<<test<<endl;
     pt = new TPaveText(0.1,0.94,0.9,0.99, "brNDC");
@@ -1176,7 +1176,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     //plotmgg[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmgg[c]->SetMinimum(0.0);
     plotmgg[c]->SetMaximum(1.40*plotmgg[c]->GetMaximum());
-    plotmgg[c]->GetXaxis()->SetTitle("M_{#gamma#gamma} (GeV)");
+    plotmgg[c]->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV)");
     TCanvas* ctmp = new TCanvas(TString::Format("ctmpSigMgg_cat%d",c),"Background Categories",0,0,500,500);
     plotmgg[c]->Draw();
     plotmgg[c]->Draw("SAME");
@@ -1251,7 +1251,7 @@ void MakePlots(RooWorkspace* w, Float_t Mass) {
     //plotmjj[c]->SetTitle("CMS preliminary 19.7/fb ");
     plotmjj[c]->SetMinimum(0.0);
     plotmjj[c]->SetMaximum(1.40*plotmjj[c]->GetMaximum());
-    plotmjj[c]->GetXaxis()->SetTitle("M_{jj} (GeV)");
+    plotmjj[c]->GetXaxis()->SetTitle("m_{jj} (GeV)");
     TCanvas* ctmp = new TCanvas(TString::Format("ctmpSigMjj_cat%d",c),"Background Categories",0,0,500,500);
     plotmjj[c]->Draw();
     plotmjj[c]->Draw("SAME");
