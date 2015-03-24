@@ -519,9 +519,11 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
 					      RooArgList(*mjj, *mjj_p1mod));
 
     // we first wrap the normalization of mggBkgTmp0, mjjBkgTmp0
-    RooProdPdf BkgPdfTmp(TString::Format("BkgPdfTmp%d",c), "Background Pdf", RooArgList(*mggBkgTmp0, *mjjBkgTmp0));
     w->factory(TString::Format("bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c));
-    RooExtendPdf BkgPdf(TString::Format("BkgPdf_cat%d",c),"", BkgPdfTmp,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
+    RooProdPdf BkgPdf(TString::Format("BkgPdf_cat%d",c), "", RooArgList(*mggBkgTmp0, *mjjBkgTmp0));
+    //RooExtendPdf BkgPdfExt(TString::Format("BkgPdfExt_cat%d",c),"", BkgPdf,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
+    //BkgPdfExt.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
+    //w->import(BkgPdfExt);
     BkgPdf.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
     w->import(BkgPdf);
 
@@ -1038,6 +1040,7 @@ void MakeBkgWS(RooWorkspace* w, const char* fileBaseName) {
 
     cout<<"here"<<endl;
     wAll->import(*w->pdf(TString::Format("BkgPdf_cat%d",c)));
+    wAll->import(*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
     cout<<"here"<<endl;
     wAll->factory(
 		  TString::Format("CMS_bkg_8TeV_cat%d_norm[%g,0.0,100000.0]",
