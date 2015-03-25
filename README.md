@@ -1,13 +1,9 @@
 Limit_codes
 ===========
 
-On CMSSW_6_1_1 you install the higgs combination tools
+On CMSSW_6_1_1 you install the higgs combination tools according to slc5
 
 https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideHiggsAnalysisCombinedLimit
-
-Use the slight modification:
-git checkout de9986485209bb27dc29e986820e64c10628f770
-This ensures use of the correct version of HiggsAnalysis/CombinedLimit
 
 ......................................................................
 
