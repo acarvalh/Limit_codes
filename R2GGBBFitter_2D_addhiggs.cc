@@ -521,11 +521,11 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
     // we first wrap the normalization of mggBkgTmp0, mjjBkgTmp0
     w->factory(TString::Format("bkg_8TeV_norm_cat%d[1.0,0.0,100000]",c));
     RooProdPdf BkgPdf(TString::Format("BkgPdf_cat%d",c), "", RooArgList(*mggBkgTmp0, *mjjBkgTmp0));
-    //RooExtendPdf BkgPdfExt(TString::Format("BkgPdfExt_cat%d",c),"", BkgPdf,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
-    //BkgPdfExt.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
-    //w->import(BkgPdfExt);
-    BkgPdf.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
-    w->import(BkgPdf);
+    RooExtendPdf BkgPdfExt(TString::Format("BkgPdfExt_cat%d",c),"", BkgPdf,*w->var(TString::Format("bkg_8TeV_norm_cat%d",c)));
+    BkgPdfExt.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
+    w->import(BkgPdfExt);
+    //BkgPdf.fitTo(*data[c], Strategy(1),Minos(kFALSE), Range("BkgFitRange"),SumW2Error(kTRUE), Save(kTRUE));
+    //w->import(BkgPdf);
 
     //************************************************//
     // Plot mgg background fit results per categories
