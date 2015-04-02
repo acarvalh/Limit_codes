@@ -1,11 +1,11 @@
 mgg[100,180];
 
 
-mgg_bkg_8TeV_slope1[9,-10.0, 20.0];
-mgg_bkg_8TeV_slope1_cat0[9,-10.0, 20.0];
-mgg_bkg_8TeV_slope1_cat1[9,-10.0, 20.0];
-mgg_bkg_8TeV_slope1_cat2[9,-10.0, 20.0];
-mgg_bkg_8TeV_slope1_cat3[9,-10.0, 20.0];
+mgg_bkg_8TeV_slope1[0.1,-10.0, 10.0];
+mgg_bkg_8TeV_slope1_cat0[0.1,-10.0, 10.0];
+mgg_bkg_8TeV_slope1_cat1[0.1,-10.0, 10.0];
+mgg_bkg_8TeV_slope1_cat2[0.1,-10.0, 10.0];
+mgg_bkg_8TeV_slope1_cat3[0.1,-10.0, 10.0];
 
 mgg_sig_m0_cat0[124.2, 123, 125];
 mgg_sig_sigma_cat0[2.0, 1.0, 3.0];
