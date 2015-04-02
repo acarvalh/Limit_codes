@@ -502,11 +502,11 @@ RooFitResult* BkgModelFit(RooWorkspace* w, Bool_t dobands) {
 
     RooFormulaVar *mgg_p1mod = new RooFormulaVar(
 					     TString::Format("mgg_p1mod_cat%d",c),
-					     "","@0*@0",
+					     "","@0",
 					     *w->var(TString::Format("mgg_bkg_8TeV_slope1_cat%d",c)));
     RooFormulaVar *mjj_p1mod = new RooFormulaVar(
 					     TString::Format("mjj_p1mod_cat%d",c),
-					     "","@0*@0",
+					     "","@0",
 					     *w->var(TString::Format("mjj_bkg_8TeV_slope1_cat%d",c)));
 
     RooAbsPdf* mggBkgTmp0 = new RooGenericPdf(
